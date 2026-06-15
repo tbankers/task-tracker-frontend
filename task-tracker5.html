@@ -874,7 +874,7 @@
       <div class="field">
         <label>Статус</label>
         <select id="task-status-input">
-          <option value="todo">К выполнению</option>
+          <option value="to_do">К выполнению</option>
           <option value="in_progress">В процессе</option>
           <option value="done">Готово</option>
         </select>
@@ -888,36 +888,61 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════
+const API_BASE = '';
+let token = localStorage.getItem('tt_token') || '';
+
+function setToken(t) {
+  token = t;
+  if (t) localStorage.setItem('tt_token', t);
+  else localStorage.removeItem('tt_token');
+}
+
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API_BASE + path, opts);
+  const text = await res.text();
+  let json;
+  try { json = JSON.parse(text); } catch { json = text; }
+  if (!res.ok) throw { status: res.status, data: json };
+  return json;
+}
+
 let state = {
   user: null,
   token: null,
+  workspaceId: null,
   boards: [],
   activeBoardId: null,
-  tasks: {},        // boardId -> task[]
+  tasks: {},
   editingTaskId: null,
   editingTaskBoardId: null,
   defaultStatus: 'to_do',
 };
 
-// Pseudo-DB via localStorage (simulating API)
-function loadState() {
-  const saved = localStorage.getItem('tt_state');
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    state.boards = parsed.boards || [];
-    state.tasks  = parsed.tasks  || {};
-    state.activeBoardId = parsed.activeBoardId || null;
-  }
-}
-function saveStateToStorage() {
-  localStorage.setItem('tt_state', JSON.stringify({
-    boards: state.boards,
-    tasks: state.tasks,
-    activeBoardId: state.activeBoardId,
-  }));
+const BOARD_COLORS = ['#7C3AED','#2563EB','#059669','#D97706','#DC2626','#0891B2','#7C3AED'];
+const STATUSES = [
+  { id:'to_do',       label:'К выполнению', badgeClass:'badge-todo',     colClass:'col-todo' },
+  { id:'in_progress', label:'В процессе',   badgeClass:'badge-progress', colClass:'col-inprogress' },
+  { id:'done',        label:'Готово',       badgeClass:'badge-done',     colClass:'col-done' },
+];
+
+function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+function showLogin()    { document.getElementById('login-form').style.display='block'; document.getElementById('register-form').style.display='none'; }
+function showRegister() { document.getElementById('register-form').style.display='block'; document.getElementById('login-form').style.display='none'; }
+function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let toastTimer = null;
+function showToast(msg) {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  if (toastTimer) clearTimeout(toastTimer);
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  toastTimer = setTimeout(() => t.remove(), 2500);
 }
 
 // ═══════════════════════════════════════════════
@@ -927,7 +952,6 @@ async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-password').value;
   const errEl = document.getElementById('login-error');
-
   if (!email || !pass) { showError(errEl, 'Заполните все поля'); return; }
   if (!email.includes('@')) { showError(errEl, 'Введите корректный email'); return; }
 
@@ -981,7 +1005,6 @@ function loginUser(user, token) {
   state.token = token;
   localStorage.setItem('tt_current_user', JSON.stringify(user));
   localStorage.setItem('tt_token', token);
-  loadState();
   showApp();
 }
 
@@ -998,18 +1021,15 @@ async function apiFetch(url, options = {}) {
 }
 
 function handleLogout() {
+  setToken(null);
+  state.user = null; state.workspaceId = null; state.boards = []; state.tasks = {}; state.activeBoardId = null;
   localStorage.removeItem('tt_current_user');
   localStorage.removeItem('tt_token');
   state.token = null;
-  state.user = null; state.boards = []; state.tasks = {}; state.activeBoardId = null;
   document.getElementById('app-page').style.display  = 'none';
   document.getElementById('auth-page').style.display = 'block';
   showLogin();
 }
-
-function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
-function showLogin()    { document.getElementById('login-form').style.display='block'; document.getElementById('register-form').style.display='none'; }
-function showRegister() { document.getElementById('register-form').style.display='block'; document.getElementById('login-form').style.display='none'; }
 
 async function handleForgotPassword() {
   const email = document.getElementById('login-email').value.trim();
@@ -1034,27 +1054,82 @@ async function handleForgotPassword() {
 }
 
 // ═══════════════════════════════════════════════
-//  APP INIT
+//  APP INIT + WORKSPACE
 // ═══════════════════════════════════════════════
-function showApp() {
+async function showApp() {
   document.getElementById('auth-page').style.display = 'none';
   document.getElementById('app-page').style.display  = 'block';
-
   const u = state.user;
-  document.getElementById('sidebar-avatar').textContent = u.name.charAt(0).toUpperCase();
-  document.getElementById('sidebar-name').textContent   = u.name;
+  const name = u.username || u.name || u.email;
+  document.getElementById('sidebar-avatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('sidebar-name').textContent   = name;
   document.getElementById('sidebar-email').textContent  = u.email;
+  await ensureWorkspace();
+  await loadBoards();
+}
 
-  renderSidebar();
-  if (state.activeBoardId) renderBoard(state.activeBoardId);
-  else showNoBoard();
+async function ensureWorkspace() {
+  if (state.workspaceId) return;
+  try {
+    const workspaces = await api('GET', '/users/' + state.user.user_id + '/workspaces');
+    if (Array.isArray(workspaces) && workspaces.length > 0) {
+      state.workspaceId = workspaces[0].workspace_id;
+      return;
+    }
+  } catch (e) {}
+  try {
+    const ws = await api('POST', '/workspaces', { title: 'Мой Workspace' });
+    state.workspaceId = ws.workspace_id;
+  } catch (e) {
+    showToast('Не удалось создать workspace');
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  DATA LOADING
+// ═══════════════════════════════════════════════
+async function loadBoards() {
+  try {
+    const data = await api('GET', '/workspaces/' + state.workspaceId + '/boards');
+    const list = Array.isArray(data) ? data : [];
+    state.boards = list.map((b, i) => ({
+      id: b.id,
+      name: b.title || 'Доска',
+      color: BOARD_COLORS[i % BOARD_COLORS.length],
+    }));
+    state.tasks = {};
+    for (const b of state.boards) await loadTasks(b.id);
+    renderSidebar();
+    if (state.activeBoardId && state.boards.find(b => b.id === state.activeBoardId)) renderBoard(state.activeBoardId);
+    else showNoBoard();
+  } catch (e) {
+    state.boards = [];
+    renderSidebar();
+    showNoBoard();
+  }
+}
+
+async function loadTasks(boardId) {
+  try {
+    const data = await api('GET', '/boards/' + boardId + '/tasks');
+    const list = Array.isArray(data) ? data : [];
+    state.tasks[boardId] = list.map(t => ({
+      id: t.id,
+      board_id: boardId,
+      name: t.title || '',
+      desc: t.description || '',
+      status: t.status || 'to_do',
+      created_at: t.created_at || new Date().toISOString(),
+      updated_at: t.updated_at || new Date().toISOString(),
+    }));
+  } catch (e) {
+    state.tasks[boardId] = [];
+  }
 }
 
 // ═══════════════════════════════════════════════
 //  BOARDS
 // ═══════════════════════════════════════════════
-const BOARD_COLORS = ['#7C3AED','#2563EB','#059669','#D97706','#DC2626','#0891B2','#7C3AED'];
-
 function openBoardModal() { document.getElementById('board-modal').style.display='flex'; setTimeout(()=>document.getElementById('board-name-input').focus(),50); }
 function closeBoardModal(e) {
   if (e && e.target !== document.getElementById('board-modal')) return;
@@ -1062,30 +1137,25 @@ function closeBoardModal(e) {
   document.getElementById('board-name-input').value='';
 }
 
-function createBoard() {
+async function createBoard() {
   const name = document.getElementById('board-name-input').value.trim();
   if (!name) return;
-  const board = {
-    id: 'b_' + Date.now(),
-    name,
-    workspace_id: 'ws_default',
-    created_at: new Date().toISOString(),
-    created_by: state.user.id,
-    color: BOARD_COLORS[state.boards.length % BOARD_COLORS.length],
-  };
-  state.boards.push(board);
-  state.tasks[board.id] = [];
-  saveStateToStorage();
-  document.getElementById('board-modal').style.display='none';
-  document.getElementById('board-name-input').value='';
-  renderSidebar();
-  selectBoard(board.id);
-  showToast('Доска создана');
+  try {
+    const data = await api('POST', '/workspaces/' + state.workspaceId + '/boards', { title: name });
+    state.boards.push({ id: data.id, name, color: BOARD_COLORS[state.boards.length % BOARD_COLORS.length] });
+    state.tasks[data.id] = [];
+    document.getElementById('board-modal').style.display='none';
+    document.getElementById('board-name-input').value='';
+    renderSidebar();
+    selectBoard(data.id);
+    showToast('Доска создана');
+  } catch (e) {
+    showToast('Ошибка: ' + (e.data?.message || 'не удалось создать доску'));
+  }
 }
 
 function selectBoard(id) {
   state.activeBoardId = id;
-  saveStateToStorage();
   renderSidebar();
   renderBoard(id);
 }
@@ -1105,26 +1175,17 @@ function renderSidebar() {
 }
 
 // ═══════════════════════════════════════════════
-//  BOARD + TASKS
+//  BOARD RENDER
 // ═══════════════════════════════════════════════
-const STATUSES = [
-  { id:'todo',        label:'К выполнению', badgeClass:'badge-todo',     colClass:'col-todo' },
-  { id:'in_progress', label:'В процессе',   badgeClass:'badge-progress', colClass:'col-inprogress' },
-  { id:'done',        label:'Готово',       badgeClass:'badge-done',     colClass:'col-done' },
-];
-
 function renderBoard(boardId) {
-  const board  = state.boards.find(b => b.id === boardId);
+  const board = state.boards.find(b => b.id === boardId);
   if (!board) { showNoBoard(); return; }
-
   document.getElementById('topbar-title').textContent = board.name;
   document.getElementById('topbar-ws').textContent = '';
   document.getElementById('no-board-state').style.display   = 'none';
   document.getElementById('board-container').style.display  = 'flex';
-
   const tasks = state.tasks[boardId] || [];
   const container = document.getElementById('board-container');
-
   container.innerHTML = STATUSES.map(s => {
     const colTasks = tasks.filter(t => t.status === s.id);
     return `
@@ -1138,12 +1199,7 @@ function renderBoard(boardId) {
              ondragover="onDragOver(event)" ondrop="onDrop(event,'${boardId}','${s.id}')"
              ondragleave="onDragLeave(event)">
           ${colTasks.map(t => renderTaskCard(t)).join('')}
-          ${colTasks.length === 0 ? `<div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-            </svg>
-            <p>Задач нет</p>
-          </div>` : ''}
+          ${colTasks.length === 0 ? '<div class="empty-state"><p>Задач нет</p></div>' : ''}
         </div>
         <button class="add-task-btn" onclick="openCreateTask('${boardId}','${s.id}')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1155,23 +1211,21 @@ function renderBoard(boardId) {
 }
 
 function renderTaskCard(task) {
-  const s = STATUSES.find(s => s.id === task.status);
+  const s = STATUSES.find(s => s.id === task.status) || STATUSES[0];
   const date = new Date(task.created_at).toLocaleDateString('ru-RU', {day:'2-digit', month:'short'});
   return `
-    <div class="task-card" draggable="true"
-         id="task-${task.id}"
-         ondragstart="onDragStart(event,'${task.id}')"
-         ondragend="onDragEnd(event)">
+    <div class="task-card" draggable="true" id="task-${task.id}"
+         ondragstart="onDragStart(event,'${task.id}')" ondragend="onDragEnd(event)">
       <div class="task-card-actions">
         <button class="btn btn-icon" onclick="openEditTask(event,'${task.board_id}','${task.id}')" title="Редактировать">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
         <button class="btn btn-icon btn-danger" onclick="deleteTask(event,'${task.board_id}','${task.id}')" title="Удалить">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         </button>
       </div>
       <div class="task-card-name">${escHtml(task.name)}</div>
-      ${task.desc ? `<div class="task-card-desc">${escHtml(task.desc)}</div>` : ''}
+      ${task.desc ? '<div class="task-card-desc">' + escHtml(task.desc) + '</div>' : ''}
       <div class="task-card-footer">
         <span class="task-badge ${s.badgeClass}">${s.label}</span>
         <span class="task-date">${date}</span>
@@ -1186,7 +1240,9 @@ function showNoBoard() {
   document.getElementById('topbar-title').textContent = 'Выберите доску';
 }
 
-// ── Create / Edit task ─────────────────────────
+// ═══════════════════════════════════════════════
+//  TASKS
+// ═══════════════════════════════════════════════
 function openCreateTask(boardId, status) {
   state.editingTaskId = null;
   state.editingTaskBoardId = boardId;
@@ -1226,50 +1282,49 @@ function closeTaskModal(e) {
   document.getElementById('task-modal').style.display = 'none';
 }
 
-function saveTask() {
+async function saveTask() {
   const name   = document.getElementById('task-name-input').value.trim();
   const desc   = document.getElementById('task-desc-input').value.trim();
   const status = document.getElementById('task-status-input').value;
   if (!name) { document.getElementById('task-name-input').focus(); return; }
-
   const boardId = state.editingTaskBoardId;
   if (!state.tasks[boardId]) state.tasks[boardId] = [];
-
-  if (state.editingTaskId) {
-    // Edit
-    const idx = state.tasks[boardId].findIndex(t => t.id === state.editingTaskId);
-    if (idx >= 0) {
-      state.tasks[boardId][idx] = { ...state.tasks[boardId][idx], name, desc, status, updated_at: new Date().toISOString() };
+  try {
+    if (state.editingTaskId) {
+      await api('PATCH', '/tasks/' + state.editingTaskId, { status });
+      const idx = state.tasks[boardId].findIndex(t => t.id === state.editingTaskId);
+      if (idx >= 0) state.tasks[boardId][idx] = { ...state.tasks[boardId][idx], name, desc, status };
+      showToast('Задача обновлена');
+    } else {
+      const data = await api('POST', '/boards/' + boardId + '/tasks', { title: name });
+      state.tasks[boardId].push({
+        id: data.id, board_id: boardId, name, desc, status,
+        created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+      });
+      showToast('Задача создана');
     }
-    showToast('Задача обновлена');
-  } else {
-    // Create
-    const task = {
-      id: 't_' + Date.now(),
-      board_id: boardId,
-      created_by: state.user.id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      name, desc, status,
-    };
-    state.tasks[boardId].push(task);
-    showToast('Задача создана');
+    document.getElementById('task-modal').style.display = 'none';
+    renderBoard(boardId);
+  } catch (e) {
+    showToast('Ошибка: ' + (e.data?.message || 'не удалось сохранить задачу'));
   }
-
-  saveStateToStorage();
-  document.getElementById('task-modal').style.display = 'none';
-  renderBoard(boardId);
 }
 
-function deleteTask(e, boardId, taskId) {
+async function deleteTask(e, boardId, taskId) {
   e.stopPropagation();
-  state.tasks[boardId] = (state.tasks[boardId] || []).filter(t => t.id !== taskId);
-  saveStateToStorage();
-  renderBoard(boardId);
-  showToast('Задача удалена');
+  try {
+    await api('DELETE', '/tasks/' + taskId);
+    state.tasks[boardId] = (state.tasks[boardId] || []).filter(t => t.id !== taskId);
+    renderBoard(boardId);
+    showToast('Задача удалена');
+  } catch (e) {
+    showToast('Ошибка: ' + (e.data?.message || 'не удалось удалить задачу'));
+  }
 }
 
-// ── Drag & Drop ─────────────────────────────────
+// ═══════════════════════════════════════════════
+//  DRAG & DROP
+// ═══════════════════════════════════════════════
 let dragTaskId = null;
 let dragBoardId = null;
 
@@ -1287,68 +1342,49 @@ function onDragOver(e) {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
   const col = e.currentTarget;
-  const existing = col.querySelector('.drag-placeholder');
-  if (!existing) {
+  if (!col.querySelector('.drag-placeholder')) {
     const ph = document.createElement('div');
     ph.className = 'drag-placeholder';
     col.appendChild(ph);
   }
 }
 function onDragLeave(e) {
-  const col = e.currentTarget;
-  if (!col.contains(e.relatedTarget)) {
-    col.querySelector('.drag-placeholder')?.remove();
+  if (!e.currentTarget.contains(e.relatedTarget)) {
+    e.currentTarget.querySelector('.drag-placeholder')?.remove();
   }
 }
-function onDrop(e, boardId, newStatus) {
+async function onDrop(e, boardId, newStatus) {
   e.preventDefault();
   document.querySelectorAll('.drag-placeholder').forEach(p => p.remove());
   if (!dragTaskId || !dragBoardId) return;
-  const tasks = state.tasks[dragBoardId] || [];
-  const task = tasks.find(t => t.id === dragTaskId);
+  const task = (state.tasks[dragBoardId] || []).find(t => t.id === dragTaskId);
   if (task && task.status !== newStatus) {
-    task.status = newStatus;
-    task.updated_at = new Date().toISOString();
-    saveStateToStorage();
-    renderBoard(state.activeBoardId);
+    try {
+      await api('PATCH', '/tasks/' + dragTaskId, { status: newStatus });
+      task.status = newStatus;
+      renderBoard(state.activeBoardId);
+    } catch (e) {
+      showToast('Ошибка смены статуса');
+    }
   }
   dragTaskId = null; dragBoardId = null;
 }
 
-// ── Utils ────────────────────────────────────────
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-let toastTimer = null;
-function showToast(msg) {
-  const old = document.querySelector('.toast');
-  if (old) old.remove();
-  if (toastTimer) clearTimeout(toastTimer);
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  toastTimer = setTimeout(() => t.remove(), 2500);
-}
-
-// Keyboard shortcuts
+// ═══════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     document.getElementById('task-modal').style.display  = 'none';
     document.getElementById('board-modal').style.display = 'none';
   }
-  if ((e.key === 'Enter') && document.getElementById('task-modal').style.display === 'flex') {
+  if (e.key === 'Enter' && document.getElementById('task-modal').style.display === 'flex') {
     if (document.activeElement.tagName !== 'TEXTAREA') saveTask();
   }
-  if ((e.key === 'Enter') && document.getElementById('board-modal').style.display === 'flex') {
-    createBoard();
-  }
-  if ((e.key === 'Enter') && document.getElementById('login-form').style.display !== 'none'
+  if (e.key === 'Enter' && document.getElementById('board-modal').style.display === 'flex') createBoard();
+  if (e.key === 'Enter' && document.getElementById('login-form').style.display !== 'none'
       && document.getElementById('auth-page').style.display !== 'none') handleLogin();
-  if ((e.key === 'Enter') && document.getElementById('register-form').style.display !== 'none'
+  if (e.key === 'Enter' && document.getElementById('register-form').style.display !== 'none'
       && document.getElementById('auth-page').style.display !== 'none') handleRegister();
 });
 
@@ -1359,7 +1395,6 @@ document.addEventListener('keydown', e => {
   if (savedUser && savedToken) {
     state.user  = JSON.parse(savedUser);
     state.token = savedToken;
-    loadState();
     showApp();
   }
 })();
