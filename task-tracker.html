@@ -7,6 +7,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .forgot-link {
+    display: block;
+    text-align: right;
+    font-size: 12.5px;
+    color: var(--slate-400);
+    cursor: pointer;
+    margin-top: -8px;
+    margin-bottom: 14px;
+    transition: color 0.15s;
+  }
+  .forgot-link:hover { color: var(--violet-600); }
 
   :root {
     --indigo-950: #1E1B4B;
@@ -54,7 +65,7 @@
     line-height: 1.5;
   }
 
-  /* ── AUTH ───────────────────────────────────────── */
+  /*  AUTH */
   .auth-page {
     min-height: 100vh;
     display: flex;
@@ -227,7 +238,7 @@
     display: none;
   }
 
-  /* ── APP LAYOUT ─────────────────────────────────── */
+  /* APP LAYOUT */
   .app { display: flex; height: 100vh; overflow: hidden; }
 
   /* Sidebar */
@@ -695,6 +706,7 @@
 
       <!-- LOGIN FORM -->
       <div id="login-form">
+        <span class="forgot-link" onclick="handleForgotPassword()">Восстановить пароль</span>
         <h1 class="auth-heading">С возвращением</h1>
         <p class="auth-subheading">Войдите, чтобы продолжить работу</p>
         <div id="login-error" class="error-msg"></div>
@@ -713,7 +725,7 @@
       <!-- REGISTER FORM -->
       <div id="register-form" style="display:none">
         <h1 class="auth-heading">Создать аккаунт</h1>
-        <p class="auth-subheading">Начните управлять задачами бесплатно</p>
+        <p class="auth-subheading">Начните управлять задачами с Task-Tracker</p>
         <div id="register-error" class="error-msg"></div>
         <div class="field">
           <label>Имя</label>
@@ -966,6 +978,38 @@ function handleLogout() {
 function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
 function showLogin()    { document.getElementById('login-form').style.display='block'; document.getElementById('register-form').style.display='none'; }
 function showRegister() { document.getElementById('register-form').style.display='block'; document.getElementById('login-form').style.display='none'; }
+
+async function handleForgotPassword() {
+  const email = document.getElementById('login-email').value.trim();
+  const errEl = document.getElementById('login-error');
+
+  if (!email) {
+    showError(errEl, 'Введите email выше, затем нажмите «Восстановить пароль»');
+    return;
+  }
+  if (!email.includes('@')) {
+    showError(errEl, 'Введите корректный email');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    if (res.ok) {
+      errEl.style.display = 'none';
+      showToast('Пароль отправлен на ' + email);
+    } else {
+      const data = await res.json().catch(() => ({}));
+      showError(errEl, data.message || 'Аккаунт с таким email не найден');
+    }
+  } catch (e) {
+    showError(errEl, 'Ошибка соединения с сервером');
+  }
+}
 
 // ═══════════════════════════════════════════════
 //  APP INIT
