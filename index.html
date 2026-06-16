@@ -260,6 +260,10 @@
             margin-top: auto;
             padding: 12px;
             border-top: 1px solid rgba(255, 255, 255, .07);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .user-chip {
@@ -268,6 +272,27 @@
             gap: 10px;
             padding: 8px;
             border-radius: 8px;
+            min-width: 0;
+        }
+
+        .user-chip>div:not(.avatar) {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .user-name,
+        .user-email {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-logout {
+            width: 100%;
+            color: rgba(255, 255, 255, .85);
+            border-color: rgba(255, 255, 255, .25);
+            background: rgba(255, 255, 255, .06);
+            flex-shrink: 0;
         }
 
         .avatar {
@@ -659,6 +684,19 @@
         .hidden {
             display: none !important;
         }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 12.5px;
+            color: var(--slate-400);
+            cursor: pointer;
+            margin: -8px 0 14px;
+        }
+
+        .forgot-link:hover {
+            color: var(--violet-600);
+        }
     </style>
 </head>
 
@@ -669,17 +707,16 @@
         <div class="auth-wrap">
             <div class="auth-card">
                 <h1 class="auth-heading">Task<span style="color:#7C3AED">Tracker</span></h1>
-                <p class="auth-sub">Sign in or try the preview without a backend</p>
+                <p class="auth-sub">Sign in</p>
 
                 <div id="login-form">
                     <div id="login-error" class="error-msg"></div>
+                    <span class="forgot-link" onclick="handleForgotPassword()">Forgot password?</span>
                     <div class="field"><label>Email</label><input type="email" id="login-email"
-                            placeholder="demo@example.com"></div>
+                            placeholder="name@example.com"></div>
                     <div class="field"><label>Password</label><input type="password" id="login-password"
-                            placeholder="demo123"></div>
+                            placeholder="password123"></div>
                     <button class="btn btn-primary" onclick="handleLogin()">Sign in</button>
-                    <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="enterDemo()">Try demo (no
-                        backend)</button>
                     <p class="auth-switch">No account? <a onclick="showRegister()">Register</a></p>
                 </div>
 
@@ -721,9 +758,7 @@
                             <div class="user-email" id="sidebar-email">demo@example.com</div>
                         </div>
                     </div>
-                    <button class="btn btn-ghost btn-sm"
-                        style="width:100%;margin-top:8px;color:#fff;border-color:rgba(255,255,255,.2)"
-                        onclick="handleLogout()">Log out</button>
+                    <button class="btn btn-ghost btn-sm sidebar-logout" onclick="handleLogout()">Log out</button>
                 </div>
             </aside>
 
@@ -802,8 +837,6 @@
                             <li>Edit title, description, status, and assignee</li>
                             <li>Created and updated dates are shown on each card</li>
                         </ul>
-                        <h3>Preview mode</h3>
-                        <p>Data is saved in your browser. Click “Reset demo data” in the yellow bar to start fresh.</p>
                     </div>
                 </div>
             </main>
@@ -889,6 +922,30 @@
         const API_BASE = 'https://team2.verstack.ru'; // ← replace with your backend URL
         const MOCK_KEY = 'tt_preview_db';
         const SESSION_KEY = 'tt_preview_session';
+        const NAV_KEY = 'tt_nav_state';
+        function saveNavState() {
+            localStorage.setItem(NAV_KEY, JSON.stringify({
+                view: state.view,
+                activeWorkspaceId: state.activeWorkspaceId,
+                activeBoardId: state.activeBoardId,
+            }));
+        }
+        async function restoreNavState() {
+            const raw = localStorage.getItem(NAV_KEY);
+            if (!raw) { navigate('account'); return; }
+            const saved = JSON.parse(raw);
+            await loadWorkspaces();
+            if (saved.view === 'workspaces') { navigate('workspaces'); return; }
+            if (saved.view === 'help') { navigate('help'); return; }
+            if (saved.activeWorkspaceId) {
+                await openWorkspace(saved.activeWorkspaceId);
+                if (saved.view === 'board' && saved.activeBoardId) {
+                    openBoard(saved.activeBoardId);
+                }
+                return;
+            }
+            navigate(saved.view === 'account' ? 'account' : 'workspaces');
+        }
 
         const STATUSES = [
             { id: 'to_do', label: 'Todo', badge: 'badge-todo', dot: '#94A3B8' },
@@ -1017,12 +1074,27 @@
             const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
             document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
         }
+        function normId(id) { return id == null ? '' : String(id); }
         function showLogin() { document.getElementById('login-form').classList.remove('hidden'); document.getElementById('register-form').classList.add('hidden'); }
         function showRegister() { document.getElementById('register-form').classList.remove('hidden'); document.getElementById('login-form').classList.add('hidden'); }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(e, id) { if (e && e.target.id !== id) return; document.getElementById(id).classList.add('hidden'); }
 
         // ── Auth ──
+        async function handleForgotPassword() {
+            const email = document.getElementById('login-email').value.trim();
+            const err = document.getElementById('login-error');
+            if (!email) { showError(err, 'Enter your email above, then click Forgot password'); return; }
+            if (!email.includes('@')) { showError(err, 'Enter a valid email'); return; }
+            try {
+                await api('POST', '/auth/forgot-password', { email });
+                err.style.display = 'none';
+                showToast('Password reset email sent to ' + email);
+            } catch (e) {
+                showError(err, e.data?.message || 'Account with this email not found');
+            }
+        }
+
         async function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-password').value;
@@ -1049,12 +1121,6 @@
             } catch (e) { showError(err, e.data?.message || 'Registration failed'); }
         }
 
-        function enterDemo() {
-            document.getElementById('login-email').value = 'demo@example.com';
-            document.getElementById('login-password').value = 'demo123';
-            handleLogin();
-        }
-
         function loginUser(user, token) {
             // Normalize real API response fields to what the UI expects
             user.id = user.id || user.user_id;
@@ -1068,11 +1134,12 @@
             document.getElementById('sidebar-email').textContent = user.email;
             renderAccount();
             loadWorkspaces();
-            navigate('account');
+            renderAccount();
+            restoreNavState();
         }
 
         function handleLogout() {
-            localStorage.removeItem(SESSION_KEY);
+            localStorage.removeItem(NAV_KEY);
             state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, activeWorkspaceId: null, activeBoardId: null };
             document.getElementById('app-page').classList.add('hidden');
             document.getElementById('auth-page').classList.remove('hidden');
@@ -1104,6 +1171,7 @@
             if (view === 'account') document.getElementById('view-account').classList.remove('hidden');
             if (view === 'workspaces') { document.getElementById('view-workspaces').classList.remove('hidden'); renderWorkspaces(); }
             if (view === 'help') document.getElementById('view-help').classList.remove('hidden');
+            saveNavState();
         }
 
         function renderAccount() {
@@ -1154,6 +1222,7 @@
             state.view = 'workspace-detail';
             await loadBoards(wsId);
             renderBoardList();
+            saveNavState();
         }
 
         async function loadBoards(wsId) {
@@ -1194,6 +1263,7 @@
             document.getElementById('view-board').classList.add('hidden');
             document.getElementById('view-workspace-detail').classList.remove('hidden');
             renderBoardList();
+            saveNavState();
         }
 
         // ── Board / tasks ──
@@ -1201,7 +1271,7 @@
             try {
                 const list = await api('GET', '/boards/' + boardId + '/tasks');
                 state.tasks[boardId] = list.map(t => ({
-                    id: t.id || t.task_id, board_id: boardId, name: t.title, desc: t.description || '',
+                    id: t.id || t.task_id, board_id: normId(boardId), name: t.title, desc: t.description || '',
                     status: t.status, assignee: t.assignee || t.assigned_id || 'Unassigned',
                     created_at: t.created_at, updated_at: t.updated_at,
                 }));
@@ -1217,6 +1287,7 @@
             document.getElementById('view-workspace-detail').classList.add('hidden');
             document.getElementById('view-board').classList.remove('hidden');
             renderBoard(boardId);
+            saveNavState();
         }
 
         function renderBoard(boardId) {
@@ -1225,8 +1296,8 @@
             area.innerHTML = STATUSES.map(s => {
                 const col = tasks.filter(t => t.status === s.id);
                 return `<div class="column">
-      <div class="column-header"><span class="dot" style="background:${s.dot}"></span>
-        <span class="column-title">${s.label}</span><span class="column-count">${col.length}</span></div>
+                <div class="column-header"><span class="dot" style="background:${s.dot}"></span>
+                <span class="column-title">${s.label}</span><span class="column-count">${col.length}</span></div>
       <div class="column-cards">${col.map(t => renderTaskCard(t)).join('') || '<div class="empty" style="padding:16px">No tasks</div>'}</div>
       <button class="add-task-btn" onclick="openCreateTask('${boardId}','${s.id}')">+ Add task</button>
     </div>`;
@@ -1310,10 +1381,12 @@
 
         async function deleteTask(e, boardId, taskId) {
             e.stopPropagation();
+            const id = normId(taskId);
+            const bid = normId(boardId);
             try {
-                await api('DELETE', '/tasks/' + taskId);
-                state.tasks[boardId] = state.tasks[boardId].filter(t => t.id !== taskId);
-                renderBoard(boardId);
+                await api('DELETE', '/tasks/' + id);
+                state.tasks[bid] = (state.tasks[bid] || []).filter(t => normId(t.id) !== id);
+                renderBoard(bid);
                 showToast('Task deleted');
             } catch { showToast('Failed to delete'); }
         }
