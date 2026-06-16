@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [vers-2]
+    branches: [vers-2, main]
   pull_request:
-    branches: [vers-2]
+    branches: [vers-2, main]
 
 env:
   REGISTRY: ghcr.io
