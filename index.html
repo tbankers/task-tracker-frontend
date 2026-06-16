@@ -934,7 +934,7 @@ async function handleLogin() {
   if (!email.includes('@')) { showError(errEl, 'Введите корректный email'); return; }
 
   try {
-    const res = await fetch('/auth/login', {
+    const res = await fetch(API + '/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password: pass }),
@@ -961,7 +961,7 @@ async function handleRegister() {
   if (pass.length < 6) { showError(errEl, 'Пароль должен быть не менее 6 символов'); return; }
 
   try {
-    const res = await fetch('/auth/register', {
+    const res = await fetch(API + '/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: name, email, password: pass }),
@@ -1009,10 +1009,12 @@ async function loginUser(user, token) {
   showApp();
 }
 
+const API = '/api';
+
 // Хелпер: все запросы к API проходят через него, чтобы автоматически
 // подставлять токен авторизации в заголовок Authorization
 async function apiFetch(url, options = {}) {
-  return fetch(url, {
+  return fetch(API + url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -1030,7 +1032,7 @@ async function handleForgotPassword() {
   if (!email.includes('@')) { showError(errEl, 'Введите корректный email'); return; }
 
   try {
-    const res = await fetch('/auth/forgot-password', {
+    const res = await fetch(API + '/auth/forgot-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
