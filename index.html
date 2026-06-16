@@ -884,9 +884,9 @@
     </div>
 
     <script>
-        // ── Config: preview mode ON by default ──
-        const USE_MOCK = true; // set false + API_BASE when backend is ready
-        const API_BASE = '';
+        // ── Config ──
+        const USE_MOCK = true; // set true to use local mock data instead of the real API
+        const API_BASE = ''; // ← replace with your backend URL
         const MOCK_KEY = 'tt_preview_db';
         const SESSION_KEY = 'tt_preview_session';
 
@@ -1043,7 +1043,7 @@
             if (!name || !email || !pass) { showError(err, 'Fill in all fields'); return; }
             if (pass.length < 6) { showError(err, 'Password min 6 chars'); return; }
             try {
-                const { token, user } = await api('POST', '/auth/register', { name, email, password: pass });
+                const { token, user } = await api('POST', '/auth/register', { username: name, email, password: pass });
                 err.style.display = 'none';
                 loginUser(user, token);
             } catch (e) { showError(err, e.data?.message || 'Registration failed'); }
@@ -1056,6 +1056,9 @@
         }
 
         function loginUser(user, token) {
+            // Normalize real API response fields to what the UI expects
+            user.id = user.id || user.user_id;
+            user.name = user.name || user.username;
             state.user = user; state.token = token;
             localStorage.setItem(SESSION_KEY, JSON.stringify({ user, token }));
             document.getElementById('auth-page').classList.add('hidden');
@@ -1082,7 +1085,7 @@
             const confirm = document.getElementById('pwd-confirm').value;
             if (!current || !nw || nw !== confirm) { showToast('Check password fields'); return; }
             try {
-                await api('POST', '/auth/change-password', { current, new_password: nw });
+                await api('PATCH', '/users/' + state.user.id, { password: nw });
                 closeModal(null, 'password-modal');
                 showToast('Password updated');
             } catch (e) { showToast(e.data?.message || 'Failed'); }
@@ -1113,7 +1116,8 @@
         // ── Workspaces ──
         async function loadWorkspaces() {
             try {
-                state.workspaces = await api('GET', '/users/' + state.user.id + '/workspaces');
+                const list = await api('GET', '/users/' + state.user.id + '/workspaces');
+                state.workspaces = list.map(ws => ({ ...ws, id: ws.id || ws.workspace_id }));
             } catch { state.workspaces = []; }
         }
 
@@ -1132,6 +1136,7 @@
             if (!title) return;
             try {
                 const ws = await api('POST', '/workspaces', { title });
+                ws.id = ws.id || ws.workspace_id;
                 state.workspaces.push(ws);
                 document.getElementById('workspace-title-input').value = '';
                 closeModal(null, 'workspace-modal');
@@ -1152,7 +1157,10 @@
         }
 
         async function loadBoards(wsId) {
-            try { state.boards = await api('GET', '/workspaces/' + wsId + '/boards'); }
+            try {
+                const list = await api('GET', '/workspaces/' + wsId + '/boards');
+                state.boards = list.map(b => ({ ...b, id: b.id || b.board_id }));
+            }
             catch { state.boards = []; }
             state.tasks = {};
             for (const b of state.boards) await loadTasks(b.id);
@@ -1172,6 +1180,7 @@
             if (!title || !state.activeWorkspaceId) return;
             try {
                 const b = await api('POST', '/workspaces/' + state.activeWorkspaceId + '/boards', { title });
+                b.id = b.id || b.board_id;
                 state.boards.push(b);
                 state.tasks[b.id] = [];
                 document.getElementById('board-title-input').value = '';
@@ -1192,8 +1201,8 @@
             try {
                 const list = await api('GET', '/boards/' + boardId + '/tasks');
                 state.tasks[boardId] = list.map(t => ({
-                    id: t.id, board_id: boardId, name: t.title, desc: t.description || '',
-                    status: t.status, assignee: t.assignee || 'Unassigned',
+                    id: t.id || t.task_id, board_id: boardId, name: t.title, desc: t.description || '',
+                    status: t.status, assignee: t.assignee || t.assigned_id || 'Unassigned',
                     created_at: t.created_at, updated_at: t.updated_at,
                 }));
             } catch { state.tasks[boardId] = []; }
@@ -1277,19 +1286,19 @@
             const boardId = state.activeBoardId;
             try {
                 if (state.editingTaskId) {
-                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, { title, description, assignee, status });
+                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, { status });
                     const idx = state.tasks[boardId].findIndex(t => t.id === state.editingTaskId);
                     if (idx >= 0) state.tasks[boardId][idx] = {
-                        id: updated.id, board_id: boardId, name: updated.title, desc: updated.description,
-                        status: updated.status, assignee: updated.assignee,
+                        id: updated.id || updated.task_id, board_id: boardId, name: updated.title, desc: updated.description,
+                        status: updated.status, assignee: updated.assignee || updated.assigned_id || 'Unassigned',
                         created_at: updated.created_at, updated_at: updated.updated_at,
                     };
                     showToast('Task updated');
                 } else {
-                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, assignee, status });
+                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, status });
                     state.tasks[boardId].push({
-                        id: created.id, board_id: boardId, name: created.title, desc: created.description,
-                        status: created.status, assignee: created.assignee,
+                        id: created.id || created.task_id, board_id: boardId, name: created.title, desc: created.description,
+                        status: created.status, assignee: created.assignee || created.assigned_id || 'Unassigned',
                         created_at: created.created_at, updated_at: created.updated_at,
                     });
                     showToast('Task created');
