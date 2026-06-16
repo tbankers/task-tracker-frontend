@@ -7,17 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  .forgot-link {
-    display: block;
-    text-align: right;
-    font-size: 12.5px;
-    color: var(--slate-400);
-    cursor: pointer;
-    margin-top: -8px;
-    margin-bottom: 14px;
-    transition: color 0.15s;
-  }
-  .forgot-link:hover { color: var(--violet-600); }
 
   :root {
     --indigo-950: #1E1B4B;
@@ -65,7 +54,7 @@
     line-height: 1.5;
   }
 
-  /*  AUTH */
+  /* ── AUTH ───────────────────────────────────────── */
   .auth-page {
     min-height: 100vh;
     display: flex;
@@ -238,7 +227,7 @@
     display: none;
   }
 
-  /* APP LAYOUT */
+  /* ── APP LAYOUT ─────────────────────────────────── */
   .app { display: flex; height: 100vh; overflow: hidden; }
 
   /* Sidebar */
@@ -686,6 +675,18 @@
     from { transform: translateX(20px); opacity: 0; }
     to   { transform: translateX(0);    opacity: 1; }
   }
+
+  .forgot-link {
+    display: block;
+    text-align: right;
+    font-size: 12.5px;
+    color: var(--slate-400);
+    cursor: pointer;
+    margin-top: -8px;
+    margin-bottom: 14px;
+    transition: color 0.15s;
+  }
+  .forgot-link:hover { color: var(--violet-600); }
 </style>
 </head>
 <body>
@@ -706,7 +707,6 @@
 
       <!-- LOGIN FORM -->
       <div id="login-form">
-        <span class="forgot-link" onclick="handleForgotPassword()">Восстановить пароль</span>
         <h1 class="auth-heading">С возвращением</h1>
         <p class="auth-subheading">Войдите, чтобы продолжить работу</p>
         <div id="login-error" class="error-msg"></div>
@@ -718,6 +718,7 @@
           <label>Пароль</label>
           <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
         </div>
+        <span class="forgot-link" onclick="handleForgotPassword()">Восстановить пароль</span>
         <button class="btn btn-primary" onclick="handleLogin()">Войти</button>
         <p class="auth-switch">Нет аккаунта? <a onclick="showRegister()">Зарегистрироваться</a></p>
       </div>
@@ -725,7 +726,7 @@
       <!-- REGISTER FORM -->
       <div id="register-form" style="display:none">
         <h1 class="auth-heading">Создать аккаунт</h1>
-        <p class="auth-subheading">Начните управлять задачами с Task-Tracker</p>
+        <p class="auth-subheading">Начните управлять задачами бесплатно</p>
         <div id="register-error" class="error-msg"></div>
         <div class="field">
           <label>Имя</label>
@@ -888,61 +889,37 @@
 </div>
 
 <script>
-const API_BASE = '';
-let token = localStorage.getItem('tt_token') || '';
-
-function setToken(t) {
-  token = t;
-  if (t) localStorage.setItem('tt_token', t);
-  else localStorage.removeItem('tt_token');
-}
-
-async function api(method, path, body) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(API_BASE + path, opts);
-  const text = await res.text();
-  let json;
-  try { json = JSON.parse(text); } catch { json = text; }
-  if (!res.ok) throw { status: res.status, data: json };
-  return json;
-}
-
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
 let state = {
   user: null,
   token: null,
-  workspaceId: null,
+  workspace: null,
   boards: [],
   activeBoardId: null,
-  tasks: {},
+  tasks: {},        // boardId -> task[]
   editingTaskId: null,
   editingTaskBoardId: null,
   defaultStatus: 'to_do',
 };
 
-const BOARD_COLORS = ['#7C3AED','#2563EB','#059669','#D97706','#DC2626','#0891B2','#7C3AED'];
-const STATUSES = [
-  { id:'to_do',       label:'К выполнению', badgeClass:'badge-todo',     colClass:'col-todo' },
-  { id:'in_progress', label:'В процессе',   badgeClass:'badge-progress', colClass:'col-inprogress' },
-  { id:'done',        label:'Готово',       badgeClass:'badge-done',     colClass:'col-done' },
-];
-
-function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
-function showLogin()    { document.getElementById('login-form').style.display='block'; document.getElementById('register-form').style.display='none'; }
-function showRegister() { document.getElementById('register-form').style.display='block'; document.getElementById('login-form').style.display='none'; }
-function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-let toastTimer = null;
-function showToast(msg) {
-  const old = document.querySelector('.toast');
-  if (old) old.remove();
-  if (toastTimer) clearTimeout(toastTimer);
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  toastTimer = setTimeout(() => t.remove(), 2500);
+// Pseudo-DB via localStorage (simulating API)
+function loadState() {
+  const saved = localStorage.getItem('tt_state');
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    state.boards = parsed.boards || [];
+    state.tasks  = parsed.tasks  || {};
+    state.activeBoardId = parsed.activeBoardId || null;
+  }
+}
+function saveStateToStorage() {
+  localStorage.setItem('tt_state', JSON.stringify({
+    boards: state.boards,
+    tasks: state.tasks,
+    activeBoardId: state.activeBoardId,
+  }));
 }
 
 // ═══════════════════════════════════════════════
@@ -952,6 +929,7 @@ async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-password').value;
   const errEl = document.getElementById('login-error');
+
   if (!email || !pass) { showError(errEl, 'Заполните все поля'); return; }
   if (!email.includes('@')) { showError(errEl, 'Введите корректный email'); return; }
 
@@ -978,7 +956,7 @@ async function handleRegister() {
   const pass  = document.getElementById('reg-password').value;
   const errEl = document.getElementById('register-error');
 
-  if (!name || !email ||  !pass) { showError(errEl, 'Заполните все поля'); return; }
+  if (!name || !email || !pass) { showError(errEl, 'Заполните все поля'); return; }
   if (!email.includes('@')) { showError(errEl, 'Введите корректный email'); return; }
   if (pass.length < 6) { showError(errEl, 'Пароль должен быть не менее 6 символов'); return; }
 
@@ -999,16 +977,40 @@ async function handleRegister() {
   }
 }
 
-
-function loginUser(user, token) {
+async function loginUser(user, token) {
   state.user  = user;
   state.token = token;
   localStorage.setItem('tt_current_user', JSON.stringify(user));
   localStorage.setItem('tt_token', token);
+
+  try {
+    const res = await apiFetch(`/users/${user.user_id}/workspaces`);
+    if (res.ok) {
+      const workspaces = await res.json();
+      state.workspace = workspaces[0] || null;
+      if (!state.workspace) {
+        const wsRes = await apiFetch('/workspaces', {
+          method: 'POST',
+          body: JSON.stringify({ title: 'Мой воркспейс' }),
+        });
+        if (wsRes.ok) state.workspace = await wsRes.json();
+      }
+      if (state.workspace) {
+        const bRes = await apiFetch(`/workspaces/${state.workspace.workspace_id}/boards`);
+        if (bRes.ok) {
+          const boards = await bRes.json();
+          state.boards = boards.map((b, i) => ({ ...b, color: BOARD_COLORS[i % BOARD_COLORS.length] }));
+        }
+      }
+    }
+  } catch (e) { console.error('Ошибка загрузки данных:', e); }
+
+  saveStateToStorage();
   showApp();
 }
 
-// Хелпер — все запросы к API через него
+// Хелпер: все запросы к API проходят через него, чтобы автоматически
+// подставлять токен авторизации в заголовок Authorization
 async function apiFetch(url, options = {}) {
   return fetch(url, {
     ...options,
@@ -1018,17 +1020,6 @@ async function apiFetch(url, options = {}) {
       ...(options.headers || {}),
     },
   });
-}
-
-function handleLogout() {
-  setToken(null);
-  state.user = null; state.workspaceId = null; state.boards = []; state.tasks = {}; state.activeBoardId = null;
-  localStorage.removeItem('tt_current_user');
-  localStorage.removeItem('tt_token');
-  state.token = null;
-  document.getElementById('app-page').style.display  = 'none';
-  document.getElementById('auth-page').style.display = 'block';
-  showLogin();
 }
 
 async function handleForgotPassword() {
@@ -1053,83 +1044,42 @@ async function handleForgotPassword() {
   }
 }
 
+function handleLogout() {
+  localStorage.removeItem('tt_current_user');
+  localStorage.removeItem('tt_token');
+  state.user = null; state.token = null; state.workspace = null;
+  state.boards = []; state.tasks = {}; state.activeBoardId = null;
+  document.getElementById('app-page').style.display  = 'none';
+  document.getElementById('auth-page').style.display = 'block';
+  showLogin();
+}
+
+function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+function showLogin()    { document.getElementById('login-form').style.display='block'; document.getElementById('register-form').style.display='none'; }
+function showRegister() { document.getElementById('register-form').style.display='block'; document.getElementById('login-form').style.display='none'; }
+
 // ═══════════════════════════════════════════════
-//  APP INIT + WORKSPACE
+//  APP INIT
 // ═══════════════════════════════════════════════
-async function showApp() {
+function showApp() {
   document.getElementById('auth-page').style.display = 'none';
   document.getElementById('app-page').style.display  = 'block';
+
   const u = state.user;
-  const name = u.username || u.name || u.email;
-  document.getElementById('sidebar-avatar').textContent = name.charAt(0).toUpperCase();
-  document.getElementById('sidebar-name').textContent   = name;
+  document.getElementById('sidebar-avatar').textContent = u.username.charAt(0).toUpperCase();
+  document.getElementById('sidebar-name').textContent   = u.username;
   document.getElementById('sidebar-email').textContent  = u.email;
-  await ensureWorkspace();
-  await loadBoards();
-}
 
-async function ensureWorkspace() {
-  if (state.workspaceId) return;
-  try {
-    const workspaces = await api('GET', '/users/' + state.user.user_id + '/workspaces');
-    if (Array.isArray(workspaces) && workspaces.length > 0) {
-      state.workspaceId = workspaces[0].workspace_id;
-      return;
-    }
-  } catch (e) {}
-  try {
-    const ws = await api('POST', '/workspaces', { title: 'Мой Workspace' });
-    state.workspaceId = ws.workspace_id;
-  } catch (e) {
-    showToast('Не удалось создать workspace');
-  }
-}
-
-// ═══════════════════════════════════════════════
-//  DATA LOADING
-// ═══════════════════════════════════════════════
-async function loadBoards() {
-  try {
-    const data = await api('GET', '/workspaces/' + state.workspaceId + '/boards');
-    const list = Array.isArray(data) ? data : [];
-    state.boards = list.map((b, i) => ({
-      id: b.id,
-      name: b.title || 'Доска',
-      color: BOARD_COLORS[i % BOARD_COLORS.length],
-    }));
-    state.tasks = {};
-    for (const b of state.boards) await loadTasks(b.id);
-    renderSidebar();
-    if (state.activeBoardId && state.boards.find(b => b.id === state.activeBoardId)) renderBoard(state.activeBoardId);
-    else showNoBoard();
-  } catch (e) {
-    state.boards = [];
-    renderSidebar();
-    showNoBoard();
-  }
-}
-
-async function loadTasks(boardId) {
-  try {
-    const data = await api('GET', '/boards/' + boardId + '/tasks');
-    const list = Array.isArray(data) ? data : [];
-    state.tasks[boardId] = list.map(t => ({
-      id: t.id,
-      board_id: boardId,
-      name: t.title || '',
-      desc: t.description || '',
-      status: t.status || 'to_do',
-      created_at: t.created_at || new Date().toISOString(),
-      updated_at: t.updated_at || new Date().toISOString(),
-    }));
-  } catch (e) {
-    state.tasks[boardId] = [];
-  }
+  renderSidebar();
+  if (state.activeBoardId) renderBoard(state.activeBoardId);
+  else showNoBoard();
 }
 
 // ═══════════════════════════════════════════════
 //  BOARDS
 // ═══════════════════════════════════════════════
+const BOARD_COLORS = ['#7C3AED','#2563EB','#059669','#D97706','#DC2626','#0891B2','#7C3AED'];
+
 function openBoardModal() { document.getElementById('board-modal').style.display='flex'; setTimeout(()=>document.getElementById('board-name-input').focus(),50); }
 function closeBoardModal(e) {
   if (e && e.target !== document.getElementById('board-modal')) return;
@@ -1139,24 +1089,43 @@ function closeBoardModal(e) {
 
 async function createBoard() {
   const name = document.getElementById('board-name-input').value.trim();
-  if (!name) return;
+  if (!name || !state.workspace) return;
+
   try {
-    const data = await api('POST', '/workspaces/' + state.workspaceId + '/boards', { title: name });
-    state.boards.push({ id: data.id, name, color: BOARD_COLORS[state.boards.length % BOARD_COLORS.length] });
-    state.tasks[data.id] = [];
+    const res = await apiFetch(`/workspaces/${state.workspace.workspace_id}/boards`, {
+      method: 'POST',
+      body: JSON.stringify({ title: name }),
+    });
+    if (!res.ok) { showToast('Ошибка создания доски'); return; }
+
+    const board = await res.json();
+    board.color = BOARD_COLORS[state.boards.length % BOARD_COLORS.length];
+    state.boards.push(board);
+    state.tasks[board.board_id] = [];
+    saveStateToStorage();
     document.getElementById('board-modal').style.display='none';
     document.getElementById('board-name-input').value='';
     renderSidebar();
-    selectBoard(data.id);
+    selectBoard(board.board_id);
     showToast('Доска создана');
   } catch (e) {
-    showToast('Ошибка: ' + (e.data?.message || 'не удалось создать доску'));
+    showToast('Ошибка соединения с сервером');
   }
 }
 
-function selectBoard(id) {
+async function selectBoard(id) {
   state.activeBoardId = id;
+  saveStateToStorage();
   renderSidebar();
+
+  try {
+    const res = await apiFetch(`/boards/${id}/tasks`);
+    if (res.ok) {
+      state.tasks[id] = await res.json();
+      saveStateToStorage();
+    }
+  } catch (e) { console.error('Ошибка загрузки задач:', e); }
+
   renderBoard(id);
 }
 
@@ -1167,25 +1136,34 @@ function renderSidebar() {
     return;
   }
   container.innerHTML = state.boards.map(b => `
-    <div class="sidebar-item ${b.id === state.activeBoardId ? 'active' : ''}" onclick="selectBoard('${b.id}')">
+    <div class="sidebar-item ${b.board_id === state.activeBoardId ? 'active' : ''}" onclick="selectBoard('${b.board_id}')">
       <span class="sidebar-board-dot" style="background:${b.color}"></span>
-      ${escHtml(b.name)}
+      ${escHtml(b.title)}
     </div>
   `).join('');
 }
 
 // ═══════════════════════════════════════════════
-//  BOARD RENDER
+//  BOARD + TASKS
 // ═══════════════════════════════════════════════
+const STATUSES = [
+  { id:'to_do',       label:'К выполнению', badgeClass:'badge-todo',     colClass:'col-todo' },
+  { id:'in_progress', label:'В процессе',   badgeClass:'badge-progress', colClass:'col-inprogress' },
+  { id:'done',        label:'Готово',       badgeClass:'badge-done',     colClass:'col-done' },
+];
+
 function renderBoard(boardId) {
-  const board = state.boards.find(b => b.id === boardId);
+  const board  = state.boards.find(b => b.board_id === boardId);
   if (!board) { showNoBoard(); return; }
-  document.getElementById('topbar-title').textContent = board.name;
+
+  document.getElementById('topbar-title').textContent = board.title;
   document.getElementById('topbar-ws').textContent = '';
   document.getElementById('no-board-state').style.display   = 'none';
   document.getElementById('board-container').style.display  = 'flex';
+
   const tasks = state.tasks[boardId] || [];
   const container = document.getElementById('board-container');
+
   container.innerHTML = STATUSES.map(s => {
     const colTasks = tasks.filter(t => t.status === s.id);
     return `
@@ -1199,7 +1177,12 @@ function renderBoard(boardId) {
              ondragover="onDragOver(event)" ondrop="onDrop(event,'${boardId}','${s.id}')"
              ondragleave="onDragLeave(event)">
           ${colTasks.map(t => renderTaskCard(t)).join('')}
-          ${colTasks.length === 0 ? '<div class="empty-state"><p>Задач нет</p></div>' : ''}
+          ${colTasks.length === 0 ? `<div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+            <p>Задач нет</p>
+          </div>` : ''}
         </div>
         <button class="add-task-btn" onclick="openCreateTask('${boardId}','${s.id}')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1211,21 +1194,23 @@ function renderBoard(boardId) {
 }
 
 function renderTaskCard(task) {
-  const s = STATUSES.find(s => s.id === task.status) || STATUSES[0];
+  const s = STATUSES.find(s => s.id === task.status);
   const date = new Date(task.created_at).toLocaleDateString('ru-RU', {day:'2-digit', month:'short'});
   return `
-    <div class="task-card" draggable="true" id="task-${task.id}"
-         ondragstart="onDragStart(event,'${task.id}')" ondragend="onDragEnd(event)">
+    <div class="task-card" draggable="true"
+         id="task-${task.task_id}"
+         ondragstart="onDragStart(event,'${task.task_id}')"
+         ondragend="onDragEnd(event)">
       <div class="task-card-actions">
-        <button class="btn btn-icon" onclick="openEditTask(event,'${task.board_id}','${task.id}')" title="Редактировать">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <button class="btn btn-icon" onclick="openEditTask(event,'${task.board_id}','${task.task_id}')" title="Редактировать">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
-        <button class="btn btn-icon btn-danger" onclick="deleteTask(event,'${task.board_id}','${task.id}')" title="Удалить">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        <button class="btn btn-icon btn-danger" onclick="deleteTask(event,'${task.board_id}','${task.task_id}')" title="Удалить">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         </button>
       </div>
-      <div class="task-card-name">${escHtml(task.name)}</div>
-      ${task.desc ? '<div class="task-card-desc">' + escHtml(task.desc) + '</div>' : ''}
+      <div class="task-card-name">${escHtml(task.title)}</div>
+      ${task.description ? `<div class="task-card-desc">${escHtml(task.description)}</div>` : ''}
       <div class="task-card-footer">
         <span class="task-badge ${s.badgeClass}">${s.label}</span>
         <span class="task-date">${date}</span>
@@ -1240,9 +1225,7 @@ function showNoBoard() {
   document.getElementById('topbar-title').textContent = 'Выберите доску';
 }
 
-// ═══════════════════════════════════════════════
-//  TASKS
-// ═══════════════════════════════════════════════
+// ── Create / Edit task ─────────────────────────
 function openCreateTask(boardId, status) {
   state.editingTaskId = null;
   state.editingTaskBoardId = boardId;
@@ -1261,13 +1244,13 @@ function openCreateTask(boardId, status) {
 
 function openEditTask(e, boardId, taskId) {
   e.stopPropagation();
-  const task = (state.tasks[boardId] || []).find(t => t.id === taskId);
+  const task = (state.tasks[boardId] || []).find(t => t.task_id === taskId);
   if (!task) return;
   state.editingTaskId = taskId;
   state.editingTaskBoardId = boardId;
   document.getElementById('task-modal-title').textContent = 'Редактировать задачу';
-  document.getElementById('task-name-input').value   = task.name;
-  document.getElementById('task-desc-input').value   = task.desc || '';
+  document.getElementById('task-name-input').value   = task.title;
+  document.getElementById('task-desc-input').value   = task.description || '';
   document.getElementById('task-status-input').value = task.status;
   document.getElementById('task-modal-footer').innerHTML = `
     <button class="btn btn-ghost" onclick="closeTaskModal()">Отмена</button>
@@ -1287,44 +1270,57 @@ async function saveTask() {
   const desc   = document.getElementById('task-desc-input').value.trim();
   const status = document.getElementById('task-status-input').value;
   if (!name) { document.getElementById('task-name-input').focus(); return; }
+
   const boardId = state.editingTaskBoardId;
   if (!state.tasks[boardId]) state.tasks[boardId] = [];
+
   try {
     if (state.editingTaskId) {
-      await api('PATCH', '/tasks/' + state.editingTaskId, { status });
-      const idx = state.tasks[boardId].findIndex(t => t.id === state.editingTaskId);
-      if (idx >= 0) state.tasks[boardId][idx] = { ...state.tasks[boardId][idx], name, desc, status };
+      // Edit — отправляем новый статус
+      const res = await apiFetch(`/tasks/${state.editingTaskId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) { showToast('Ошибка сохранения'); return; }
+      const updated = await res.json();
+      const idx = state.tasks[boardId].findIndex(t => t.task_id === state.editingTaskId);
+      if (idx >= 0) state.tasks[boardId][idx] = updated;
       showToast('Задача обновлена');
     } else {
-      const data = await api('POST', '/boards/' + boardId + '/tasks', { title: name });
-      state.tasks[boardId].push({
-        id: data.id, board_id: boardId, name, desc, status,
-        created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+      // Create
+      const res = await apiFetch(`/boards/${boardId}/tasks`, {
+        method: 'POST',
+        body: JSON.stringify({ title: name, description: desc, status }),
       });
+      if (!res.ok) { showToast('Ошибка создания задачи'); return; }
+      const task = await res.json();
+      state.tasks[boardId].push(task);
       showToast('Задача создана');
     }
+
+    saveStateToStorage();
     document.getElementById('task-modal').style.display = 'none';
     renderBoard(boardId);
   } catch (e) {
-    showToast('Ошибка: ' + (e.data?.message || 'не удалось сохранить задачу'));
+    showToast('Ошибка соединения с сервером');
   }
 }
 
 async function deleteTask(e, boardId, taskId) {
   e.stopPropagation();
   try {
-    await api('DELETE', '/tasks/' + taskId);
-    state.tasks[boardId] = (state.tasks[boardId] || []).filter(t => t.id !== taskId);
+    const res = await apiFetch(`/tasks/${taskId}`, { method: 'DELETE' });
+    if (!res.ok && res.status !== 204) { showToast('Ошибка удаления'); return; }
+    state.tasks[boardId] = (state.tasks[boardId] || []).filter(t => t.task_id !== taskId);
+    saveStateToStorage();
     renderBoard(boardId);
     showToast('Задача удалена');
   } catch (e) {
-    showToast('Ошибка: ' + (e.data?.message || 'не удалось удалить задачу'));
+    showToast('Ошибка соединения с сервером');
   }
 }
 
-// ═══════════════════════════════════════════════
-//  DRAG & DROP
-// ═══════════════════════════════════════════════
+// ── Drag & Drop ─────────────────────────────────
 let dragTaskId = null;
 let dragBoardId = null;
 
@@ -1342,49 +1338,78 @@ function onDragOver(e) {
   e.preventDefault();
   e.dataTransfer.dropEffect = 'move';
   const col = e.currentTarget;
-  if (!col.querySelector('.drag-placeholder')) {
+  const existing = col.querySelector('.drag-placeholder');
+  if (!existing) {
     const ph = document.createElement('div');
     ph.className = 'drag-placeholder';
     col.appendChild(ph);
   }
 }
 function onDragLeave(e) {
-  if (!e.currentTarget.contains(e.relatedTarget)) {
-    e.currentTarget.querySelector('.drag-placeholder')?.remove();
+  const col = e.currentTarget;
+  if (!col.contains(e.relatedTarget)) {
+    col.querySelector('.drag-placeholder')?.remove();
   }
 }
 async function onDrop(e, boardId, newStatus) {
   e.preventDefault();
   document.querySelectorAll('.drag-placeholder').forEach(p => p.remove());
   if (!dragTaskId || !dragBoardId) return;
-  const task = (state.tasks[dragBoardId] || []).find(t => t.id === dragTaskId);
+
+  const tasks = state.tasks[dragBoardId] || [];
+  const task = tasks.find(t => t.task_id === dragTaskId);
   if (task && task.status !== newStatus) {
     try {
-      await api('PATCH', '/tasks/' + dragTaskId, { status: newStatus });
-      task.status = newStatus;
-      renderBoard(state.activeBoardId);
-    } catch (e) {
-      showToast('Ошибка смены статуса');
-    }
+      const res = await apiFetch(`/tasks/${dragTaskId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        const idx = state.tasks[dragBoardId].findIndex(t => t.task_id === dragTaskId);
+        if (idx >= 0) state.tasks[dragBoardId][idx] = updated;
+        saveStateToStorage();
+        renderBoard(state.activeBoardId);
+      }
+    } catch (e) { console.error('Ошибка смены статуса:', e); }
   }
   dragTaskId = null; dragBoardId = null;
 }
 
-// ═══════════════════════════════════════════════
-//  KEYBOARD SHORTCUTS
-// ═══════════════════════════════════════════════
+// ── Utils ────────────────────────────────────────
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer = null;
+function showToast(msg) {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  if (toastTimer) clearTimeout(toastTimer);
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  toastTimer = setTimeout(() => t.remove(), 2500);
+}
+
+// Keyboard shortcuts
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     document.getElementById('task-modal').style.display  = 'none';
     document.getElementById('board-modal').style.display = 'none';
   }
-  if (e.key === 'Enter' && document.getElementById('task-modal').style.display === 'flex') {
+  if ((e.key === 'Enter') && document.getElementById('task-modal').style.display === 'flex') {
     if (document.activeElement.tagName !== 'TEXTAREA') saveTask();
   }
-  if (e.key === 'Enter' && document.getElementById('board-modal').style.display === 'flex') createBoard();
-  if (e.key === 'Enter' && document.getElementById('login-form').style.display !== 'none'
+  if ((e.key === 'Enter') && document.getElementById('board-modal').style.display === 'flex') {
+    createBoard();
+  }
+  if ((e.key === 'Enter') && document.getElementById('login-form').style.display !== 'none'
       && document.getElementById('auth-page').style.display !== 'none') handleLogin();
-  if (e.key === 'Enter' && document.getElementById('register-form').style.display !== 'none'
+  if ((e.key === 'Enter') && document.getElementById('register-form').style.display !== 'none'
       && document.getElementById('auth-page').style.display !== 'none') handleRegister();
 });
 
@@ -1395,6 +1420,7 @@ document.addEventListener('keydown', e => {
   if (savedUser && savedToken) {
     state.user  = JSON.parse(savedUser);
     state.token = savedToken;
+    loadState();
     showApp();
   }
 })();
