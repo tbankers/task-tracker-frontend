@@ -1841,7 +1841,7 @@
             try {
                 const user = await api('GET', '/users?email=' + encodeURIComponent(email));
                 await api('POST', '/workspaces/' + state.activeWorkspaceId + '/workspace_members', {
-                    user_id: user.id,
+                    user_id: user.user_id,
                     role: role,
                 });
                 document.getElementById('add-member-email').value = '';
