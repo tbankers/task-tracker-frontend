@@ -1844,9 +1844,10 @@
         function populateAssigneeDropdown() {
             const select = document.getElementById('task-assignee-input');
             const members = state.members[state.activeWorkspaceId] || [];
-            select.innerHTML = members.map(m => `<option value="${esc(m.name)}">${esc(m.name)}</option>`).join('');
-            if (select.options.length === 0) {
+            if (members.length === 0) {
                 select.innerHTML = '<option value="Unassigned">Unassigned</option>';
+            } else {
+                select.innerHTML = members.map(m => `<option value="${esc(m.name)}">${esc(m.name)}</option>`).join('');
             }
         }
 
@@ -1918,10 +1919,9 @@
 
         function renderTaskCard(task) {
             const s = STATUSES.find(x => x.id === task.status) || STATUSES[0];
-            return `<div class="task-card">
+            return `<div class="task-card" onclick="openEditTask(event,'${task.board_id}','${task.id}')">
     <div class="task-card-actions">
-      <button class="btn btn-icon" onclick="openEditTask(event,'${task.board_id}','${task.id}')" title="Edit">&#9998;</button>
-      <button class="btn btn-icon btn-danger" onclick="deleteTask(event,'${task.board_id}','${task.id}')" title="Delete">&#128465;</button>
+      <button class="btn btn-icon" onclick="event.stopPropagation();deleteTask(event,'${task.board_id}','${task.id}')" title="Delete">&#128465;</button>
     </div>
     <div class="task-name">${esc(task.name)}</div>
     ${task.desc ? `<div class="task-desc">${esc(task.desc)}</div>` : ''}
@@ -1932,6 +1932,24 @@
       ${task.due_date ? `<span>Due ${fmtDate(task.due_date)}</span>` : ''}
     </div>
   </div>`;
+        }
+
+        function parseDateSafe(v) {
+            if (!v) return null;
+            const d = new Date(v);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        function ganttTaskRange(t) {
+            const start = parseDateSafe(t.start_date) || parseDateSafe(t.created_at) || new Date();
+            let end = parseDateSafe(t.due_date);
+            if (!end) {
+                end = new Date(start.getTime() + 3 * 86400000);
+            }
+            if (end < start) {
+                end = new Date(start.getTime() + 3 * 86400000);
+            }
+            return { start, end };
         }
 
         function renderGantt(boardId) {
@@ -1947,16 +1965,18 @@
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-            tasks.forEach(t => {
-                const start = t.start_date ? new Date(t.start_date).getTime() : new Date(t.created_at).getTime();
-                const end = t.due_date ? new Date(t.due_date).getTime() : new Date(t.updated_at || t.created_at).getTime() + 3 * 86400000;
-                if (start < minDate) minDate = start;
-                if (end > maxDate) maxDate = end;
+            const ranges = tasks.map(t => {
+                const r = ganttTaskRange(t);
+                const s = r.start.getTime();
+                const e = r.end.getTime();
+                if (s < minDate) minDate = s;
+                if (e > maxDate) maxDate = e;
+                return { task: t, start: r.start, end: r.end };
             });
 
             const rangeStart = new Date(minDate - 2 * 86400000);
             const rangeEnd = new Date(maxDate + 3 * 86400000);
-            const totalDays = Math.ceil((rangeEnd - rangeStart) / 86400000);
+            const totalDays = Math.max(1, Math.ceil((rangeEnd - rangeStart) / 86400000));
 
             let days = [];
             for (let i = 0; i < totalDays; i++) {
@@ -1965,15 +1985,13 @@
                 days.push({ date: d, label: d.getDate() + '/' + (d.getMonth() + 1), isToday });
             }
 
-            const nowPos = Math.max(0, Math.min(1, (today.getTime() - rangeStart.getTime()) / (rangeEnd.getTime() - rangeStart.getTime())));
+            const totalMs = rangeEnd.getTime() - rangeStart.getTime();
+            const nowPos = Math.max(0, Math.min(1, (today.getTime() - rangeStart.getTime()) / totalMs));
 
-            const rows = tasks.map(t => {
-                const start = t.start_date ? new Date(t.start_date) : new Date(t.created_at);
-                const end = t.due_date ? new Date(t.due_date) : new Date(t.updated_at || t.created_at);
-                const endAdjusted = end < start ? new Date(start.getTime() + 3 * 86400000) : end;
-                const left = ((start.getTime() - rangeStart.getTime()) / (rangeEnd.getTime() - rangeStart.getTime())) * 100;
-                const width = Math.max(2, ((endAdjusted.getTime() - start.getTime()) / (rangeEnd.getTime() - rangeStart.getTime())) * 100);
-                return { task: t, left, width };
+            const rows = ranges.map(r => {
+                const left = ((r.start.getTime() - rangeStart.getTime()) / totalMs) * 100;
+                const width = Math.max(2, ((r.end.getTime() - r.start.getTime()) / totalMs) * 100);
+                return { task: r.task, left, width };
             });
 
             ganttEl.innerHTML = `
@@ -2025,10 +2043,15 @@
             document.getElementById('task-status-input').value = task.status;
             document.getElementById('task-start-input').value = task.start_date ? toISODate(task.start_date) : '';
             document.getElementById('task-due-input').value = task.due_date ? toISODate(task.due_date) : '';
-            populateAssigneeDropdown();
+            try {
+                populateAssigneeDropdown();
+            } catch (ex) { /* members may not be loaded */ }
             const assigneeSelect = document.getElementById('task-assignee-input');
-            for (let opt of assigneeSelect.options) {
-                if (opt.value === task.assignee) { opt.selected = true; break; }
+            for (let i = 0; i < assigneeSelect.options.length; i++) {
+                if (assigneeSelect.options[i].value === task.assignee) {
+                    assigneeSelect.selectedIndex = i;
+                    break;
+                }
             }
             openModal('task-modal');
         }
@@ -2044,7 +2067,8 @@
             const boardId = state.activeBoardId;
             try {
                 if (state.editingTaskId) {
-                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, { status, assignee, start_date: startDate, due_date: dueDate });
+                    const patchBody = { title, description, status, assignee, start_date: startDate, due_date: dueDate };
+                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, patchBody);
                     const idx = state.tasks[boardId].findIndex(t => t.id === state.editingTaskId);
                     if (idx >= 0) state.tasks[boardId][idx] = {
                         id: updated.id || updated.task_id, board_id: boardId, name: updated.title || title, desc: updated.description || description,
