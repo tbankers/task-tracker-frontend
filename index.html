@@ -707,7 +707,7 @@
         <div class="auth-wrap">
             <div class="auth-card">
                 <h1 class="auth-heading">Task<span style="color:#7C3AED">Tracker</span></h1>
-                <p class="auth-sub">Sign in</p>
+                <p class="auth-sub" id="auth-sub">Sign in</p>
 
                 <div id="login-form">
                     <div id="login-error" class="error-msg"></div>
@@ -730,6 +730,37 @@
                             placeholder="Min 6 chars"></div>
                     <button class="btn btn-primary" onclick="handleRegister()">Create account</button>
                     <p class="auth-switch">Have an account? <a onclick="showLogin()">Sign in</a></p>
+                </div>
+
+                <div id="check-email-form" class="hidden" style="text-align:center;">
+                    <div style="font-size:48px;margin-bottom:16px;">&#9993;</div>
+                    <h2 style="font-size:18px;margin-bottom:8px;">Check your email</h2>
+                    <p style="color:var(--slate-500);font-size:14px;margin-bottom:8px;" id="check-email-text"></p>
+                    <p style="color:var(--slate-400);font-size:13px;margin-bottom:20px;">Didn't receive the email? Check spam or</p>
+                    <button class="btn btn-ghost" style="width:100%;margin-bottom:12px;" onclick="handleResendVerification()">Resend email</button>
+                    <p class="auth-switch"><a onclick="showLogin()">Back to sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ VERIFY EMAIL ═══ -->
+    <div id="verify-page" class="hidden">
+        <div class="auth-wrap">
+            <div class="auth-card" style="text-align:center;">
+                <h1 class="auth-heading">Task<span style="color:#7C3AED">Tracker</span></h1>
+                <div id="verify-loading" style="padding:24px 0;color:var(--slate-500);">Verifying your email...</div>
+                <div id="verify-success" class="hidden" style="padding:16px 0;">
+                    <div style="font-size:48px;margin-bottom:12px;color:#10B981;">&#10003;</div>
+                    <h2 style="font-size:18px;margin-bottom:8px;">Email verified!</h2>
+                    <p style="color:var(--slate-500);font-size:14px;margin-bottom:20px;">You can now sign in to your account.</p>
+                    <button class="btn btn-primary" onclick="showLogin()">Sign in</button>
+                </div>
+                <div id="verify-error" class="hidden" style="padding:16px 0;">
+                    <div style="font-size:48px;margin-bottom:12px;color:var(--red-600);">&#10007;</div>
+                    <h2 style="font-size:18px;margin-bottom:8px;">Verification failed</h2>
+                    <p style="color:var(--slate-500);font-size:14px;margin-bottom:20px;" id="verify-error-text">Invalid or expired token.</p>
+                    <button class="btn btn-primary" onclick="showLogin()">Sign in</button>
                 </div>
             </div>
         </div>
@@ -934,7 +965,16 @@
             }
             function getRouteFromHash() {
                 const hash = window.location.hash.slice(1) || '/';
-                const parts = hash.split('/').filter(Boolean);
+                const qIdx = hash.indexOf('?');
+                const path = qIdx >= 0 ? hash.slice(0, qIdx) : hash;
+                const params = new URLSearchParams(qIdx >= 0 ? hash.slice(qIdx) : '');
+                const parts = path.split('/').filter(Boolean);
+                if (parts[0] === 'verify-email') {
+                    return { view: 'verify-email', token: params.get('token') };
+                }
+                if (parts[0] === 'reset-password') {
+                    return { view: 'reset-password', token: params.get('token') };
+                }
                 if (parts[0] === 'workspaces' && parts[1]) {
                     if (parts[2] === 'boards' && parts[3]) {
                         return { view: 'board', activeWorkspaceId: parts[1], activeBoardId: parts[3] };
@@ -946,6 +986,7 @@
                 return { view: 'account' };
             }
             function saveNavState() {
+                if (state.view === 'verify-email' || state.view === 'reset-password') return;
                 let hash = '/';
                 if (state.view === 'workspaces') hash = '/workspaces';
                 else if (state.view === 'workspace-detail' && state.activeWorkspaceId) hash = '/workspaces/' + state.activeWorkspaceId;
@@ -955,6 +996,18 @@
             }
             async function restoreNavState() {
                 const route = getRouteFromHash();
+                if (route.view === 'verify-email' && route.token) {
+                    document.getElementById('auth-page').classList.add('hidden');
+                    document.getElementById('verify-page').classList.remove('hidden');
+                    handleVerifyEmail(route.token);
+                    return;
+                }
+                if (route.view === 'reset-password' && route.token) {
+                    document.getElementById('auth-page').classList.add('hidden');
+                    document.getElementById('app-page').classList.add('hidden');
+                    document.getElementById('verify-page').classList.add('hidden');
+                    return;
+                }
                 await loadWorkspaces();
                 if (route.view === 'workspaces') { navigate('workspaces'); return; }
                 if (route.view === 'help') { navigate('help'); return; }
@@ -985,6 +1038,7 @@
                 tasks: {},
                 editingTaskId: null,
                 defaultStatus: 'to_do',
+                pendingVerificationEmail: null,
             };
 
             // ── Mock DB ──
@@ -1096,8 +1150,29 @@
                 document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
             }
             function normId(id) { return id == null ? '' : String(id); }
-            function showLogin() { document.getElementById('login-form').classList.remove('hidden'); document.getElementById('register-form').classList.add('hidden'); }
-            function showRegister() { document.getElementById('register-form').classList.remove('hidden'); document.getElementById('login-form').classList.add('hidden'); }
+            function showLogin() {
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('register-form').classList.add('hidden');
+                document.getElementById('check-email-form').classList.add('hidden');
+                document.getElementById('auth-page').classList.remove('hidden');
+                document.getElementById('verify-page').classList.add('hidden');
+                document.getElementById('app-page').classList.add('hidden');
+                document.getElementById('auth-sub').textContent = 'Sign in';
+            }
+            function showRegister() {
+                document.getElementById('register-form').classList.remove('hidden');
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('check-email-form').classList.add('hidden');
+                document.getElementById('auth-sub').textContent = 'Create account';
+            }
+            function showCheckEmail(email) {
+                state.pendingVerificationEmail = email;
+                document.getElementById('check-email-form').classList.remove('hidden');
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('register-form').classList.add('hidden');
+                document.getElementById('check-email-text').textContent = 'We sent a confirmation link to ' + email;
+                document.getElementById('auth-sub').textContent = 'Verify your email';
+            }
             function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
             function closeModal(e, id) { if (e && e.target.id !== id) return; document.getElementById(id).classList.add('hidden'); }
 
@@ -1125,7 +1200,13 @@
                     const { token, user } = await api('POST', '/auth/login', { email, password: pass });
                     err.style.display = 'none';
                     loginUser(user, token);
-                } catch (e) { showError(err, e.data?.message || 'Login failed'); }
+                } catch (e) {
+                    if (e.status === 403 && e.data?.code === 'EMAIL_NOT_VERIFIED') {
+                        showCheckEmail(email);
+                        return;
+                    }
+                    showError(err, e.data?.message || 'Login failed');
+                }
             }
 
             async function handleRegister() {
@@ -1136,10 +1217,39 @@
                 if (!name || !email || !pass) { showError(err, 'Fill in all fields'); return; }
                 if (pass.length < 6) { showError(err, 'Password min 6 chars'); return; }
                 try {
-                    const { token, user } = await api('POST', '/auth/register', { username: name, email, password: pass });
+                    await api('POST', '/auth/register', { username: name, email, password: pass });
                     err.style.display = 'none';
-                    loginUser(user, token);
+                    showCheckEmail(email);
                 } catch (e) { showError(err, e.data?.message || 'Registration failed'); }
+            }
+
+            async function handleResendVerification() {
+                const email = state.pendingVerificationEmail;
+                if (!email) { showToast('No email to resend to'); return; }
+                try {
+                    await api('POST', '/auth/resend-verification', { email });
+                    showToast('Verification email resent to ' + email);
+                } catch (e) {
+                    showToast('Failed to resend email');
+                }
+            }
+
+            async function handleVerifyEmail(token) {
+                const loadingEl = document.getElementById('verify-loading');
+                const successEl = document.getElementById('verify-success');
+                const errorEl = document.getElementById('verify-error');
+                loadingEl.classList.remove('hidden');
+                successEl.classList.add('hidden');
+                errorEl.classList.add('hidden');
+                try {
+                    await api('POST', '/auth/verify-email?token=' + encodeURIComponent(token), {});
+                    loadingEl.classList.add('hidden');
+                    successEl.classList.remove('hidden');
+                } catch (e) {
+                    loadingEl.classList.add('hidden');
+                    errorEl.classList.remove('hidden');
+                    document.getElementById('verify-error-text').textContent = e.data?.message || 'Invalid or expired token';
+                }
             }
 
             function loginUser(user, token) {
@@ -1149,6 +1259,7 @@
                 state.user = user; state.token = token;
                 localStorage.setItem(SESSION_KEY, JSON.stringify({ user, token }));
                 document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('verify-page').classList.add('hidden');
                 document.getElementById('app-page').classList.remove('hidden');
                 document.getElementById('sidebar-avatar').textContent = (user.name || user.email)[0].toUpperCase();
                 document.getElementById('sidebar-name').textContent = user.name || user.email;
@@ -1163,6 +1274,7 @@
                 history.replaceState(null, '', window.location.pathname);
                 state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, activeWorkspaceId: null, activeBoardId: null };
                 document.getElementById('app-page').classList.add('hidden');
+                document.getElementById('verify-page').classList.add('hidden');
                 document.getElementById('auth-page').classList.remove('hidden');
                 showLogin();
             }
@@ -1484,6 +1596,13 @@
 
             // ── Bootstrap ──
             (function init() {
+                const route = getRouteFromHash();
+                if (route.view === 'verify-email' && route.token) {
+                    document.getElementById('auth-page').classList.add('hidden');
+                    document.getElementById('verify-page').classList.remove('hidden');
+                    handleVerifyEmail(route.token);
+                    return;
+                }
                 const session = localStorage.getItem(SESSION_KEY);
                 if (session) {
                     const { user, token } = JSON.parse(session);
