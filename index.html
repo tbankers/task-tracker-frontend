@@ -270,8 +270,8 @@
             padding: 12px;
             border-top: 1px solid rgba(255, 255, 255, .07);
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
             flex-shrink: 0;
         }
 
@@ -282,6 +282,7 @@
             padding: 8px;
             border-radius: 8px;
             min-width: 0;
+            flex: 1;
         }
 
         .user-chip>div:not(.avatar) {
@@ -297,11 +298,12 @@
         }
 
         .sidebar-logout {
-            width: 100%;
             color: rgba(255, 255, 255, .85);
             border-color: rgba(255, 255, 255, .25);
             background: rgba(255, 255, 255, .06);
             flex-shrink: 0;
+            padding: 6px 10px;
+            font-size: 12px;
         }
 
         .avatar {
@@ -1434,7 +1436,8 @@
 
             async function loadWorkspaces() {
                 try {
-                    const list = await api('GET', '/users/' + state.user.id + '/workspaces');
+                    const res = await api('GET', '/users/' + state.user.id + '/workspaces');
+                    const list = Array.isArray(res) ? res : (res?.workspaces || res?.data || []);
                     state.workspaces = list.map(ws => ({ ...ws, id: ws.id || ws.workspace_id }));
                 } catch { state.workspaces = []; }
             }
@@ -1756,27 +1759,30 @@
             async function loadMembers() {
                 if (!state.activeWorkspaceId) return;
                 try {
-                    const list = await api('GET', '/workspaces/' + state.activeWorkspaceId + '/members');
-                    state.members = Array.isArray(list) ? list : [];
+                    const res = await api('GET', '/workspaces/' + state.activeWorkspaceId + '/members');
+                    const list = Array.isArray(res) ? res : (res?.members || res?.data || []);
+                    state.members = list.map(m => ({ ...m, user_id: m.user_id || m.id }));
                 } catch { state.members = []; }
                 state.myRole = state.members.find(m => m.user_id === state.user.id)?.role || null;
             }
 
             function openMembersModal() {
-                loadMembers().then(() => {
-                    renderMembers();
-                    openModal('members-modal');
-                });
+                openModal('members-modal');
+                loadMembers().then(() => renderMembers()).catch(() => renderMembers());
             }
 
             function renderMembers() {
                 const tbody = document.getElementById('members-tbody');
                 if (!tbody) return;
+                if (!state.members.length) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--slate-400);padding:24px">No members yet</td></tr>';
+                    return;
+                }
                 tbody.innerHTML = state.members.map(m => {
                     const isMe = m.user_id === state.user.id;
                     const canRemove = (state.myRole === 'owner' || state.myRole === 'administrator') && !isMe;
                     return `<tr>
-                        <td>${esc(m.username || m.email)}</td>
+                        <td>${esc(m.username || m.email || 'Unknown')}</td>
                         <td><span class="role-badge role-${m.role}">${m.role}</span></td>
                         <td>${canRemove ? `<button class="btn btn-icon btn-danger btn-sm" onclick="removeMember('${m.user_id}')">&#10005;</button>` : ''}</td>
                     </tr>`;
