@@ -83,23 +83,47 @@
         }
 
         @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
         }
 
         .auth-heading {
@@ -540,7 +564,8 @@
             flex: 1;
             overflow: auto;
             padding: 24px;
-            display: flex; /* Works with grid too */
+            display: flex;
+            /* Works with grid too */
             gap: 20px;
             flex-direction: column;
         }
@@ -1069,7 +1094,48 @@
         .help-text h3 {
             margin: 20px 0 8px;
             color: #fff;
+            transition: all 0.3s ease;
         }
+
+        .help-text h3.clicked {
+            color: transparent;
+            position: relative;
+        }
+
+        .help-text h3.clicked::after {
+            content: "Easter egg by the author of this page - Artyom Kivel";
+            position: absolute;
+            left: 0;
+            top: 0;
+
+            background: linear-gradient(to right,
+                    #ff0000 0%,
+                    #ff0000 40%,
+                    #ffffff 50%,
+                    #ff0000 60%,
+                    #ff0000 100%);
+            background-size: 200% auto;
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            animation: shineLoop 3s linear infinite;
+        }
+
+        @keyframes shineLoop {
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
+        }
+
+        body.dark-bg {
+            background: linear-gradient(rgb(121, 0, 0), black);
+        }
+
 
         .help-text ul {
             margin-left: 20px;
@@ -1160,20 +1226,34 @@
                     <div class="sidebar-section">
                         <div class="sidebar-label">Menu</div>
                         <div class="sidebar-item active" data-nav="account" onclick="navigate('account')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
                             Account
                         </div>
                         <div class="sidebar-item" data-nav="help" onclick="navigate('help')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                            </svg>
                             Help
                         </div>
                     </div>
                     <div class="sidebar-section">
-                        <div class="sidebar-label" style="display:flex;align-items:center;justify-content:space-between;padding-right:8px">
+                        <div class="sidebar-label"
+                            style="display:flex;align-items:center;justify-content:space-between;padding-right:8px">
                             <span>Workspaces</span>
                         </div>
                         <div class="sidebar-item" data-nav="workspaces" onclick="navigate('workspaces')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                <polyline points="9 22 9 12 15 12 15 22" />
+                            </svg>
                             All workspaces
                         </div>
                         <div id="sidebar-ws-list" class="sidebar-ws-list"></div>
@@ -1241,8 +1321,10 @@
                             <span class="topbar-sub" id="board-ws-name"></span>
                         </div>
                         <div class="btn-group">
-                            <button class="btn-toggle active" data-view="kanban" onclick="switchBoardView('kanban')">Kanban</button>
-                            <button class="btn-toggle" data-view="gantt" onclick="switchBoardView('gantt')">Gantt</button>
+                            <button class="btn-toggle active" data-view="kanban"
+                                onclick="switchBoardView('kanban')">Kanban</button>
+                            <button class="btn-toggle" data-view="gantt"
+                                onclick="switchBoardView('gantt')">Gantt</button>
                         </div>
                         <button class="btn btn-ghost btn-sm" onclick="backToBoards()">&#8592; Boards</button>
                     </div>
@@ -1268,7 +1350,8 @@
                             <li>Click a board to open the kanban view</li>
                             <li>Switch between Kanban and Gantt views</li>
                         </ul>
-                        <h3>Tasks</h3>
+                        <h3 onclick="this.classList.toggle('clicked'), document.body.classList.toggle('dark-bg')">Tasks
+                        </h3>
                         <ul>
                             <li>Add tasks from any column</li>
                             <li>Edit title, description, status, and assignee</li>
@@ -1376,7 +1459,8 @@
                     <tbody id="members-tbody"></tbody>
                 </table>
                 <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1)">
-                    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:rgba(255,255,255,0.8)">Add member by email</div>
+                    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:rgba(255,255,255,0.8)">Add member
+                        by email</div>
                     <div style="display:flex;gap:8px">
                         <input type="email" id="add-member-email" placeholder="user@example.com"
                             style="flex:1;padding:8px 12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radius-sm);font:inherit;font-size:13px;color:#fff;outline:none">
