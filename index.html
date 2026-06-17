@@ -1936,10 +1936,10 @@
 
         function renderTaskCard(task) {
             const s = STATUSES.find(x => x.id === task.status) || STATUSES[0];
-            return `<div class="task-card" onclick="openEditTask(event,'${task.board_id}','${task.id}')">
+            return `<div class="task-card" onclick="openEditTaskDirect('${task.board_id}','${task.id}')">
     <div class="task-card-actions">
-      <button class="btn btn-icon" onclick="event.stopPropagation();openEditTask(event,'${task.board_id}','${task.id}')" title="Edit">&#9998;</button>
-      <button class="btn btn-icon" onclick="event.stopPropagation();deleteTask(event,'${task.board_id}','${task.id}')" title="Delete">&#128465;</button>
+      <button class="btn btn-icon" onclick="event.stopPropagation();openEditTaskDirect('${task.board_id}','${task.id}')" title="Edit">&#9998;</button>
+      <button class="btn btn-icon" onclick="event.stopPropagation();deleteTask('${task.board_id}','${task.id}')" title="Delete">&#128465;</button>
     </div>
     <div class="task-name">${esc(task.name)}</div>
     ${task.desc ? `<div class="task-desc">${esc(task.desc)}</div>` : ''}
@@ -2034,8 +2034,7 @@
             openModal('task-modal');
         }
 
-        function openEditTask(e, boardId, taskId) {
-            e.stopPropagation();
+        function openEditTaskDirect(boardId, taskId) {
             const task = (state.tasks[boardId] || []).find(t => t.id === taskId);
             if (!task) return;
             state.editingTaskId = taskId;
@@ -2094,8 +2093,7 @@
             } catch { showToast('Failed to save task'); }
         }
 
-        async function deleteTask(e, boardId, taskId) {
-            e.stopPropagation();
+        async function deleteTask(boardId, taskId) {
             try {
                 await api('DELETE', '/tasks/' + taskId);
                 state.tasks[boardId] = state.tasks[boardId].filter(t => t.id !== taskId);
