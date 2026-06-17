@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Tracker — Preview</title>
+    <title>Task Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *,
@@ -18,10 +18,13 @@
         :root {
             --indigo-950: #1E1B4B;
             --violet-600: #7C3AED;
+            --violet-500: #8B5CF6;
             --violet-50: #F5F3FF;
+            --blue-500: #3B82F6;
             --slate-50: #F8FAFC;
             --slate-100: #F1F5F9;
             --slate-200: #E2E8F0;
+            --slate-300: #CBD5E1;
             --slate-400: #94A3B8;
             --slate-500: #64748B;
             --slate-600: #475569;
@@ -29,25 +32,33 @@
             --slate-800: #1E293B;
             --slate-900: #0F172A;
             --green-100: #DCFCE7;
+            --green-500: #22C55E;
             --green-700: #15803D;
             --yellow-100: #FEF9C3;
+            --yellow-500: #EAB308;
             --yellow-700: #A16207;
             --red-100: #FEE2E2;
             --red-600: #DC2626;
             --white: #fff;
-            --radius: 10px;
-            --radius-sm: 6px;
+            --radius: 12px;
+            --radius-sm: 8px;
             --radius-lg: 16px;
-            --shadow: 0 1px 3px rgba(0, 0, 0, .1);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, .07);
+            --radius-xl: 20px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 1px 2px rgba(0, 0, 0, .04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, .12);
+            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-fast: 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         body {
-            font-family: Inter, sans-serif;
-            background: var(--slate-100);
+            font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F2F2F7;
             color: var(--slate-800);
             font-size: 14px;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* Auth */
@@ -61,16 +72,34 @@
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, .97);
-            border-radius: var(--radius-lg);
+            background: rgba(255, 255, 255, .95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-xl);
             padding: 40px;
             width: 100%;
             max-width: 420px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, .35);
+            animation: fadeSlideUp 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .auth-heading {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
             margin-bottom: 6px;
         }
@@ -101,6 +130,8 @@
             border-radius: var(--radius-sm);
             font: inherit;
             outline: none;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+            background: var(--slate-50);
         }
 
         .field input:focus,
@@ -108,6 +139,7 @@
         .field select:focus {
             border-color: var(--violet-600);
             box-shadow: 0 0 0 3px rgba(124, 58, 237, .12);
+            background: #fff;
         }
 
         .field textarea {
@@ -123,6 +155,7 @@
             font-size: 13px;
             margin-bottom: 14px;
             display: none;
+            animation: fadeSlideUp 0.2s ease;
         }
 
         .auth-switch {
@@ -136,6 +169,11 @@
             color: var(--violet-600);
             font-weight: 600;
             cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .auth-switch a:hover {
+            color: var(--violet-500);
         }
 
         /* Buttons */
@@ -144,13 +182,17 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 10px 16px;
+            padding: 10px 18px;
             border-radius: var(--radius-sm);
             font: inherit;
             font-weight: 500;
             cursor: pointer;
             border: none;
-            transition: .15s;
+            transition: all var(--transition-fast);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
         }
 
         .btn-primary {
@@ -161,7 +203,8 @@
         }
 
         .btn-primary:hover {
-            filter: brightness(1.05);
+            filter: brightness(1.08);
+            box-shadow: 0 4px 12px rgba(124, 58, 237, .3);
         }
 
         .btn-ghost {
@@ -172,16 +215,19 @@
 
         .btn-ghost:hover {
             background: var(--slate-50);
+            border-color: var(--slate-300);
         }
 
         .btn-icon {
             padding: 6px;
             background: transparent;
             color: var(--slate-500);
+            border-radius: var(--radius-sm);
         }
 
         .btn-icon:hover {
             background: var(--slate-100);
+            color: var(--slate-700);
         }
 
         .btn-danger {
@@ -189,9 +235,45 @@
             color: var(--red-600);
         }
 
+        .btn-danger:hover {
+            background: var(--red-600);
+            color: #fff;
+        }
+
         .btn-sm {
-            padding: 7px 12px;
+            padding: 7px 14px;
             font-size: 13px;
+        }
+
+        .btn-group {
+            display: inline-flex;
+            background: var(--slate-100);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .btn-group .btn-toggle {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--slate-500);
+            transition: all var(--transition-fast);
+        }
+
+        .btn-group .btn-toggle.active {
+            background: #fff;
+            color: var(--slate-800);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+        }
+
+        .btn-group .btn-toggle:hover:not(.active) {
+            color: var(--slate-700);
         }
 
         /* App layout */
@@ -202,18 +284,22 @@
         }
 
         .sidebar {
-            width: 240px;
-            background: var(--indigo-950);
+            width: 260px;
+            background: rgba(30, 27, 75, 0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
+            border-right: 1px solid rgba(255, 255, 255, .06);
         }
 
         .sidebar-logo {
-            padding: 20px;
+            padding: 20px 20px 16px;
             color: #fff;
             font-weight: 700;
-            border-bottom: 1px solid rgba(255, 255, 255, .07);
+            font-size: 17px;
+            letter-spacing: -0.3px;
         }
 
         .sidebar-logo span {
@@ -221,14 +307,14 @@
         }
 
         .sidebar-section {
-            padding: 16px 12px 8px;
+            padding: 4px 12px 8px;
         }
 
         .sidebar-label {
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: .8px;
-            color: rgba(255, 255, 255, .35);
+            color: rgba(255, 255, 255, .3);
             padding: 0 8px;
             margin-bottom: 6px;
             font-weight: 600;
@@ -239,25 +325,51 @@
             align-items: center;
             gap: 10px;
             padding: 8px 10px;
-            border-radius: 8px;
-            color: rgba(255, 255, 255, .65);
+            border-radius: var(--radius-sm);
+            color: rgba(255, 255, 255, .6);
             cursor: pointer;
             font-weight: 500;
             user-select: none;
+            transition: all var(--transition-fast);
         }
 
         .sidebar-item:hover {
-            background: rgba(255, 255, 255, .07);
+            background: rgba(255, 255, 255, .08);
             color: #fff;
         }
 
         .sidebar-item.active {
-            background: rgba(124, 58, 237, .35);
+            background: rgba(139, 92, 246, .3);
             color: #fff;
         }
 
+        .sidebar-item .ws-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 8px;
+        }
+
+        .sidebar-scrollable::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scrollable::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-scrollable::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .15);
+            border-radius: 4px;
+        }
+
         .sidebar-bottom {
-            margin-top: auto;
             padding: 12px;
             border-top: 1px solid rgba(255, 255, 255, .07);
         }
@@ -267,20 +379,21 @@
             align-items: center;
             gap: 10px;
             padding: 8px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
         }
 
         .avatar {
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: linear-gradient(135deg, #8B5CF6, #4338CA);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
+            flex-shrink: 0;
         }
 
         .user-name {
@@ -290,7 +403,7 @@
         }
 
         .user-email {
-            color: rgba(255, 255, 255, .35);
+            color: rgba(255, 255, 255, .3);
             font-size: 11px;
         }
 
@@ -299,23 +412,27 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            background: #F2F2F7;
         }
 
         .topbar {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 16px 24px;
-            background: #fff;
-            border-bottom: 1px solid var(--slate-200);
+            padding: 16px 28px;
+            background: rgba(255, 255, 255, .8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, .06);
             flex-shrink: 0;
         }
 
         .topbar-title {
             flex: 1;
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--slate-900);
+            letter-spacing: -0.3px;
         }
 
         .topbar-sub {
@@ -328,13 +445,14 @@
         .content {
             flex: 1;
             overflow: auto;
-            padding: 24px;
+            padding: 28px;
+            animation: fadeIn 0.25s ease;
         }
 
         /* Panels */
         .panel-card {
             background: #fff;
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             padding: 24px;
             box-shadow: var(--shadow);
             max-width: 560px;
@@ -366,28 +484,34 @@
 
         .grid-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 16px;
         }
 
         .card-clickable {
             background: #fff;
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             padding: 20px;
             box-shadow: var(--shadow);
             cursor: pointer;
             border: 1.5px solid transparent;
-            transition: .15s;
+            transition: all var(--transition);
         }
 
         .card-clickable:hover {
             border-color: var(--violet-600);
             box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-clickable:active {
+            transform: translateY(0);
         }
 
         .card-clickable h3 {
             font-size: 15px;
             margin-bottom: 6px;
+            letter-spacing: -0.2px;
         }
 
         .card-clickable p {
@@ -403,6 +527,13 @@
             justify-content: center;
             color: var(--slate-400);
             min-height: 100px;
+            transition: all var(--transition);
+        }
+
+        .card-add:hover {
+            border-color: var(--violet-600);
+            color: var(--violet-600);
+            background: var(--violet-50);
         }
 
         /* Board */
@@ -414,8 +545,21 @@
             padding-bottom: 8px;
         }
 
+        .board-area::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .board-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .board-area::-webkit-scrollbar-thumb {
+            background: var(--slate-300);
+            border-radius: 4px;
+        }
+
         .column {
-            width: 290px;
+            width: 300px;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
@@ -426,7 +570,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 14px;
+            padding: 12px 14px;
             background: #fff;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
@@ -449,7 +593,7 @@
             color: var(--slate-500);
             font-size: 11px;
             font-weight: 600;
-            padding: 2px 7px;
+            padding: 2px 8px;
             border-radius: 20px;
         }
 
@@ -467,11 +611,13 @@
             box-shadow: var(--shadow);
             position: relative;
             border: 1.5px solid transparent;
+            transition: all var(--transition-fast);
         }
 
         .task-card:hover {
             border-color: var(--slate-200);
             box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
         }
 
         .task-card-actions {
@@ -481,6 +627,7 @@
             display: flex;
             gap: 2px;
             opacity: 0;
+            transition: opacity var(--transition-fast);
         }
 
         .task-card:hover .task-card-actions {
@@ -549,6 +696,7 @@
             color: var(--slate-400);
             cursor: pointer;
             font: inherit;
+            transition: all var(--transition-fast);
         }
 
         .add-task-btn:hover {
@@ -557,25 +705,164 @@
             background: var(--violet-50);
         }
 
+        /* Gantt */
+        .gantt-container {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .gantt-header {
+            display: flex;
+            border-bottom: 1px solid var(--slate-100);
+            padding: 0 16px;
+        }
+
+        .gantt-header-label {
+            width: 220px;
+            flex-shrink: 0;
+            padding: 12px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .gantt-timeline-header {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .gantt-day-cell {
+            flex: 1;
+            min-width: 40px;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 11px;
+            color: var(--slate-400);
+            font-weight: 500;
+            border-left: 1px solid var(--slate-50);
+        }
+
+        .gantt-day-cell.today {
+            color: var(--violet-600);
+            font-weight: 700;
+            background: rgba(124, 58, 237, .04);
+        }
+
+        .gantt-body {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .gantt-row {
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--slate-50);
+            transition: background var(--transition-fast);
+        }
+
+        .gantt-row:hover {
+            background: var(--slate-50);
+        }
+
+        .gantt-row:last-child {
+            border-bottom: none;
+        }
+
+        .gantt-row-label {
+            width: 220px;
+            flex-shrink: 0;
+            padding: 10px 0;
+            font-size: 13px;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .gantt-row-bars {
+            flex: 1;
+            position: relative;
+            height: 36px;
+            display: flex;
+            align-items: center;
+        }
+
+        .gantt-bar {
+            position: absolute;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: default;
+            transition: filter var(--transition-fast);
+        }
+
+        .gantt-bar:hover {
+            filter: brightness(1.1);
+        }
+
+        .gantt-bar.status-todo {
+            background: linear-gradient(135deg, #94A3B8, #64748B);
+        }
+
+        .gantt-bar.status-in_progress {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+
+        .gantt-bar.status-done {
+            background: linear-gradient(135deg, #22C55E, #16A34A);
+        }
+
+        .gantt-empty {
+            text-align: center;
+            color: var(--slate-400);
+            padding: 48px 16px;
+            font-size: 14px;
+        }
+
+        .gantt-now-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--violet-600);
+            z-index: 2;
+        }
+
         /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, .55);
-            backdrop-filter: blur(3px);
+            background: rgba(0, 0, 0, .4);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100;
             padding: 24px;
+            animation: fadeIn 0.2s ease;
         }
 
         .modal {
             background: #fff;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             width: 100%;
             max-width: 480px;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         .modal-header {
@@ -587,8 +874,9 @@
         }
 
         .modal-title {
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 700;
+            letter-spacing: -0.3px;
         }
 
         .modal-body {
@@ -654,10 +942,21 @@
             border-radius: var(--radius);
             z-index: 999;
             font-weight: 500;
+            animation: slideUp 0.3s ease;
+            box-shadow: var(--shadow-lg);
         }
 
         .hidden {
             display: none !important;
+        }
+
+        .field-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .field-row .field {
+            flex: 1;
         }
     </style>
 </head>
@@ -669,7 +968,7 @@
         <div class="auth-wrap">
             <div class="auth-card">
                 <h1 class="auth-heading">Task<span style="color:#7C3AED">Tracker</span></h1>
-                <p class="auth-sub">Sign in or try the preview without a backend</p>
+                <p class="auth-sub">Sign in to your account</p>
 
                 <div id="login-form">
                     <div id="login-error" class="error-msg"></div>
@@ -678,8 +977,6 @@
                     <div class="field"><label>Password</label><input type="password" id="login-password"
                             placeholder="demo123"></div>
                     <button class="btn btn-primary" onclick="handleLogin()">Sign in</button>
-                    <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="enterDemo()">Try demo (no
-                        backend)</button>
                     <p class="auth-switch">No account? <a onclick="showRegister()">Register</a></p>
                 </div>
 
@@ -700,18 +997,32 @@
 
     <!-- ═══ APP ═══ -->
     <div id="app-page" class="hidden">
-        <div id="preview-bar" class="preview-bar">
-            Preview mode — data stored in localStorage
-            <a onclick="resetMockData()">Reset demo data</a>
-        </div>
         <div class="app">
             <aside class="sidebar">
                 <div class="sidebar-logo">Task<span>Tracker</span></div>
-                <div class="sidebar-section">
-                    <div class="sidebar-label">Menu</div>
-                    <div class="sidebar-item active" data-nav="account" onclick="navigate('account')">Account</div>
-                    <div class="sidebar-item" data-nav="workspaces" onclick="navigate('workspaces')">Workspaces</div>
-                    <div class="sidebar-item" data-nav="help" onclick="navigate('help')">Help</div>
+                <div class="sidebar-scrollable">
+                    <div class="sidebar-section">
+                        <div class="sidebar-label">Menu</div>
+                        <div class="sidebar-item active" data-nav="account" onclick="navigate('account')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Account
+                        </div>
+                        <div class="sidebar-item" data-nav="workspaces" onclick="navigate('workspaces')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Workspaces
+                        </div>
+                    </div>
+                    <div class="sidebar-section" id="sidebar-workspaces-section">
+                        <div class="sidebar-label">Your Workspaces</div>
+                        <div id="sidebar-workspaces-list"></div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-label">Help</div>
+                        <div class="sidebar-item" data-nav="help" onclick="navigate('help')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Help
+                        </div>
+                    </div>
                 </div>
                 <div class="sidebar-bottom">
                     <div class="user-chip">
@@ -750,7 +1061,7 @@
                 <div id="view-workspaces" class="content hidden">
                     <div class="topbar">
                         <div class="topbar-title">Workspaces</div>
-                        <button class="btn btn-ghost btn-sm" onclick="openModal('workspace-modal')">Add new</button>
+                        <button class="btn btn-ghost btn-sm" onclick="openModal('workspace-modal')">+ Add new</button>
                     </div>
                     <div id="workspace-list" class="grid-cards"></div>
                 </div>
@@ -761,22 +1072,27 @@
                         <div>
                             <div class="topbar-title" id="ws-detail-title">Workspace</div>
                         </div>
-                        <button class="btn btn-ghost btn-sm" onclick="navigate('workspaces')">← Back</button>
-                        <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')">Add board</button>
+                        <button class="btn btn-ghost btn-sm" onclick="navigate('workspaces')">&#8592; Back</button>
+                        <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')">+ Add board</button>
                     </div>
                     <div id="board-list" class="grid-cards"></div>
                 </div>
 
-                <!-- BOARD (kanban) -->
+                <!-- BOARD (kanban + gantt) -->
                 <div id="view-board" class="content hidden">
                     <div class="topbar">
                         <div>
                             <div class="topbar-title" id="board-title">Board</div>
                             <span class="topbar-sub" id="board-ws-name"></span>
                         </div>
-                        <button class="btn btn-ghost btn-sm" onclick="backToBoards()">← Boards</button>
+                        <div class="btn-group">
+                            <button class="btn-toggle active" data-view="kanban" onclick="switchBoardView('kanban')">Kanban</button>
+                            <button class="btn-toggle" data-view="gantt" onclick="switchBoardView('gantt')">Gantt</button>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="backToBoards()">&#8592; Boards</button>
                     </div>
                     <div id="board-area" class="board-area"></div>
+                    <div id="gantt-area" class="gantt-container hidden"></div>
                 </div>
 
                 <!-- HELP -->
@@ -795,15 +1111,15 @@
                         <ul>
                             <li>Each board has Todo, In Progress, and Done columns</li>
                             <li>Click a board to open the kanban view</li>
+                            <li>Switch between Kanban and Gantt views</li>
                         </ul>
                         <h3>Tasks</h3>
                         <ul>
                             <li>Add tasks from any column</li>
                             <li>Edit title, description, status, and assignee</li>
+                            <li>Set start and due dates for Gantt view</li>
                             <li>Created and updated dates are shown on each card</li>
                         </ul>
-                        <h3>Preview mode</h3>
-                        <p>Data is saved in your browser. Click “Reset demo data” in the yellow bar to start fresh.</p>
                     </div>
                 </div>
             </main>
@@ -814,7 +1130,7 @@
     <div id="workspace-modal" class="modal-overlay hidden" onclick="closeModal(event,'workspace-modal')">
         <div class="modal">
             <div class="modal-header"><span class="modal-title">New workspace</span><button class="btn btn-icon"
-                    onclick="closeModal(null,'workspace-modal')">✕</button></div>
+                    onclick="closeModal(null,'workspace-modal')">&#10005;</button></div>
             <div class="modal-body">
                 <div class="field"><label>Title</label><input type="text" id="workspace-title-input"
                         placeholder="e.g. Marketing team"></div>
@@ -829,7 +1145,7 @@
     <div id="board-modal" class="modal-overlay hidden" onclick="closeModal(event,'board-modal')">
         <div class="modal">
             <div class="modal-header"><span class="modal-title">New board</span><button class="btn btn-icon"
-                    onclick="closeModal(null,'board-modal')">✕</button></div>
+                    onclick="closeModal(null,'board-modal')">&#10005;</button></div>
             <div class="modal-body">
                 <div class="field"><label>Title</label><input type="text" id="board-title-input"
                         placeholder="e.g. Sprint 12"></div>
@@ -844,12 +1160,16 @@
     <div id="task-modal" class="modal-overlay hidden" onclick="closeModal(event,'task-modal')">
         <div class="modal">
             <div class="modal-header"><span class="modal-title" id="task-modal-title">New task</span><button
-                    class="btn btn-icon" onclick="closeModal(null,'task-modal')">✕</button></div>
+                    class="btn btn-icon" onclick="closeModal(null,'task-modal')">&#10005;</button></div>
             <div class="modal-body">
                 <div class="field"><label>Title</label><input type="text" id="task-title-input"
                         placeholder="What needs to be done?"></div>
                 <div class="field"><label>Description</label><textarea id="task-desc-input"
                         placeholder="Details..."></textarea></div>
+                <div class="field-row">
+                    <div class="field"><label>Start date</label><input type="date" id="task-start-input"></div>
+                    <div class="field"><label>Due date</label><input type="date" id="task-due-input"></div>
+                </div>
                 <div class="field"><label>Assigned to</label><input type="text" id="task-assignee-input"
                         placeholder="Person name"></div>
                 <div class="field"><label>Status</label>
@@ -870,7 +1190,7 @@
     <div id="password-modal" class="modal-overlay hidden" onclick="closeModal(event,'password-modal')">
         <div class="modal">
             <div class="modal-header"><span class="modal-title">Change password</span><button class="btn btn-icon"
-                    onclick="closeModal(null,'password-modal')">✕</button></div>
+                    onclick="closeModal(null,'password-modal')">&#10005;</button></div>
             <div class="modal-body">
                 <div class="field"><label>Current password</label><input type="password" id="pwd-current"></div>
                 <div class="field"><label>New password</label><input type="password" id="pwd-new"></div>
@@ -885,8 +1205,8 @@
 
     <script>
         // ── Config ──
-        const USE_MOCK = true; // set true to use local mock data instead of the real API
-        const API_BASE = ''; // ← replace with your backend URL
+        const USE_MOCK = true;
+        const API_BASE = '';
         const MOCK_KEY = 'tt_preview_db';
         const SESSION_KEY = 'tt_preview_session';
 
@@ -907,6 +1227,7 @@
             tasks: {},
             editingTaskId: null,
             defaultStatus: 'to_do',
+            boardViewMode: 'kanban',
         };
 
         // ── Mock DB ──
@@ -916,14 +1237,21 @@
             const wsId = uid();
             const boardId = uid();
             const now = new Date().toISOString();
+            const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
             return {
                 users: [{ id: 'u1', name: 'Demo User', email: 'demo@example.com', password: 'demo123', created_at: '2025-01-10T09:00:00Z' }],
-                workspaces: [{ id: wsId, user_id: 'u1', title: 'My Workspace', created_at: now }],
-                boards: [{ id: boardId, workspace_id: wsId, title: 'Product backlog', created_at: now }],
+                workspaces: [
+                    { id: wsId, user_id: 'u1', title: 'My Workspace', created_at: now },
+                    { id: uid(), user_id: 'u1', title: 'Side Projects', created_at: now },
+                ],
+                boards: [
+                    { id: boardId, workspace_id: wsId, title: 'Product backlog', created_at: now },
+                    { id: uid(), workspace_id: wsId, title: 'Sprint 1', created_at: now },
+                ],
                 tasks: [
-                    { id: uid(), board_id: boardId, title: 'Design auth page', description: 'Login and register forms', status: 'done', assignee: 'Alex', created_at: now, updated_at: now },
-                    { id: uid(), board_id: boardId, title: 'Build workspace list', description: 'CRUD for workspaces', status: 'in_progress', assignee: 'Sam', created_at: now, updated_at: now },
-                    { id: uid(), board_id: boardId, title: 'Connect API', description: 'Replace mock layer', status: 'to_do', assignee: 'Jordan', created_at: now, updated_at: now },
+                    { id: uid(), board_id: boardId, title: 'Design auth page', description: 'Login and register forms', status: 'done', assignee: 'Alex', created_at: weekAgo, updated_at: now, start_date: weekAgo, due_date: now },
+                    { id: uid(), board_id: boardId, title: 'Build workspace list', description: 'CRUD for workspaces', status: 'in_progress', assignee: 'Sam', created_at: weekAgo, updated_at: now, start_date: weekAgo, due_date: new Date(Date.now() + 3 * 86400000).toISOString() },
+                    { id: uid(), board_id: boardId, title: 'Connect API', description: 'Replace mock layer', status: 'to_do', assignee: 'Jordan', created_at: now, updated_at: now, start_date: new Date(Date.now() + 1 * 86400000).toISOString(), due_date: new Date(Date.now() + 7 * 86400000).toISOString() },
                 ],
             };
         }
@@ -992,7 +1320,12 @@
             if (method === 'POST' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
                 const boardId = path.split('/')[2];
                 const now = new Date().toISOString();
-                const t = { id: uid(), board_id: boardId, title: body.title, description: body.description || '', status: body.status || 'to_do', assignee: body.assignee || 'Unassigned', created_at: now, updated_at: now };
+                const t = {
+                    id: uid(), board_id: boardId, title: body.title, description: body.description || '',
+                    status: body.status || 'to_do', assignee: body.assignee || 'Unassigned',
+                    created_at: now, updated_at: now,
+                    start_date: body.start_date || null, due_date: body.due_date || null,
+                };
                 db.tasks.push(t); saveDb(db); return t;
             }
             if (method === 'PATCH' && path.startsWith('/tasks/')) {
@@ -1011,7 +1344,7 @@
 
         // ── Helpers ──
         function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-        function fmtDate(iso) { return new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); }
+        function fmtDate(iso) { if (!iso) return '—'; return new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); }
         function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
         function showToast(msg) {
             const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
@@ -1021,6 +1354,7 @@
         function showRegister() { document.getElementById('register-form').classList.remove('hidden'); document.getElementById('login-form').classList.add('hidden'); }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(e, id) { if (e && e.target.id !== id) return; document.getElementById(id).classList.add('hidden'); }
+        function toISODate(d) { return d ? new Date(d).toISOString().slice(0, 10) : ''; }
 
         // ── Auth ──
         async function handleLogin() {
@@ -1049,14 +1383,7 @@
             } catch (e) { showError(err, e.data?.message || 'Registration failed'); }
         }
 
-        function enterDemo() {
-            document.getElementById('login-email').value = 'demo@example.com';
-            document.getElementById('login-password').value = 'demo123';
-            handleLogin();
-        }
-
         function loginUser(user, token) {
-            // Normalize real API response fields to what the UI expects
             user.id = user.id || user.user_id;
             user.name = user.name || user.username;
             state.user = user; state.token = token;
@@ -1068,7 +1395,13 @@
             document.getElementById('sidebar-email').textContent = user.email;
             renderAccount();
             loadWorkspaces();
-            navigate('account');
+            // Restore route from URL hash or default to account
+            const hash = location.hash.replace('#/', '');
+            if (hash && isValidRoute(hash)) {
+                restoreRoute(hash);
+            } else {
+                navigate('account', true);
+            }
         }
 
         function handleLogout() {
@@ -1077,6 +1410,7 @@
             document.getElementById('app-page').classList.add('hidden');
             document.getElementById('auth-page').classList.remove('hidden');
             showLogin();
+            history.pushState(null, '', '#/login');
         }
 
         async function changePassword() {
@@ -1093,17 +1427,86 @@
 
         function openPasswordModal() { openModal('password-modal'); }
 
+        // ── Routing ──
+        function isValidRoute(hash) {
+            return /^(account|workspaces|workspace\/[^/]+|board\/[^/]+|help)$/.test(hash);
+        }
+
+        function setHash(route) {
+            const newHash = '#/' + route;
+            if (location.hash !== newHash) {
+                history.pushState({ route }, '', newHash);
+            }
+        }
+
+        async function restoreRoute(hash) {
+            const parts = hash.split('/');
+            const view = parts[0];
+
+            if (view === 'account' || view === 'workspaces' || view === 'help') {
+                navigate(view, true);
+                if (view === 'workspaces') renderWorkspaces();
+            } else if (view === 'workspace' && parts[1]) {
+                const wsId = parts[1];
+                const ws = state.workspaces.find(w => w.id === wsId);
+                if (ws) {
+                    await openWorkspace(wsId, true);
+                } else {
+                    navigate('workspaces', true);
+                }
+            } else if (view === 'board' && parts[1]) {
+                const boardId = parts[1];
+                // Need to find which workspace this board belongs to
+                const db = getDb();
+                const board = db.boards.find(b => b.id === boardId);
+                if (board) {
+                    state.activeWorkspaceId = board.workspace_id;
+                    await loadBoards(board.workspace_id);
+                    openBoard(boardId, true);
+                } else {
+                    navigate('workspaces', true);
+                }
+            } else {
+                navigate('account', true);
+            }
+        }
+
+        window.addEventListener('popstate', function() {
+            if (!state.user) return;
+            const hash = location.hash.replace('#/', '').replace('#', '');
+            if (hash && isValidRoute(hash)) {
+                restoreRoute(hash);
+            } else {
+                navigate('account', true);
+            }
+        });
+
         // ── Navigation ──
-        function navigate(view) {
+        function navigate(view, skipPush) {
             state.view = view;
+            if (!skipPush) setHash(view);
+
             document.querySelectorAll('.sidebar-item[data-nav]').forEach(el => el.classList.toggle('active', el.dataset.nav === view));
             ['account', 'workspaces', 'workspace-detail', 'board', 'help'].forEach(v => {
                 const el = document.getElementById('view-' + v.replace('_', '-'));
-                if (el) el.classList.add('hidden');
+                if (el) {
+                    if (!el.classList.contains('hidden')) {
+                        el.classList.add('hidden');
+                    }
+                }
             });
-            if (view === 'account') document.getElementById('view-account').classList.remove('hidden');
-            if (view === 'workspaces') { document.getElementById('view-workspaces').classList.remove('hidden'); renderWorkspaces(); }
-            if (view === 'help') document.getElementById('view-help').classList.remove('hidden');
+
+            const views = { account: 'view-account', workspaces: 'view-workspaces', help: 'view-help' };
+            if (views[view]) {
+                const el = document.getElementById(views[view]);
+                el.classList.remove('hidden');
+                el.style.animation = 'none';
+                el.offsetHeight;
+                el.style.animation = '';
+                if (view === 'workspaces') renderWorkspaces();
+            }
+
+            renderSidebarWorkspaces();
         }
 
         function renderAccount() {
@@ -1113,12 +1516,37 @@
             document.getElementById('acc-created').textContent = u.created_at ? fmtDate(u.created_at) : '—';
         }
 
+        // ── Sidebar workspaces ──
+        function renderSidebarWorkspaces() {
+            const el = document.getElementById('sidebar-workspaces-list');
+            const section = document.getElementById('sidebar-workspaces-section');
+            if (!state.user || state.workspaces.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+            const wsColors = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899'];
+            el.innerHTML = state.workspaces.map((ws, i) => {
+                const color = wsColors[i % wsColors.length];
+                const isActive = state.activeWorkspaceId === ws.id && (state.view === 'workspace-detail' || state.view === 'board');
+                return `<div class="sidebar-item${isActive ? ' active' : ''}" onclick="navigateToWorkspace('${ws.id}')">
+                    <span class="ws-dot" style="background:${color}"></span>
+                    ${esc(ws.title)}
+                </div>`;
+            }).join('');
+        }
+
+        async function navigateToWorkspace(wsId) {
+            await openWorkspace(wsId);
+        }
+
         // ── Workspaces ──
         async function loadWorkspaces() {
             try {
                 const list = await api('GET', '/users/' + state.user.id + '/workspaces');
                 state.workspaces = list.map(ws => ({ ...ws, id: ws.id || ws.workspace_id }));
             } catch { state.workspaces = []; }
+            renderSidebarWorkspaces();
         }
 
         function renderWorkspaces() {
@@ -1141,19 +1569,26 @@
                 document.getElementById('workspace-title-input').value = '';
                 closeModal(null, 'workspace-modal');
                 renderWorkspaces();
+                renderSidebarWorkspaces();
                 showToast('Workspace created');
             } catch (e) { showToast('Error creating workspace'); }
         }
 
-        async function openWorkspace(wsId) {
+        async function openWorkspace(wsId, skipPush) {
             state.activeWorkspaceId = wsId;
             const ws = state.workspaces.find(w => w.id === wsId);
             document.getElementById('ws-detail-title').textContent = ws?.title || 'Workspace';
             document.getElementById('view-workspaces').classList.add('hidden');
-            document.getElementById('view-workspace-detail').classList.remove('hidden');
+            const detailEl = document.getElementById('view-workspace-detail');
+            detailEl.classList.remove('hidden');
+            detailEl.style.animation = 'none';
+            detailEl.offsetHeight;
+            detailEl.style.animation = '';
             state.view = 'workspace-detail';
+            if (!skipPush) setHash('workspace/' + wsId);
             await loadBoards(wsId);
             renderBoardList();
+            renderSidebarWorkspaces();
         }
 
         async function loadBoards(wsId) {
@@ -1191,6 +1626,7 @@
         }
 
         function backToBoards() {
+            navigate('workspace/' + state.activeWorkspaceId);
             document.getElementById('view-board').classList.add('hidden');
             document.getElementById('view-workspace-detail').classList.remove('hidden');
             renderBoardList();
@@ -1204,19 +1640,49 @@
                     id: t.id || t.task_id, board_id: boardId, name: t.title, desc: t.description || '',
                     status: t.status, assignee: t.assignee || t.assigned_id || 'Unassigned',
                     created_at: t.created_at, updated_at: t.updated_at,
+                    start_date: t.start_date || null, due_date: t.due_date || null,
                 }));
             } catch { state.tasks[boardId] = []; }
         }
 
-        function openBoard(boardId) {
+        function openBoard(boardId, skipPush) {
             state.activeBoardId = boardId;
+            state.boardViewMode = 'kanban';
             const board = state.boards.find(b => b.id === boardId);
             const ws = state.workspaces.find(w => w.id === state.activeWorkspaceId);
             document.getElementById('board-title').textContent = board?.title || 'Board';
-            document.getElementById('board-ws-name').textContent = ws ? '· ' + ws.title : '';
+            document.getElementById('board-ws-name').textContent = ws ? '\u00B7 ' + ws.title : '';
             document.getElementById('view-workspace-detail').classList.add('hidden');
-            document.getElementById('view-board').classList.remove('hidden');
+            const boardEl = document.getElementById('view-board');
+            boardEl.classList.remove('hidden');
+            boardEl.style.animation = 'none';
+            boardEl.offsetHeight;
+            boardEl.style.animation = '';
+            if (!skipPush) setHash('board/' + boardId);
+            // Reset view toggle
+            document.querySelectorAll('.btn-group .btn-toggle').forEach(b => {
+                b.classList.toggle('active', b.dataset.view === 'kanban');
+            });
+            document.getElementById('board-area').classList.remove('hidden');
+            document.getElementById('gantt-area').classList.add('hidden');
             renderBoard(boardId);
+            renderSidebarWorkspaces();
+        }
+
+        function switchBoardView(mode) {
+            state.boardViewMode = mode;
+            document.querySelectorAll('.btn-group .btn-toggle').forEach(b => {
+                b.classList.toggle('active', b.dataset.view === mode);
+            });
+            if (mode === 'kanban') {
+                document.getElementById('board-area').classList.remove('hidden');
+                document.getElementById('gantt-area').classList.add('hidden');
+                renderBoard(state.activeBoardId);
+            } else {
+                document.getElementById('board-area').classList.add('hidden');
+                document.getElementById('gantt-area').classList.remove('hidden');
+                renderGantt(state.activeBoardId);
+            }
         }
 
         function renderBoard(boardId) {
@@ -1237,8 +1703,8 @@
             const s = STATUSES.find(x => x.id === task.status) || STATUSES[0];
             return `<div class="task-card">
     <div class="task-card-actions">
-      <button class="btn btn-icon" onclick="openEditTask(event,'${task.board_id}','${task.id}')" title="Edit">✎</button>
-      <button class="btn btn-icon btn-danger" onclick="deleteTask(event,'${task.board_id}','${task.id}')" title="Delete">🗑</button>
+      <button class="btn btn-icon" onclick="openEditTask(event,'${task.board_id}','${task.id}')" title="Edit">&#9998;</button>
+      <button class="btn btn-icon btn-danger" onclick="deleteTask(event,'${task.board_id}','${task.id}')" title="Delete">&#128465;</button>
     </div>
     <div class="task-name">${esc(task.name)}</div>
     ${task.desc ? `<div class="task-desc">${esc(task.desc)}</div>` : ''}
@@ -1246,9 +1712,85 @@
       <span class="badge ${s.badge}">${s.label}</span>
       <span class="assignee">${esc(task.assignee)}</span>
       <span>Created ${fmtDate(task.created_at)}</span>
-      <span>Updated ${fmtDate(task.updated_at)}</span>
+      ${task.due_date ? `<span>Due ${fmtDate(task.due_date)}</span>` : ''}
     </div>
   </div>`;
+        }
+
+        // ── Gantt ──
+        function renderGantt(boardId) {
+            const tasks = state.tasks[boardId] || [];
+            const ganttEl = document.getElementById('gantt-area');
+
+            if (tasks.length === 0) {
+                ganttEl.innerHTML = '<div class="gantt-empty">No tasks to display in Gantt view</div>';
+                return;
+            }
+
+            // Determine date range
+            let minDate = Infinity, maxDate = -Infinity;
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            tasks.forEach(t => {
+                const start = t.start_date ? new Date(t.start_date).getTime() : new Date(t.created_at).getTime();
+                const end = t.due_date ? new Date(t.due_date).getTime() : new Date(t.updated_at || t.created_at).getTime() + 3 * 86400000;
+                if (start < minDate) minDate = start;
+                if (end > maxDate) maxDate = end;
+            });
+
+            // Extend range a bit
+            const rangeStart = new Date(minDate - 2 * 86400000);
+            const rangeEnd = new Date(maxDate + 3 * 86400000);
+            const totalDays = Math.ceil((rangeEnd - rangeStart) / 86400000);
+            const dayWidth = Math.max(40, Math.min(60, 800 / totalDays));
+
+            // Build day columns
+            let days = [];
+            for (let i = 0; i < totalDays; i++) {
+                const d = new Date(rangeStart.getTime() + i * 86400000);
+                const isToday = d.toDateString() === today.toDateString();
+                days.push({
+                    date: d,
+                    label: d.getDate() + '/' + (d.getMonth() + 1),
+                    isToday
+                });
+            }
+
+            // Now line position
+            const nowPos = Math.max(0, Math.min(1, (today.getTime() - rangeStart.getTime()) / (rangeEnd.getTime() - rangeStart.getTime())));
+
+            // Build rows
+            const rows = tasks.map(t => {
+                const start = t.start_date ? new Date(t.start_date) : new Date(t.created_at);
+                const end = t.due_date ? new Date(t.due_date) : new Date(t.updated_at || t.created_at);
+                const endAdjusted = end < start ? new Date(start.getTime() + 3 * 86400000) : end;
+                const left = ((start.getTime() - rangeStart.getTime()) / (rangeEnd.getTime() - rangeStart.getTime())) * 100;
+                const width = Math.max(2, ((endAdjusted.getTime() - start.getTime()) / (rangeEnd.getTime() - rangeStart.getTime())) * 100);
+                return { task: t, left, width };
+            });
+
+            ganttEl.innerHTML = `
+                <div class="gantt-header">
+                    <div class="gantt-header-label">Task</div>
+                    <div class="gantt-timeline-header">
+                        ${days.map(d => `<div class="gantt-day-cell${d.isToday ? ' today' : ''}">${d.label}</div>`).join('')}
+                    </div>
+                </div>
+                <div class="gantt-body">
+                    ${rows.map(r => `
+                        <div class="gantt-row">
+                            <div class="gantt-row-label" title="${esc(r.task.name)}">${esc(r.task.name)}</div>
+                            <div class="gantt-row-bars">
+                                <div class="gantt-bar status-${r.task.status}" style="left:${r.left}%;width:${r.width}%" title="${esc(r.task.name)}">
+                                    ${r.width > 10 ? esc(r.task.name) : ''}
+                                </div>
+                                <div class="gantt-now-line" style="left:${nowPos * 100}%"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
         }
 
         function openCreateTask(boardId, status) {
@@ -1260,6 +1802,8 @@
             document.getElementById('task-desc-input').value = '';
             document.getElementById('task-assignee-input').value = '';
             document.getElementById('task-status-input').value = status;
+            document.getElementById('task-start-input').value = '';
+            document.getElementById('task-due-input').value = '';
             openModal('task-modal');
         }
 
@@ -1274,6 +1818,8 @@
             document.getElementById('task-desc-input').value = task.desc || '';
             document.getElementById('task-assignee-input').value = task.assignee || '';
             document.getElementById('task-status-input').value = task.status;
+            document.getElementById('task-start-input').value = task.start_date ? toISODate(task.start_date) : '';
+            document.getElementById('task-due-input').value = task.due_date ? toISODate(task.due_date) : '';
             openModal('task-modal');
         }
 
@@ -1282,29 +1828,34 @@
             const description = document.getElementById('task-desc-input').value.trim();
             const assignee = document.getElementById('task-assignee-input').value.trim() || 'Unassigned';
             const status = document.getElementById('task-status-input').value;
+            const startDate = document.getElementById('task-start-input').value || null;
+            const dueDate = document.getElementById('task-due-input').value || null;
             if (!title) return;
             const boardId = state.activeBoardId;
             try {
                 if (state.editingTaskId) {
-                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, { status });
+                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, { status, start_date: startDate, due_date: dueDate });
                     const idx = state.tasks[boardId].findIndex(t => t.id === state.editingTaskId);
                     if (idx >= 0) state.tasks[boardId][idx] = {
                         id: updated.id || updated.task_id, board_id: boardId, name: updated.title, desc: updated.description,
                         status: updated.status, assignee: updated.assignee || updated.assigned_id || 'Unassigned',
                         created_at: updated.created_at, updated_at: updated.updated_at,
+                        start_date: updated.start_date, due_date: updated.due_date,
                     };
                     showToast('Task updated');
                 } else {
-                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, status });
+                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, status, start_date: startDate, due_date: dueDate });
                     state.tasks[boardId].push({
                         id: created.id || created.task_id, board_id: boardId, name: created.title, desc: created.description,
                         status: created.status, assignee: created.assignee || created.assigned_id || 'Unassigned',
                         created_at: created.created_at, updated_at: created.updated_at,
+                        start_date: created.start_date, due_date: created.due_date,
                     });
                     showToast('Task created');
                 }
                 closeModal(null, 'task-modal');
                 renderBoard(boardId);
+                if (state.boardViewMode === 'gantt') renderGantt(boardId);
             } catch { showToast('Failed to save task'); }
         }
 
@@ -1314,6 +1865,7 @@
                 await api('DELETE', '/tasks/' + taskId);
                 state.tasks[boardId] = state.tasks[boardId].filter(t => t.id !== taskId);
                 renderBoard(boardId);
+                if (state.boardViewMode === 'gantt') renderGantt(boardId);
                 showToast('Task deleted');
             } catch { showToast('Failed to delete'); }
         }
