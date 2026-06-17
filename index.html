@@ -72,14 +72,15 @@
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, .95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, .88);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, .6);
             border-radius: var(--radius-xl);
             padding: 40px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, .35);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .5);
             animation: fadeSlideUp 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
@@ -96,6 +97,11 @@
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
         }
 
         .auth-heading {
@@ -130,8 +136,10 @@
             border-radius: var(--radius-sm);
             font: inherit;
             outline: none;
-            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-            background: var(--slate-50);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+            background: rgba(255, 255, 255, .7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .field input:focus,
@@ -139,7 +147,7 @@
         .field select:focus {
             border-color: var(--violet-600);
             box-shadow: 0 0 0 3px rgba(124, 58, 237, .12);
-            background: #fff;
+            background: rgba(255, 255, 255, .95);
         }
 
         .field textarea {
@@ -200,21 +208,29 @@
             color: #fff;
             width: 100%;
             font-weight: 600;
+            box-shadow: 0 2px 8px rgba(124, 58, 237, .25);
         }
 
         .btn-primary:hover {
             filter: brightness(1.08);
-            box-shadow: 0 4px 12px rgba(124, 58, 237, .3);
+            box-shadow: 0 4px 16px rgba(124, 58, 237, .35);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97) translateY(0);
         }
 
         .btn-ghost {
-            background: #fff;
-            border: 1.5px solid var(--slate-200);
+            background: rgba(255, 255, 255, .7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, .5);
             color: var(--slate-600);
         }
 
         .btn-ghost:hover {
-            background: var(--slate-50);
+            background: rgba(255, 255, 255, .9);
             border-color: var(--slate-300);
         }
 
@@ -247,7 +263,9 @@
 
         .btn-group {
             display: inline-flex;
-            background: var(--slate-100);
+            background: rgba(0, 0, 0, .06);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: var(--radius-sm);
             padding: 3px;
             gap: 2px;
@@ -267,9 +285,11 @@
         }
 
         .btn-group .btn-toggle.active {
-            background: #fff;
+            background: rgba(255, 255, 255, .85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             color: var(--slate-800);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
         }
 
         .btn-group .btn-toggle:hover:not(.active) {
@@ -285,13 +305,13 @@
 
         .sidebar {
             width: 260px;
-            background: rgba(30, 27, 75, 0.97);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(30, 27, 75, .82);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
-            border-right: 1px solid rgba(255, 255, 255, .06);
+            border-right: 1px solid rgba(255, 255, 255, .08);
         }
 
         .sidebar-logo {
@@ -334,7 +354,7 @@
         }
 
         .sidebar-item:hover {
-            background: rgba(255, 255, 255, .08);
+            background: rgba(255, 255, 255, .1);
             color: #fff;
         }
 
@@ -371,7 +391,7 @@
 
         .sidebar-bottom {
             padding: 12px;
-            border-top: 1px solid rgba(255, 255, 255, .07);
+            border-top: 1px solid rgba(255, 255, 255, .08);
         }
 
         .user-chip {
@@ -420,9 +440,9 @@
             align-items: center;
             gap: 12px;
             padding: 16px 28px;
-            background: rgba(255, 255, 255, .8);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, .72);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             border-bottom: 1px solid rgba(0, 0, 0, .06);
             flex-shrink: 0;
         }
@@ -449,12 +469,15 @@
             animation: fadeIn 0.25s ease;
         }
 
-        /* Panels */
+        /* Liquid glass panels */
         .panel-card {
-            background: #fff;
+            background: rgba(255, 255, 255, .72);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, .6);
             border-radius: var(--radius-lg);
             padding: 24px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .4);
             max-width: 560px;
         }
 
@@ -467,7 +490,7 @@
             display: flex;
             justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px solid var(--slate-100);
+            border-bottom: 1px solid rgba(0, 0, 0, .04);
         }
 
         .info-row:last-child {
@@ -489,18 +512,20 @@
         }
 
         .card-clickable {
-            background: #fff;
+            background: rgba(255, 255, 255, .72);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, .6);
             border-radius: var(--radius-lg);
             padding: 20px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .4);
             cursor: pointer;
-            border: 1.5px solid transparent;
             transition: all var(--transition);
         }
 
         .card-clickable:hover {
-            border-color: var(--violet-600);
-            box-shadow: var(--shadow-md);
+            border-color: rgba(124, 58, 237, .3);
+            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, .5);
             transform: translateY(-2px);
         }
 
@@ -522,6 +547,8 @@
         .card-add {
             border: 1.5px dashed var(--slate-300);
             background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -533,7 +560,7 @@
         .card-add:hover {
             border-color: var(--violet-600);
             color: var(--violet-600);
-            background: var(--violet-50);
+            background: rgba(124, 58, 237, .04);
         }
 
         /* Board */
@@ -571,9 +598,12 @@
             align-items: center;
             gap: 8px;
             padding: 12px 14px;
-            background: #fff;
+            background: rgba(255, 255, 255, .72);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, .6);
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .4);
         }
 
         .dot {
@@ -589,7 +619,7 @@
         }
 
         .column-count {
-            background: var(--slate-100);
+            background: rgba(0, 0, 0, .06);
             color: var(--slate-500);
             font-size: 11px;
             font-weight: 600;
@@ -605,18 +635,20 @@
         }
 
         .task-card {
-            background: #fff;
+            background: rgba(255, 255, 255, .78);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, .5);
             border-radius: var(--radius);
             padding: 14px 16px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .35);
             position: relative;
-            border: 1.5px solid transparent;
             transition: all var(--transition-fast);
         }
 
         .task-card:hover {
-            border-color: var(--slate-200);
-            box-shadow: var(--shadow-md);
+            border-color: rgba(124, 58, 237, .2);
+            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, .5);
             transform: translateY(-1px);
         }
 
@@ -664,22 +696,22 @@
         }
 
         .badge-todo {
-            background: var(--slate-100);
+            background: rgba(0, 0, 0, .06);
             color: var(--slate-500);
         }
 
         .badge-progress {
-            background: var(--yellow-100);
+            background: rgba(234, 179, 8, .15);
             color: var(--yellow-700);
         }
 
         .badge-done {
-            background: var(--green-100);
+            background: rgba(34, 197, 94, .15);
             color: var(--green-700);
         }
 
         .assignee {
-            background: var(--violet-50);
+            background: rgba(139, 92, 246, .1);
             color: var(--violet-600);
             padding: 2px 8px;
             border-radius: 20px;
@@ -702,20 +734,23 @@
         .add-task-btn:hover {
             border-color: var(--violet-600);
             color: var(--violet-600);
-            background: var(--violet-50);
+            background: rgba(124, 58, 237, .04);
         }
 
         /* Gantt */
         .gantt-container {
-            background: #fff;
+            background: rgba(255, 255, 255, .72);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, .6);
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .4);
             overflow: hidden;
         }
 
         .gantt-header {
             display: flex;
-            border-bottom: 1px solid var(--slate-100);
+            border-bottom: 1px solid rgba(0, 0, 0, .04);
             padding: 0 16px;
         }
 
@@ -744,7 +779,7 @@
             font-size: 11px;
             color: var(--slate-400);
             font-weight: 500;
-            border-left: 1px solid var(--slate-50);
+            border-left: 1px solid rgba(0, 0, 0, .03);
         }
 
         .gantt-day-cell.today {
@@ -762,12 +797,12 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            border-bottom: 1px solid var(--slate-50);
+            border-bottom: 1px solid rgba(0, 0, 0, .03);
             transition: background var(--transition-fast);
         }
 
         .gantt-row:hover {
-            background: var(--slate-50);
+            background: rgba(0, 0, 0, .02);
         }
 
         .gantt-row:last-child {
@@ -813,7 +848,7 @@
             filter: brightness(1.1);
         }
 
-        .gantt-bar.status-todo {
+        .gantt-bar.status-to_do {
             background: linear-gradient(135deg, #94A3B8, #64748B);
         }
 
@@ -845,9 +880,9 @@
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, .4);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background: rgba(0, 0, 0, .35);
+            backdrop-filter: blur(8px) saturate(120%);
+            -webkit-backdrop-filter: blur(8px) saturate(120%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -857,11 +892,14 @@
         }
 
         .modal {
-            background: #fff;
+            background: rgba(255, 255, 255, .88);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, .6);
             border-radius: var(--radius-xl);
             width: 100%;
             max-width: 480px;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, .5);
             animation: slideUp 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
@@ -870,7 +908,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 24px 16px;
-            border-bottom: 1px solid var(--slate-100);
+            border-bottom: 1px solid rgba(0, 0, 0, .05);
         }
 
         .modal-title {
@@ -888,7 +926,7 @@
             justify-content: flex-end;
             gap: 8px;
             padding: 16px 24px 20px;
-            border-top: 1px solid var(--slate-100);
+            border-top: 1px solid rgba(0, 0, 0, .05);
         }
 
         .empty {
@@ -916,27 +954,13 @@
             margin-bottom: 6px;
         }
 
-        .preview-bar {
-            background: #FEF9C3;
-            color: #A16207;
-            text-align: center;
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            border-bottom: 1px solid #FDE047;
-        }
-
-        .preview-bar a {
-            color: #7C3AED;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-
         .toast {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: var(--slate-900);
+            background: rgba(15, 23, 42, .88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             color: #fff;
             padding: 12px 18px;
             border-radius: var(--radius);
@@ -956,6 +980,109 @@
         }
 
         .field-row .field {
+            flex: 1;
+        }
+
+        /* Members */
+        .members-section {
+            margin-top: 28px;
+        }
+
+        .members-section h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--slate-800);
+        }
+
+        .members-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .member-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, .72);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, .5);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all var(--transition-fast);
+        }
+
+        .member-row:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .member-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .member-email {
+            color: var(--slate-400);
+            font-size: 12px;
+        }
+
+        .member-role {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(124, 58, 237, .1);
+            color: var(--violet-600);
+        }
+
+        .member-role.owner {
+            background: rgba(34, 197, 94, .1);
+            color: var(--green-700);
+        }
+
+        .member-remove {
+            padding: 4px 8px;
+            border: none;
+            background: transparent;
+            color: var(--slate-400);
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all var(--transition-fast);
+        }
+
+        .member-remove:hover {
+            background: var(--red-100);
+            color: var(--red-600);
+        }
+
+        .add-member-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .add-member-row input {
             flex: 1;
         }
     </style>
@@ -1066,7 +1193,7 @@
                     <div id="workspace-list" class="grid-cards"></div>
                 </div>
 
-                <!-- WORKSPACE DETAIL (boards) -->
+                <!-- WORKSPACE DETAIL (boards + members) -->
                 <div id="view-workspace-detail" class="content hidden">
                     <div class="topbar">
                         <div>
@@ -1076,6 +1203,15 @@
                         <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')">+ Add board</button>
                     </div>
                     <div id="board-list" class="grid-cards"></div>
+                    <div class="members-section">
+                        <h3>Members</h3>
+                        <div id="members-list" class="members-list"></div>
+                        <div class="add-member-row">
+                            <input type="text" id="new-member-name" placeholder="Name" style="padding:8px 12px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);font:inherit;outline:none;background:rgba(255,255,255,.7);backdrop-filter:blur(12px)">
+                            <input type="email" id="new-member-email" placeholder="Email" style="padding:8px 12px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);font:inherit;outline:none;background:rgba(255,255,255,.7);backdrop-filter:blur(12px)">
+                            <button class="btn btn-ghost btn-sm" onclick="addMember()">+ Add</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- BOARD (kanban + gantt) -->
@@ -1105,7 +1241,7 @@
                         <h3>Workspaces</h3>
                         <ul>
                             <li>Create a workspace with a title</li>
-                            <li>Open it to manage boards</li>
+                            <li>Open it to manage boards and members</li>
                         </ul>
                         <h3>Boards</h3>
                         <ul>
@@ -1170,8 +1306,7 @@
                     <div class="field"><label>Start date</label><input type="date" id="task-start-input"></div>
                     <div class="field"><label>Due date</label><input type="date" id="task-due-input"></div>
                 </div>
-                <div class="field"><label>Assigned to</label><input type="text" id="task-assignee-input"
-                        placeholder="Person name"></div>
+                <div class="field"><label>Assigned to</label><select id="task-assignee-input"></select></div>
                 <div class="field"><label>Status</label>
                     <select id="task-status-input">
                         <option value="to_do">Todo</option>
@@ -1204,7 +1339,6 @@
     </div>
 
     <script>
-        // ── Config ──
         const USE_MOCK = true;
         const API_BASE = '';
         const MOCK_KEY = 'tt_preview_db';
@@ -1215,6 +1349,8 @@
             { id: 'in_progress', label: 'In Progress', badge: 'badge-progress', dot: '#F59E0B' },
             { id: 'done', label: 'Done', badge: 'badge-done', dot: '#10B981' },
         ];
+
+        const MEMBER_COLORS = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
 
         let state = {
             user: null,
@@ -1228,13 +1364,14 @@
             editingTaskId: null,
             defaultStatus: 'to_do',
             boardViewMode: 'kanban',
+            members: {},
         };
 
-        // ── Mock DB ──
         function uid() { return 'id_' + Math.random().toString(36).slice(2, 10); }
 
         function defaultDb() {
             const wsId = uid();
+            const wsId2 = uid();
             const boardId = uid();
             const now = new Date().toISOString();
             const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
@@ -1242,7 +1379,13 @@
                 users: [{ id: 'u1', name: 'Demo User', email: 'demo@example.com', password: 'demo123', created_at: '2025-01-10T09:00:00Z' }],
                 workspaces: [
                     { id: wsId, user_id: 'u1', title: 'My Workspace', created_at: now },
-                    { id: uid(), user_id: 'u1', title: 'Side Projects', created_at: now },
+                    { id: wsId2, user_id: 'u1', title: 'Side Projects', created_at: now },
+                ],
+                workspace_members: [
+                    { id: uid(), workspace_id: wsId, user_id: 'u1', name: 'Demo User', email: 'demo@example.com', role: 'owner' },
+                    { id: uid(), workspace_id: wsId, user_id: null, name: 'Alex', email: 'alex@example.com', role: 'member' },
+                    { id: uid(), workspace_id: wsId, user_id: null, name: 'Sam', email: 'sam@example.com', role: 'member' },
+                    { id: uid(), workspace_id: wsId, user_id: null, name: 'Jordan', email: 'jordan@example.com', role: 'member' },
                 ],
                 boards: [
                     { id: boardId, workspace_id: wsId, title: 'Product backlog', created_at: now },
@@ -1264,7 +1407,6 @@
         function saveDb(db) { localStorage.setItem(MOCK_KEY, JSON.stringify(db)); }
         function resetMockData() { localStorage.removeItem(MOCK_KEY); localStorage.removeItem(SESSION_KEY); location.reload(); }
 
-        // ── API layer ──
         async function api(method, path, body) {
             if (USE_MOCK) return mockApi(method, path, body);
             const opts = { method, headers: { 'Content-Type': 'application/json' } };
@@ -1302,20 +1444,34 @@
             }
             if (method === 'POST' && path === '/workspaces') {
                 const ws = { id: uid(), user_id: userId, title: body.title, created_at: new Date().toISOString() };
-                db.workspaces.push(ws); saveDb(db); return ws;
+                db.workspaces.push(ws);
+                const u = db.users.find(x => x.id === userId);
+                db.workspace_members.push({ id: uid(), workspace_id: ws.id, user_id: userId, name: u?.name || 'You', email: u?.email || '', role: 'owner' });
+                saveDb(db); return ws;
             }
             if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/boards$/)) {
-                const wsId = path.split('/')[2];
-                return db.boards.filter(b => b.workspace_id === wsId);
+                return db.boards.filter(b => b.workspace_id === path.split('/')[2]);
             }
             if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/boards$/)) {
                 const wsId = path.split('/')[2];
                 const b = { id: uid(), workspace_id: wsId, title: body.title, created_at: new Date().toISOString() };
                 db.boards.push(b); saveDb(db); return b;
             }
+            if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/members$/)) {
+                return db.workspace_members.filter(m => m.workspace_id === path.split('/')[2]);
+            }
+            if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/members$/)) {
+                const wsId = path.split('/')[2];
+                const m = { id: uid(), workspace_id: wsId, user_id: null, name: body.name, email: body.email || '', role: 'member' };
+                db.workspace_members.push(m); saveDb(db); return m;
+            }
+            if (method === 'DELETE' && path.match(/^\/workspaces\/[^/]+\/members\/[^/]+$/)) {
+                const parts = path.split('/');
+                db.workspace_members = db.workspace_members.filter(m => !(m.workspace_id === parts[2] && m.id === parts[4]));
+                saveDb(db); return { ok: true };
+            }
             if (method === 'GET' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
-                const boardId = path.split('/')[2];
-                return db.tasks.filter(t => t.board_id === boardId);
+                return db.tasks.filter(t => t.board_id === path.split('/')[2]);
             }
             if (method === 'POST' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
                 const boardId = path.split('/')[2];
@@ -1342,9 +1498,9 @@
             throw { status: 404, data: { message: 'Not found: ' + method + ' ' + path } };
         }
 
-        // ── Helpers ──
         function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
         function fmtDate(iso) { if (!iso) return '—'; return new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); }
+        function todayISO() { return new Date().toISOString().slice(0, 10); }
         function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
         function showToast(msg) {
             const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
@@ -1355,6 +1511,12 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(e, id) { if (e && e.target.id !== id) return; document.getElementById(id).classList.add('hidden'); }
         function toISODate(d) { return d ? new Date(d).toISOString().slice(0, 10) : ''; }
+
+        function hideAllViews() {
+            ['view-account', 'view-workspaces', 'view-workspace-detail', 'view-board', 'view-help'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
 
         // ── Auth ──
         async function handleLogin() {
@@ -1395,7 +1557,6 @@
             document.getElementById('sidebar-email').textContent = user.email;
             renderAccount();
             loadWorkspaces();
-            // Restore route from URL hash or default to account
             const hash = location.hash.replace('#/', '');
             if (hash && isValidRoute(hash)) {
                 restoreRoute(hash);
@@ -1406,7 +1567,7 @@
 
         function handleLogout() {
             localStorage.removeItem(SESSION_KEY);
-            state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, activeWorkspaceId: null, activeBoardId: null };
+            state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, activeWorkspaceId: null, activeBoardId: null, members: {} };
             document.getElementById('app-page').classList.add('hidden');
             document.getElementById('auth-page').classList.remove('hidden');
             showLogin();
@@ -1456,7 +1617,6 @@
                 }
             } else if (view === 'board' && parts[1]) {
                 const boardId = parts[1];
-                // Need to find which workspace this board belongs to
                 const db = getDb();
                 const board = db.boards.find(b => b.id === boardId);
                 if (board) {
@@ -1487,14 +1647,8 @@
             if (!skipPush) setHash(view);
 
             document.querySelectorAll('.sidebar-item[data-nav]').forEach(el => el.classList.toggle('active', el.dataset.nav === view));
-            ['account', 'workspaces', 'workspace-detail', 'board', 'help'].forEach(v => {
-                const el = document.getElementById('view-' + v.replace('_', '-'));
-                if (el) {
-                    if (!el.classList.contains('hidden')) {
-                        el.classList.add('hidden');
-                    }
-                }
-            });
+
+            hideAllViews();
 
             const views = { account: 'view-account', workspaces: 'view-workspaces', help: 'view-help' };
             if (views[view]) {
@@ -1525,9 +1679,8 @@
                 return;
             }
             section.classList.remove('hidden');
-            const wsColors = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899'];
             el.innerHTML = state.workspaces.map((ws, i) => {
-                const color = wsColors[i % wsColors.length];
+                const color = MEMBER_COLORS[i % MEMBER_COLORS.length];
                 const isActive = state.activeWorkspaceId === ws.id && (state.view === 'workspace-detail' || state.view === 'board');
                 return `<div class="sidebar-item${isActive ? ' active' : ''}" onclick="navigateToWorkspace('${ws.id}')">
                     <span class="ws-dot" style="background:${color}"></span>
@@ -1537,6 +1690,7 @@
         }
 
         async function navigateToWorkspace(wsId) {
+            hideAllViews();
             await openWorkspace(wsId);
         }
 
@@ -1578,7 +1732,7 @@
             state.activeWorkspaceId = wsId;
             const ws = state.workspaces.find(w => w.id === wsId);
             document.getElementById('ws-detail-title').textContent = ws?.title || 'Workspace';
-            document.getElementById('view-workspaces').classList.add('hidden');
+            hideAllViews();
             const detailEl = document.getElementById('view-workspace-detail');
             detailEl.classList.remove('hidden');
             detailEl.style.animation = 'none';
@@ -1587,7 +1741,9 @@
             state.view = 'workspace-detail';
             if (!skipPush) setHash('workspace/' + wsId);
             await loadBoards(wsId);
+            await loadMembers(wsId);
             renderBoardList();
+            renderMembers();
             renderSidebarWorkspaces();
         }
 
@@ -1632,6 +1788,68 @@
             renderBoardList();
         }
 
+        // ── Members ──
+        async function loadMembers(wsId) {
+            try {
+                const list = await api('GET', '/workspaces/' + wsId + '/members');
+                state.members[wsId] = list;
+            } catch { state.members[wsId] = []; }
+        }
+
+        function renderMembers() {
+            const el = document.getElementById('members-list');
+            const members = state.members[state.activeWorkspaceId] || [];
+            el.innerHTML = members.map((m, i) => {
+                const color = MEMBER_COLORS[i % MEMBER_COLORS.length];
+                const initial = (m.name || '?')[0].toUpperCase();
+                const isOwner = m.role === 'owner';
+                return `<div class="member-row">
+                    <div class="member-avatar" style="background:${color}">${initial}</div>
+                    <div class="member-info">
+                        <div class="member-name">${esc(m.name)}</div>
+                        <div class="member-email">${esc(m.email)}</div>
+                    </div>
+                    <span class="member-role${isOwner ? ' owner' : ''}">${isOwner ? 'Owner' : 'Member'}</span>
+                    ${!isOwner ? `<button class="member-remove" onclick="removeMember('${m.id}')" title="Remove">&#10005;</button>` : ''}
+                </div>`;
+            }).join('');
+            if (members.length === 0) {
+                el.innerHTML = '<div class="empty" style="padding:16px">No members yet</div>';
+            }
+        }
+
+        async function addMember() {
+            const name = document.getElementById('new-member-name').value.trim();
+            const email = document.getElementById('new-member-email').value.trim();
+            if (!name) { showToast('Name is required'); return; }
+            try {
+                await api('POST', '/workspaces/' + state.activeWorkspaceId + '/members', { name, email });
+                document.getElementById('new-member-name').value = '';
+                document.getElementById('new-member-email').value = '';
+                await loadMembers(state.activeWorkspaceId);
+                renderMembers();
+                showToast('Member added');
+            } catch { showToast('Failed to add member'); }
+        }
+
+        async function removeMember(memberId) {
+            try {
+                await api('DELETE', '/workspaces/' + state.activeWorkspaceId + '/members/' + memberId);
+                await loadMembers(state.activeWorkspaceId);
+                renderMembers();
+                showToast('Member removed');
+            } catch { showToast('Failed to remove member'); }
+        }
+
+        function populateAssigneeDropdown() {
+            const select = document.getElementById('task-assignee-input');
+            const members = state.members[state.activeWorkspaceId] || [];
+            select.innerHTML = members.map(m => `<option value="${esc(m.name)}">${esc(m.name)}</option>`).join('');
+            if (select.options.length === 0) {
+                select.innerHTML = '<option value="Unassigned">Unassigned</option>';
+            }
+        }
+
         // ── Board / tasks ──
         async function loadTasks(boardId) {
             try {
@@ -1652,14 +1870,13 @@
             const ws = state.workspaces.find(w => w.id === state.activeWorkspaceId);
             document.getElementById('board-title').textContent = board?.title || 'Board';
             document.getElementById('board-ws-name').textContent = ws ? '\u00B7 ' + ws.title : '';
-            document.getElementById('view-workspace-detail').classList.add('hidden');
+            hideAllViews();
             const boardEl = document.getElementById('view-board');
             boardEl.classList.remove('hidden');
             boardEl.style.animation = 'none';
             boardEl.offsetHeight;
             boardEl.style.animation = '';
             if (!skipPush) setHash('board/' + boardId);
-            // Reset view toggle
             document.querySelectorAll('.btn-group .btn-toggle').forEach(b => {
                 b.classList.toggle('active', b.dataset.view === 'kanban');
             });
@@ -1717,7 +1934,6 @@
   </div>`;
         }
 
-        // ── Gantt ──
         function renderGantt(boardId) {
             const tasks = state.tasks[boardId] || [];
             const ganttEl = document.getElementById('gantt-area');
@@ -1727,7 +1943,6 @@
                 return;
             }
 
-            // Determine date range
             let minDate = Infinity, maxDate = -Infinity;
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -1739,28 +1954,19 @@
                 if (end > maxDate) maxDate = end;
             });
 
-            // Extend range a bit
             const rangeStart = new Date(minDate - 2 * 86400000);
             const rangeEnd = new Date(maxDate + 3 * 86400000);
             const totalDays = Math.ceil((rangeEnd - rangeStart) / 86400000);
-            const dayWidth = Math.max(40, Math.min(60, 800 / totalDays));
 
-            // Build day columns
             let days = [];
             for (let i = 0; i < totalDays; i++) {
                 const d = new Date(rangeStart.getTime() + i * 86400000);
                 const isToday = d.toDateString() === today.toDateString();
-                days.push({
-                    date: d,
-                    label: d.getDate() + '/' + (d.getMonth() + 1),
-                    isToday
-                });
+                days.push({ date: d, label: d.getDate() + '/' + (d.getMonth() + 1), isToday });
             }
 
-            // Now line position
             const nowPos = Math.max(0, Math.min(1, (today.getTime() - rangeStart.getTime()) / (rangeEnd.getTime() - rangeStart.getTime())));
 
-            // Build rows
             const rows = tasks.map(t => {
                 const start = t.start_date ? new Date(t.start_date) : new Date(t.created_at);
                 const end = t.due_date ? new Date(t.due_date) : new Date(t.updated_at || t.created_at);
@@ -1800,10 +2006,10 @@
             document.getElementById('task-modal-title').textContent = 'New task';
             document.getElementById('task-title-input').value = '';
             document.getElementById('task-desc-input').value = '';
-            document.getElementById('task-assignee-input').value = '';
             document.getElementById('task-status-input').value = status;
-            document.getElementById('task-start-input').value = '';
+            document.getElementById('task-start-input').value = todayISO();
             document.getElementById('task-due-input').value = '';
+            populateAssigneeDropdown();
             openModal('task-modal');
         }
 
@@ -1816,17 +2022,21 @@
             document.getElementById('task-modal-title').textContent = 'Edit task';
             document.getElementById('task-title-input').value = task.name;
             document.getElementById('task-desc-input').value = task.desc || '';
-            document.getElementById('task-assignee-input').value = task.assignee || '';
             document.getElementById('task-status-input').value = task.status;
             document.getElementById('task-start-input').value = task.start_date ? toISODate(task.start_date) : '';
             document.getElementById('task-due-input').value = task.due_date ? toISODate(task.due_date) : '';
+            populateAssigneeDropdown();
+            const assigneeSelect = document.getElementById('task-assignee-input');
+            for (let opt of assigneeSelect.options) {
+                if (opt.value === task.assignee) { opt.selected = true; break; }
+            }
             openModal('task-modal');
         }
 
         async function saveTask() {
             const title = document.getElementById('task-title-input').value.trim();
             const description = document.getElementById('task-desc-input').value.trim();
-            const assignee = document.getElementById('task-assignee-input').value.trim() || 'Unassigned';
+            const assignee = document.getElementById('task-assignee-input').value || 'Unassigned';
             const status = document.getElementById('task-status-input').value;
             const startDate = document.getElementById('task-start-input').value || null;
             const dueDate = document.getElementById('task-due-input').value || null;
@@ -1834,20 +2044,20 @@
             const boardId = state.activeBoardId;
             try {
                 if (state.editingTaskId) {
-                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, { status, start_date: startDate, due_date: dueDate });
+                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, { status, assignee, start_date: startDate, due_date: dueDate });
                     const idx = state.tasks[boardId].findIndex(t => t.id === state.editingTaskId);
                     if (idx >= 0) state.tasks[boardId][idx] = {
-                        id: updated.id || updated.task_id, board_id: boardId, name: updated.title, desc: updated.description,
-                        status: updated.status, assignee: updated.assignee || updated.assigned_id || 'Unassigned',
+                        id: updated.id || updated.task_id, board_id: boardId, name: updated.title || title, desc: updated.description || description,
+                        status: updated.status, assignee: updated.assignee || 'Unassigned',
                         created_at: updated.created_at, updated_at: updated.updated_at,
                         start_date: updated.start_date, due_date: updated.due_date,
                     };
                     showToast('Task updated');
                 } else {
-                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, status, start_date: startDate, due_date: dueDate });
+                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, status, assignee, start_date: startDate, due_date: dueDate });
                     state.tasks[boardId].push({
                         id: created.id || created.task_id, board_id: boardId, name: created.title, desc: created.description,
-                        status: created.status, assignee: created.assignee || created.assigned_id || 'Unassigned',
+                        status: created.status, assignee: created.assignee || 'Unassigned',
                         created_at: created.created_at, updated_at: created.updated_at,
                         start_date: created.start_date, due_date: created.due_date,
                     });
@@ -1870,7 +2080,6 @@
             } catch { showToast('Failed to delete'); }
         }
 
-        // ── Bootstrap ──
         (function init() {
             const session = localStorage.getItem(SESSION_KEY);
             if (session) {
