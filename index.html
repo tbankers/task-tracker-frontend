@@ -16,72 +16,70 @@
         }
 
         :root {
-            --indigo-950: #1E1B4B;
-            --violet-600: #7C3AED;
-            --violet-500: #8B5CF6;
-            --violet-50: #F5F3FF;
-            --blue-500: #3B82F6;
-            --slate-50: #F8FAFC;
-            --slate-100: #F1F5F9;
-            --slate-200: #E2E8F0;
-            --slate-300: #CBD5E1;
-            --slate-400: #94A3B8;
-            --slate-500: #64748B;
-            --slate-600: #475569;
-            --slate-700: #334155;
-            --slate-800: #1E293B;
-            --slate-900: #0F172A;
-            --green-100: #DCFCE7;
-            --green-500: #22C55E;
-            --green-700: #15803D;
-            --yellow-100: #FEF9C3;
-            --yellow-500: #EAB308;
-            --yellow-700: #A16207;
-            --red-100: #FEE2E2;
-            --red-600: #DC2626;
-            --white: #fff;
-            --radius: 12px;
-            --radius-sm: 8px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 1px 2px rgba(0, 0, 0, .04);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
-            --shadow-lg: 0 12px 40px rgba(0, 0, 0, .12);
-            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-            --transition-fast: 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --indigo-950: rgba(30, 27, 75, 0.85);
+            --violet-600: #7c3aed;
+            --violet-50: rgba(245, 243, 255, 0.2);
+            --slate-50: rgba(248, 250, 252, 0.15);
+            --slate-100: rgba(241, 245, 249, 0.2);
+            --slate-200: rgba(255, 255, 255, 0.25);
+            --slate-400: rgba(255, 255, 255, 0.6);
+            --slate-500: rgba(255, 255, 255, 0.7);
+            --slate-600: rgba(255, 255, 255, 0.8);
+            --slate-700: #f1f5f9;
+            --slate-800: #ffffff;
+            --slate-900: #ffffff;
+
+            --green-100: rgba(220, 252, 231, 0.3);
+            --green-700: #4ade80;
+            --yellow-100: rgba(254, 249, 195, 0.3);
+            --yellow-700: #facc15;
+            --red-100: rgba(254, 226, 226, 0.3);
+            --red-600: #f87171;
+            --white: rgba(255, 255, 255, 0.15);
+
+            --radius: 20px;
+            --radius-sm: 12px;
+            --radius-lg: 30px;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            --shadow-md: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+            --glass-blur: blur(12px);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         body {
-            font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #F2F2F7;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(30deg, rgb(103, 129, 165), rgb(50, 83, 144), rgb(32, 66, 120), rgb(55, 94, 223));
+            background-attachment: fixed;
             color: var(--slate-800);
             font-size: 14px;
             min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Auth */
         .auth-wrap {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #1E1B4B, #312E81, #4C1D95);
             padding: 24px;
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, .88);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, .6);
-            border-radius: var(--radius-xl);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-lg);
             padding: 40px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .5);
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
             animation: fadeSlideUp 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .auth-card:hover {
+            transform: scale(1.01);
         }
 
         @keyframes fadeSlideUp {
@@ -108,15 +106,16 @@
             font-size: 26px;
             font-weight: 700;
             margin-bottom: 6px;
+            color: #fff;
         }
 
         .auth-sub {
-            color: var(--slate-500);
+            color: var(--slate-400);
             margin-bottom: 24px;
         }
 
         .field {
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .field label {
@@ -124,30 +123,34 @@
             font-size: 13px;
             font-weight: 500;
             margin-bottom: 6px;
-            color: var(--slate-700);
+            color: #fff;
         }
 
         .field input,
         .field textarea,
         .field select {
             width: 100%;
-            padding: 10px 14px;
-            border: 1.5px solid var(--slate-200);
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: var(--radius-sm);
+            color: #fff;
             font: inherit;
             outline: none;
-            transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
-            background: rgba(255, 255, 255, .7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.2s ease;
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .field input:focus,
         .field textarea:focus,
         .field select:focus {
-            border-color: var(--violet-600);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, .12);
-            background: rgba(255, 255, 255, .95);
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
         }
 
         .field textarea {
@@ -155,117 +158,116 @@
             resize: vertical;
         }
 
+        .field select option {
+            background: rgb(50, 83, 144);
+            color: #fff;
+        }
+
         .error-msg {
-            background: var(--red-100);
-            color: var(--red-600);
+            background: rgba(220, 38, 38, 0.4);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 10px 14px;
             border-radius: var(--radius-sm);
             font-size: 13px;
             margin-bottom: 14px;
             display: none;
-            animation: fadeSlideUp 0.2s ease;
         }
 
         .auth-switch {
             text-align: center;
-            margin-top: 16px;
-            color: var(--slate-500);
+            margin-top: 18px;
+            color: var(--slate-400);
             font-size: 13px;
         }
 
         .auth-switch a {
-            color: var(--violet-600);
+            color: #fff;
+            text-decoration: underline;
             font-weight: 600;
             cursor: pointer;
-            transition: color var(--transition-fast);
         }
 
-        .auth-switch a:hover {
-            color: var(--violet-500);
-        }
-
-        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 10px 18px;
+            padding: 12px 18px;
             border-radius: var(--radius-sm);
             font: inherit;
-            font-weight: 500;
+            font-weight: bold;
             cursor: pointer;
             border: none;
-            transition: all var(--transition-fast);
+            transition: all 0.2s ease;
         }
 
         .btn:active {
-            transform: scale(0.97);
+            transform: scale(0.95);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #7C3AED, #4338CA);
+            background-color: rgba(255, 255, 255, 0.15);
             color: #fff;
+            border: 2px solid #fff;
             width: 100%;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(124, 58, 237, .25);
         }
 
         .btn-primary:hover {
-            filter: brightness(1.08);
-            box-shadow: 0 4px 16px rgba(124, 58, 237, .35);
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.97) translateY(0);
+            background-color: rgba(255, 255, 255, 0.35);
+            transform: scale(1.05);
         }
 
         .btn-ghost {
-            background: rgba(255, 255, 255, .7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, .5);
-            color: var(--slate-600);
-        }
-
-        .btn-ghost:hover {
-            background: rgba(255, 255, 255, .9);
-            border-color: var(--slate-300);
-        }
-
-        .btn-icon {
-            padding: 6px;
-            background: transparent;
-            color: var(--slate-500);
-            border-radius: var(--radius-sm);
-        }
-
-        .btn-icon:hover {
-            background: var(--slate-100);
-            color: var(--slate-700);
-        }
-
-        .btn-danger {
-            background: var(--red-100);
-            color: var(--red-600);
-        }
-
-        .btn-danger:hover {
-            background: var(--red-600);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
         }
 
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-icon {
+            padding: 8px;
+            background: transparent;
+            color: #fff;
+            border-radius: 50%;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(220, 38, 38, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: rgba(220, 38, 38, 0.6);
+        }
+
+        .btn-danger-soft {
+            color: #fff;
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-danger-soft:hover {
+            background: rgba(220, 38, 38, 0.5);
+        }
+
         .btn-sm {
-            padding: 7px 14px;
+            padding: 7px 12px;
             font-size: 13px;
+            border-radius: 8px;
         }
 
         .btn-group {
             display: inline-flex;
-            background: rgba(0, 0, 0, .06);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.15);
             border-radius: var(--radius-sm);
             padding: 3px;
             gap: 2px;
@@ -273,30 +275,27 @@
 
         .btn-group .btn-toggle {
             padding: 6px 14px;
-            border-radius: 6px;
+            border-radius: 8px;
             font: inherit;
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             border: none;
             background: transparent;
-            color: var(--slate-500);
-            transition: all var(--transition-fast);
+            color: rgba(255, 255, 255, 0.6);
+            transition: all 0.2s ease;
         }
 
         .btn-group .btn-toggle.active {
-            background: rgba(255, 255, 255, .85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            color: var(--slate-800);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border: var(--glass-border);
         }
 
         .btn-group .btn-toggle:hover:not(.active) {
-            color: var(--slate-700);
+            color: rgba(255, 255, 255, 0.9);
         }
 
-        /* App layout */
         .app {
             display: flex;
             height: 100vh;
@@ -304,39 +303,39 @@
         }
 
         .sidebar {
-            width: 260px;
-            background: rgba(30, 27, 75, .82);
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            width: 250px;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-right: var(--glass-border);
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
-            border-right: 1px solid rgba(255, 255, 255, .08);
         }
 
         .sidebar-logo {
-            padding: 20px 20px 16px;
+            padding: 24px 20px;
             color: #fff;
             font-weight: 700;
-            font-size: 17px;
-            letter-spacing: -0.3px;
+            font-size: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar-logo span {
-            color: #8B5CF6;
+            color: #a78bfa;
         }
 
         .sidebar-section {
-            padding: 4px 12px 8px;
+            padding: 16px 12px 8px;
         }
 
         .sidebar-label {
-            font-size: 10px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: .8px;
-            color: rgba(255, 255, 255, .3);
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.4);
             padding: 0 8px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
@@ -344,36 +343,82 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 8px 10px;
+            padding: 10px 12px;
             border-radius: var(--radius-sm);
-            color: rgba(255, 255, 255, .6);
+            color: rgba(255, 255, 255, 0.7);
             cursor: pointer;
             font-weight: 500;
             user-select: none;
-            transition: all var(--transition-fast);
+            transition: all 0.2s ease;
         }
 
         .sidebar-item:hover {
-            background: rgba(255, 255, 255, .1);
+            background: rgba(255, 255, 255, 0.15);
             color: #fff;
+            transform: translateX(4px);
         }
 
         .sidebar-item.active {
-            background: rgba(139, 92, 246, .3);
+            background: rgba(255, 255, 255, 0.25);
+            border: var(--glass-border);
             color: #fff;
         }
 
-        .sidebar-item .ws-dot {
-            width: 6px;
-            height: 6px;
+        .sidebar-ws-list {
+            padding: 0 12px 4px;
+        }
+
+        .sidebar-ws-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-ws-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .sidebar-ws-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-ws-dot {
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
+            background: #a78bfa;
             flex-shrink: 0;
         }
 
-        .sidebar-scrollable {
-            flex: 1;
+        .sidebar-ws-add {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: 500;
+        }
+
+        .sidebar-ws-add:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar-section-scroll {
             overflow-y: auto;
-            padding-bottom: 8px;
+            flex: 1;
         }
 
         .sidebar-scrollable::-webkit-scrollbar {
@@ -385,13 +430,18 @@
         }
 
         .sidebar-scrollable::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, .15);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 4px;
         }
 
         .sidebar-bottom {
-            padding: 12px;
-            border-top: 1px solid rgba(255, 255, 255, .08);
+            margin-top: auto;
+            padding: 16px 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
         .user-chip {
@@ -400,31 +450,56 @@
             gap: 10px;
             padding: 8px;
             border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.05);
+            min-width: 0;
+        }
+
+        .user-chip>div:not(.avatar) {
+            min-width: 0;
+            flex: 1;
         }
 
         .avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #8B5CF6, #4338CA);
+            background: linear-gradient(135deg, #a78bfa, #6366f1);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            flex-shrink: 0;
         }
 
         .user-name {
-            color: rgba(255, 255, 255, .9);
+            color: #fff;
             font-size: 13px;
             font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-email {
-            color: rgba(255, 255, 255, .3);
+            color: rgba(255, 255, 255, 0.4);
             font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-logout {
+            width: 100%;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            background: rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .sidebar-logout:hover {
+            background: rgba(220, 38, 38, 0.3);
+            border-color: rgba(220, 38, 38, 0.5) !important;
         }
 
         .main {
@@ -432,18 +507,17 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background: #F2F2F7;
         }
 
         .topbar {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 16px 28px;
-            background: rgba(255, 255, 255, .72);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border-bottom: 1px solid rgba(0, 0, 0, .06);
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: var(--glass-border);
             flex-shrink: 0;
         }
 
@@ -451,13 +525,12 @@
             flex: 1;
             font-size: 18px;
             font-weight: 700;
-            color: var(--slate-900);
-            letter-spacing: -0.3px;
+            color: #fff;
         }
 
         .topbar-sub {
-            font-size: 12px;
-            color: var(--slate-400);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
             font-weight: 400;
             margin-left: 8px;
         }
@@ -465,32 +538,38 @@
         .content {
             flex: 1;
             overflow: auto;
-            padding: 28px;
-            animation: fadeIn 0.25s ease;
+            padding: 24px;
         }
 
-        /* Liquid glass panels */
+        .panel-card,
+        .card-clickable,
+        .column-header,
+        .task-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
         .panel-card {
-            background: rgba(255, 255, 255, .72);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, .6);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius);
             padding: 24px;
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .4);
             max-width: 560px;
         }
 
         .panel-card h2 {
-            font-size: 18px;
+            font-size: 19px;
             margin-bottom: 16px;
+            color: #fff;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, .04);
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .info-row:last-child {
@@ -498,91 +577,67 @@
         }
 
         .info-label {
-            color: var(--slate-500);
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .info-value {
-            font-weight: 500;
+            font-weight: 600;
+            color: #fff;
         }
 
         .grid-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
         }
 
         .card-clickable {
-            background: rgba(255, 255, 255, .72);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, .6);
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .4);
+            border-radius: var(--radius);
+            padding: 22px;
             cursor: pointer;
-            transition: all var(--transition);
         }
 
         .card-clickable:hover {
-            border-color: rgba(124, 58, 237, .3);
-            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, .5);
-            transform: translateY(-2px);
-        }
-
-        .card-clickable:active {
-            transform: translateY(0);
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #fff;
+            transform: scale(1.03);
+            box-shadow: var(--shadow-md);
         }
 
         .card-clickable h3 {
-            font-size: 15px;
+            font-size: 16px;
             margin-bottom: 6px;
-            letter-spacing: -0.2px;
+            color: #fff;
         }
 
         .card-clickable p {
-            color: var(--slate-500);
-            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13.5px;
         }
 
         .card-add {
-            border: 1.5px dashed var(--slate-300);
+            border: 2px dashed rgba(255, 255, 255, 0.4) !important;
             background: transparent;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--slate-400);
+            color: rgba(255, 255, 255, 0.6);
             min-height: 100px;
-            transition: all var(--transition);
+            border-radius: var(--radius);
         }
 
         .card-add:hover {
-            border-color: var(--violet-600);
-            color: var(--violet-600);
-            background: rgba(124, 58, 237, .04);
+            border-color: #fff !important;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Board */
         .board-area {
             display: flex;
-            gap: 16px;
+            gap: 20px;
             align-items: flex-start;
             overflow-x: auto;
-            padding-bottom: 8px;
-        }
-
-        .board-area::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .board-area::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .board-area::-webkit-scrollbar-thumb {
-            background: var(--slate-300);
-            border-radius: 4px;
+            padding-bottom: 12px;
         }
 
         .column {
@@ -590,76 +645,68 @@
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .column-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 14px;
-            background: rgba(255, 255, 255, .72);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, .6);
+            gap: 10px;
+            padding: 12px 16px;
             border-radius: var(--radius);
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .4);
         }
 
         .dot {
-            width: 9px;
-            height: 9px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
+            box-shadow: 0 0 8px currentColor;
         }
 
         .column-title {
             flex: 1;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 14px;
+            color: #fff;
         }
 
         .column-count {
-            background: rgba(0, 0, 0, .06);
-            color: var(--slate-500);
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
             font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
+            font-weight: 700;
+            padding: 3px 8px;
             border-radius: 20px;
         }
 
         .column-cards {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            min-height: 40px;
+            gap: 10px;
+            min-height: 50px;
         }
 
         .task-card {
-            background: rgba(255, 255, 255, .78);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, .5);
             border-radius: var(--radius);
-            padding: 14px 16px;
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .35);
+            padding: 16px;
             position: relative;
-            transition: all var(--transition-fast);
         }
 
         .task-card:hover {
-            border-color: rgba(124, 58, 237, .2);
-            box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, .5);
-            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .task-card-actions {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 10px;
+            right: 10px;
             display: flex;
-            gap: 2px;
+            gap: 4px;
             opacity: 0;
-            transition: opacity var(--transition-fast);
+            transition: opacity 0.2s ease;
         }
 
         .task-card:hover .task-card-actions {
@@ -668,14 +715,16 @@
 
         .task-name {
             font-weight: 600;
+            font-size: 14.5px;
+            color: #fff;
             margin-bottom: 6px;
             padding-right: 50px;
         }
 
         .task-desc {
-            color: var(--slate-500);
-            font-size: 12.5px;
-            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 13px;
+            margin-bottom: 12px;
             line-height: 1.5;
         }
 
@@ -684,36 +733,39 @@
             flex-wrap: wrap;
             gap: 8px;
             align-items: center;
-            font-size: 11px;
-            color: var(--slate-400);
+            font-size: 11.5px;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .badge {
             font-size: 11px;
-            font-weight: 600;
-            padding: 3px 8px;
+            font-weight: 700;
+            padding: 4px 9px;
             border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .badge-todo {
-            background: rgba(0, 0, 0, .06);
-            color: var(--slate-500);
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
         }
 
         .badge-progress {
-            background: rgba(234, 179, 8, .15);
-            color: var(--yellow-700);
+            background: var(--yellow-100);
+            color: #fff;
+            border-color: var(--yellow-700);
         }
 
         .badge-done {
-            background: rgba(34, 197, 94, .15);
-            color: var(--green-700);
+            background: var(--green-100);
+            color: #fff;
+            border-color: var(--green-700);
         }
 
         .assignee {
-            background: rgba(139, 92, 246, .1);
-            color: var(--violet-600);
-            padding: 2px 8px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            padding: 3px 9px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
@@ -721,36 +773,105 @@
 
         .add-task-btn {
             width: 100%;
-            padding: 9px;
-            border: 1.5px dashed var(--slate-300);
+            padding: 10px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
             border-radius: var(--radius);
             background: transparent;
-            color: var(--slate-400);
+            color: rgba(255, 255, 255, 0.7);
             cursor: pointer;
             font: inherit;
-            transition: all var(--transition-fast);
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
         .add-task-btn:hover {
-            border-color: var(--violet-600);
-            color: var(--violet-600);
-            background: rgba(124, 58, 237, .04);
+            border-color: #fff;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Gantt */
+        .members-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            margin-top: 12px;
+        }
+
+        .members-table th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 10px 14px;
+        }
+
+        .members-table td {
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 13.5px;
+            color: #fff;
+        }
+
+        .members-table td:first-child {
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+        }
+
+        .members-table td:last-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        .members-table tr:hover td {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .role-guest {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .role-member {
+            background: rgba(139, 92, 246, 0.3);
+            color: #c084fc;
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        .role-administrator {
+            background: var(--yellow-100);
+            color: var(--yellow-700);
+        }
+
+        .role-owner {
+            background: var(--green-100);
+            color: var(--green-700);
+        }
+
         .gantt-container {
-            background: rgba(255, 255, 255, .72);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, .6);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .4);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             overflow: hidden;
         }
 
         .gantt-header {
             display: flex;
-            border-bottom: 1px solid rgba(0, 0, 0, .04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 0 16px;
         }
 
@@ -760,7 +881,7 @@
             padding: 12px 0;
             font-size: 12px;
             font-weight: 600;
-            color: var(--slate-500);
+            color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -777,15 +898,15 @@
             text-align: center;
             padding: 12px 0;
             font-size: 11px;
-            color: var(--slate-400);
+            color: rgba(255, 255, 255, 0.5);
             font-weight: 500;
-            border-left: 1px solid rgba(0, 0, 0, .03);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .gantt-day-cell.today {
-            color: var(--violet-600);
+            color: #a78bfa;
             font-weight: 700;
-            background: rgba(124, 58, 237, .04);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .gantt-body {
@@ -797,12 +918,12 @@
             display: flex;
             align-items: center;
             padding: 0 16px;
-            border-bottom: 1px solid rgba(0, 0, 0, .03);
-            transition: background var(--transition-fast);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s ease;
         }
 
         .gantt-row:hover {
-            background: rgba(0, 0, 0, .02);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .gantt-row:last-child {
@@ -815,6 +936,7 @@
             padding: 10px 0;
             font-size: 13px;
             font-weight: 500;
+            color: #fff;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -841,11 +963,11 @@
             overflow: hidden;
             white-space: nowrap;
             cursor: default;
-            transition: filter var(--transition-fast);
+            transition: filter 0.2s ease;
         }
 
         .gantt-bar:hover {
-            filter: brightness(1.1);
+            filter: brightness(1.2);
         }
 
         .gantt-bar.status-to_do {
@@ -862,7 +984,7 @@
 
         .gantt-empty {
             text-align: center;
-            color: var(--slate-400);
+            color: rgba(255, 255, 255, 0.5);
             padding: 48px 16px;
             font-size: 14px;
         }
@@ -872,17 +994,16 @@
             top: 0;
             bottom: 0;
             width: 2px;
-            background: var(--violet-600);
+            background: #a78bfa;
             z-index: 2;
         }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, .35);
-            backdrop-filter: blur(8px) saturate(120%);
-            -webkit-backdrop-filter: blur(8px) saturate(120%);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -892,14 +1013,14 @@
         }
 
         .modal {
-            background: rgba(255, 255, 255, .88);
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, .6);
-            border-radius: var(--radius-xl);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-lg);
             width: 100%;
             max-width: 480px;
-            box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, .5);
+            box-shadow: var(--shadow-md);
             animation: slideUp 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
@@ -908,13 +1029,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 24px 16px;
-            border-bottom: 1px solid rgba(0, 0, 0, .05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .modal-title {
             font-size: 17px;
             font-weight: 700;
-            letter-spacing: -0.3px;
+            color: #fff;
         }
 
         .modal-body {
@@ -926,24 +1047,24 @@
             justify-content: flex-end;
             gap: 8px;
             padding: 16px 24px 20px;
-            border-top: 1px solid rgba(0, 0, 0, .05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .empty {
             text-align: center;
-            color: var(--slate-400);
+            color: rgba(255, 255, 255, 0.5);
             padding: 48px 16px;
         }
 
         .help-text {
             max-width: 640px;
             line-height: 1.7;
-            color: var(--slate-600);
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .help-text h3 {
             margin: 20px 0 8px;
-            color: var(--slate-800);
+            color: #fff;
         }
 
         .help-text ul {
@@ -958,7 +1079,7 @@
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: rgba(15, 23, 42, .88);
+            background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             color: #fff;
@@ -967,7 +1088,7 @@
             z-index: 999;
             font-weight: 500;
             animation: slideUp 0.3s ease;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-md);
         }
 
         .hidden {
@@ -983,126 +1104,30 @@
             flex: 1;
         }
 
-        /* Members */
-        .members-section {
-            margin-top: 28px;
-        }
-
-        .members-section h3 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: var(--slate-800);
-        }
-
-        .members-list {
+        .assignee-picker {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .member-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, .72);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, .5);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            transition: all var(--transition-fast);
-        }
-
-        .member-row:hover {
-            box-shadow: var(--shadow-md);
-        }
-
-        .member-avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: #fff;
-            flex-shrink: 0;
-        }
-
-        .member-info {
-            flex: 1;
-        }
-
-        .member-name {
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        .member-email {
-            color: var(--slate-400);
-            font-size: 12px;
-        }
-
-        .member-role {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 20px;
-            background: rgba(124, 58, 237, .1);
-            color: var(--violet-600);
-        }
-
-        .member-role.owner {
-            background: rgba(34, 197, 94, .1);
-            color: var(--green-700);
-        }
-
-        .member-remove {
-            padding: 4px 8px;
-            border: none;
-            background: transparent;
-            color: var(--slate-400);
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: all var(--transition-fast);
-        }
-
-        .member-remove:hover {
-            background: var(--red-100);
-            color: var(--red-600);
-        }
-
-        .add-member-row {
-            display: flex;
+            flex-wrap: wrap;
             gap: 8px;
-            margin-top: 8px;
-        }
-
-        .add-member-row input {
-            flex: 1;
+            margin-top: 6px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- ═══ AUTH ═══ -->
+    <!-- AUTH -->
     <div id="auth-page">
         <div class="auth-wrap">
             <div class="auth-card">
-                <h1 class="auth-heading">Task<span style="color:#7C3AED">Tracker</span></h1>
-                <p class="auth-sub">Sign in to your account</p>
+                <h1 class="auth-heading">Task<span style="color:#a78bfa">Tracker</span></h1>
+                <p class="auth-sub">Sign in</p>
 
                 <div id="login-form">
                     <div id="login-error" class="error-msg"></div>
                     <div class="field"><label>Email</label><input type="email" id="login-email"
-                            placeholder="demo@example.com"></div>
+                            placeholder="name@example.com"></div>
                     <div class="field"><label>Password</label><input type="password" id="login-password"
-                            placeholder="demo123"></div>
+                            placeholder="password123"></div>
                     <button class="btn btn-primary" onclick="handleLogin()">Sign in</button>
                     <p class="auth-switch">No account? <a onclick="showRegister()">Register</a></p>
                 </div>
@@ -1122,33 +1147,33 @@
         </div>
     </div>
 
-    <!-- ═══ APP ═══ -->
+    <!-- APP -->
     <div id="app-page" class="hidden">
         <div class="app">
             <aside class="sidebar">
                 <div class="sidebar-logo">Task<span>Tracker</span></div>
-                <div class="sidebar-scrollable">
+                <div class="sidebar-section-scroll">
                     <div class="sidebar-section">
                         <div class="sidebar-label">Menu</div>
                         <div class="sidebar-item active" data-nav="account" onclick="navigate('account')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                             Account
                         </div>
-                        <div class="sidebar-item" data-nav="workspaces" onclick="navigate('workspaces')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                            Workspaces
-                        </div>
-                    </div>
-                    <div class="sidebar-section" id="sidebar-workspaces-section">
-                        <div class="sidebar-label">Your Workspaces</div>
-                        <div id="sidebar-workspaces-list"></div>
-                    </div>
-                    <div class="sidebar-section">
-                        <div class="sidebar-label">Help</div>
                         <div class="sidebar-item" data-nav="help" onclick="navigate('help')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                             Help
                         </div>
+                    </div>
+                    <div class="sidebar-section">
+                        <div class="sidebar-label" style="display:flex;align-items:center;justify-content:space-between;padding-right:8px">
+                            <span>Workspaces</span>
+                        </div>
+                        <div class="sidebar-item" data-nav="workspaces" onclick="navigate('workspaces')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            All workspaces
+                        </div>
+                        <div id="sidebar-ws-list" class="sidebar-ws-list"></div>
+                        <div class="sidebar-ws-add" onclick="openModal('workspace-modal')">+ Add workspace</div>
                     </div>
                 </div>
                 <div class="sidebar-bottom">
@@ -1159,9 +1184,7 @@
                             <div class="user-email" id="sidebar-email">demo@example.com</div>
                         </div>
                     </div>
-                    <button class="btn btn-ghost btn-sm"
-                        style="width:100%;margin-top:8px;color:#fff;border-color:rgba(255,255,255,.2)"
-                        onclick="handleLogout()">Log out</button>
+                    <button class="btn btn-ghost btn-sm sidebar-logout" onclick="handleLogout()">Log out</button>
                 </div>
             </aside>
 
@@ -1174,11 +1197,11 @@
                     <div class="panel-card">
                         <h2>Profile</h2>
                         <div class="info-row"><span class="info-label">Name</span><span class="info-value"
-                                id="acc-name">—</span></div>
+                                id="acc-name">&mdash;</span></div>
                         <div class="info-row"><span class="info-label">Email</span><span class="info-value"
-                                id="acc-email">—</span></div>
+                                id="acc-email">&mdash;</span></div>
                         <div class="info-row"><span class="info-label">Member since</span><span class="info-value"
-                                id="acc-created">—</span></div>
+                                id="acc-created">&mdash;</span></div>
                         <button class="btn btn-ghost" style="margin-top:16px" onclick="openPasswordModal()">Change
                             password</button>
                     </div>
@@ -1193,28 +1216,21 @@
                     <div id="workspace-list" class="grid-cards"></div>
                 </div>
 
-                <!-- WORKSPACE DETAIL (boards + members) -->
+                <!-- WORKSPACE DETAIL -->
                 <div id="view-workspace-detail" class="content hidden">
                     <div class="topbar">
                         <div>
                             <div class="topbar-title" id="ws-detail-title">Workspace</div>
                         </div>
                         <button class="btn btn-ghost btn-sm" onclick="navigate('workspaces')">&#8592; Back</button>
+                        <button class="btn btn-ghost btn-sm" onclick="openMembersModal()">&#128101; Members</button>
                         <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')">+ Add board</button>
                     </div>
                     <div id="board-list" class="grid-cards"></div>
-                    <div class="members-section">
-                        <h3>Members</h3>
-                        <div id="members-list" class="members-list"></div>
-                        <div class="add-member-row">
-                            <input type="text" id="new-member-name" placeholder="Name" style="padding:8px 12px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);font:inherit;outline:none;background:rgba(255,255,255,.7);backdrop-filter:blur(12px)">
-                            <input type="email" id="new-member-email" placeholder="Email" style="padding:8px 12px;border:1.5px solid var(--slate-200);border-radius:var(--radius-sm);font:inherit;outline:none;background:rgba(255,255,255,.7);backdrop-filter:blur(12px)">
-                            <button class="btn btn-ghost btn-sm" onclick="addMember()">+ Add</button>
-                        </div>
-                    </div>
+                    <div id="gantt-area" class="gantt-container hidden"></div>
                 </div>
 
-                <!-- BOARD (kanban + gantt) -->
+                <!-- BOARD -->
                 <div id="view-board" class="content hidden">
                     <div class="topbar">
                         <div>
@@ -1228,7 +1244,6 @@
                         <button class="btn btn-ghost btn-sm" onclick="backToBoards()">&#8592; Boards</button>
                     </div>
                     <div id="board-area" class="board-area"></div>
-                    <div id="gantt-area" class="gantt-container hidden"></div>
                 </div>
 
                 <!-- HELP -->
@@ -1338,19 +1353,54 @@
         </div>
     </div>
 
+    <!-- MEMBERS MODAL -->
+    <div id="members-modal" class="modal-overlay hidden" onclick="closeModal(event,'members-modal')">
+        <div class="modal" style="max-width:560px">
+            <div class="modal-header">
+                <span class="modal-title">Workspace members</span>
+                <button class="btn btn-icon" onclick="closeModal(null,'members-modal')">&#10005;</button>
+            </div>
+            <div class="modal-body">
+                <table class="members-table" id="members-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="members-tbody"></tbody>
+                </table>
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1)">
+                    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:rgba(255,255,255,0.8)">Add member by email</div>
+                    <div style="display:flex;gap:8px">
+                        <input type="email" id="add-member-email" placeholder="user@example.com"
+                            style="flex:1;padding:8px 12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radius-sm);font:inherit;font-size:13px;color:#fff;outline:none">
+                        <select id="add-member-role"
+                            style="padding:8px 10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radius-sm);font:inherit;font-size:13px;color:#fff;outline:none">
+                            <option value="guest">Guest</option>
+                            <option value="member" selected>Member</option>
+                            <option value="administrator">Administrator</option>
+                        </select>
+                        <button class="btn btn-primary" style="width:auto" onclick="addMember()">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const USE_MOCK = true;
         const API_BASE = '';
         const MOCK_KEY = 'tt_preview_db';
         const SESSION_KEY = 'tt_preview_session';
+        const MEMBER_COLORS = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
 
         const STATUSES = [
             { id: 'to_do', label: 'Todo', badge: 'badge-todo', dot: '#94A3B8' },
             { id: 'in_progress', label: 'In Progress', badge: 'badge-progress', dot: '#F59E0B' },
             { id: 'done', label: 'Done', badge: 'badge-done', dot: '#10B981' },
         ];
-
-        const MEMBER_COLORS = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
 
         let state = {
             user: null,
@@ -1364,7 +1414,8 @@
             editingTaskId: null,
             defaultStatus: 'to_do',
             boardViewMode: 'kanban',
-            members: {},
+            members: [],
+            myRole: null,
         };
 
         function uid() { return 'id_' + Math.random().toString(36).slice(2, 10); }
@@ -1376,16 +1427,19 @@
             const now = new Date().toISOString();
             const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
             return {
-                users: [{ id: 'u1', name: 'Demo User', email: 'demo@example.com', password: 'demo123', created_at: '2025-01-10T09:00:00Z' }],
+                users: [
+                    { id: 'u1', name: 'Demo User', email: 'demo@example.com', password: 'demo123', created_at: '2025-01-10T09:00:00Z' },
+                    { id: 'u2', name: 'Alex', email: 'alex@example.com', password: 'pass123', created_at: '2025-02-10T09:00:00Z' },
+                    { id: 'u3', name: 'Sam', email: 'sam@example.com', password: 'pass123', created_at: '2025-03-10T09:00:00Z' },
+                ],
                 workspaces: [
                     { id: wsId, user_id: 'u1', title: 'My Workspace', created_at: now },
                     { id: wsId2, user_id: 'u1', title: 'Side Projects', created_at: now },
                 ],
                 workspace_members: [
-                    { id: uid(), workspace_id: wsId, user_id: 'u1', name: 'Demo User', email: 'demo@example.com', role: 'owner' },
-                    { id: uid(), workspace_id: wsId, user_id: null, name: 'Alex', email: 'alex@example.com', role: 'member' },
-                    { id: uid(), workspace_id: wsId, user_id: null, name: 'Sam', email: 'sam@example.com', role: 'member' },
-                    { id: uid(), workspace_id: wsId, user_id: null, name: 'Jordan', email: 'jordan@example.com', role: 'member' },
+                    { workspace_id: wsId, user_id: 'u1', role: 'administrator' },
+                    { workspace_id: wsId, user_id: 'u2', role: 'member' },
+                    { workspace_id: wsId, user_id: 'u3', role: 'member' },
                 ],
                 boards: [
                     { id: boardId, workspace_id: wsId, title: 'Product backlog', created_at: now },
@@ -1429,7 +1483,7 @@
             }
             if (method === 'POST' && path === '/auth/register') {
                 if (db.users.some(x => x.email === body.email)) throw { status: 409, data: { message: 'Email taken' } };
-                const u = { id: uid(), name: body.name, email: body.email, password: body.password, created_at: new Date().toISOString() };
+                const u = { id: uid(), name: body.username, email: body.email, password: body.password, created_at: new Date().toISOString() };
                 db.users.push(u); saveDb(db);
                 return { token: 'mock-token', user: { id: u.id, name: u.name, email: u.email, created_at: u.created_at } };
             }
@@ -1445,8 +1499,7 @@
             if (method === 'POST' && path === '/workspaces') {
                 const ws = { id: uid(), user_id: userId, title: body.title, created_at: new Date().toISOString() };
                 db.workspaces.push(ws);
-                const u = db.users.find(x => x.id === userId);
-                db.workspace_members.push({ id: uid(), workspace_id: ws.id, user_id: userId, name: u?.name || 'You', email: u?.email || '', role: 'owner' });
+                db.workspace_members.push({ workspace_id: ws.id, user_id: userId, role: 'administrator' });
                 saveDb(db); return ws;
             }
             if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/boards$/)) {
@@ -1457,18 +1510,33 @@
                 const b = { id: uid(), workspace_id: wsId, title: body.title, created_at: new Date().toISOString() };
                 db.boards.push(b); saveDb(db); return b;
             }
-            if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/members$/)) {
-                return db.workspace_members.filter(m => m.workspace_id === path.split('/')[2]);
+            if (method === 'GET' && path === '/users' && path.includes('email=')) {
+                const email = decodeURIComponent(path.split('email=')[1]);
+                const u = db.users.find(x => x.email === email);
+                if (!u) throw { status: 404, data: { message: 'User not found' } };
+                return { id: u.id, name: u.name, email: u.email };
             }
-            if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/members$/)) {
+            if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
                 const wsId = path.split('/')[2];
-                const m = { id: uid(), workspace_id: wsId, user_id: null, name: body.name, email: body.email || '', role: 'member' };
+                return db.workspace_members.filter(m => m.workspace_id === wsId);
+            }
+            if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
+                const wsId = path.split('/')[2];
+                const exists = db.workspace_members.find(m => m.workspace_id === wsId && m.user_id === body.user_id);
+                if (exists) throw { status: 409, data: { message: 'User already a member' } };
+                const m = { workspace_id: wsId, user_id: body.user_id, role: body.role || 'member' };
                 db.workspace_members.push(m); saveDb(db); return m;
             }
-            if (method === 'DELETE' && path.match(/^\/workspaces\/[^/]+\/members\/[^/]+$/)) {
+            if (method === 'DELETE' && path.match(/^\/workspaces\/[^/]+\/workspace_members\/[^/]+$/)) {
                 const parts = path.split('/');
-                db.workspace_members = db.workspace_members.filter(m => !(m.workspace_id === parts[2] && m.id === parts[4]));
+                db.workspace_members = db.workspace_members.filter(m => !(m.workspace_id === parts[2] && m.user_id === parts[4]));
                 saveDb(db); return { ok: true };
+            }
+            if (method === 'PATCH' && path.match(/^\/workspaces\/[^/]+\/workspace_members\/[^/]+$/)) {
+                const parts = path.split('/');
+                const m = db.workspace_members.find(x => x.workspace_id === parts[2] && x.user_id === parts[4]);
+                if (!m) throw { status: 404, data: { message: 'Member not found' } };
+                m.role = body.role; saveDb(db); return m;
             }
             if (method === 'GET' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
                 return db.tasks.filter(t => t.board_id === path.split('/')[2]);
@@ -1499,13 +1567,14 @@
         }
 
         function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-        function fmtDate(iso) { if (!iso) return '—'; return new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); }
+        function fmtDate(iso) { if (!iso) return '&mdash;'; return new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); }
         function todayISO() { return new Date().toISOString().slice(0, 10); }
         function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
         function showToast(msg) {
             const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
             document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
         }
+        function normId(id) { return id == null ? '' : String(id); }
         function showLogin() { document.getElementById('login-form').classList.remove('hidden'); document.getElementById('register-form').classList.add('hidden'); }
         function showRegister() { document.getElementById('register-form').classList.remove('hidden'); document.getElementById('login-form').classList.add('hidden'); }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -1518,7 +1587,7 @@
             });
         }
 
-        // ── Auth ──
+        // Auth
         async function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-password').value;
@@ -1556,22 +1625,15 @@
             document.getElementById('sidebar-name').textContent = user.name || user.email;
             document.getElementById('sidebar-email').textContent = user.email;
             renderAccount();
-            loadWorkspaces();
-            const hash = location.hash.replace('#/', '');
-            if (hash && isValidRoute(hash)) {
-                restoreRoute(hash);
-            } else {
-                navigate('account', true);
-            }
+            loadWorkspaces().then(() => { renderSidebarWorkspaces(); });
         }
 
         function handleLogout() {
             localStorage.removeItem(SESSION_KEY);
-            state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, activeWorkspaceId: null, activeBoardId: null, members: {} };
+            state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, members: [], myRole: null, activeWorkspaceId: null, activeBoardId: null };
             document.getElementById('app-page').classList.add('hidden');
             document.getElementById('auth-page').classList.remove('hidden');
             showLogin();
-            history.pushState(null, '', '#/login');
         }
 
         async function changePassword() {
@@ -1588,119 +1650,43 @@
 
         function openPasswordModal() { openModal('password-modal'); }
 
-        // ── Routing ──
-        function isValidRoute(hash) {
-            return /^(account|workspaces|workspace\/[^/]+|board\/[^/]+|help)$/.test(hash);
-        }
-
-        function setHash(route) {
-            const newHash = '#/' + route;
-            if (location.hash !== newHash) {
-                history.pushState({ route }, '', newHash);
-            }
-        }
-
-        async function restoreRoute(hash) {
-            const parts = hash.split('/');
-            const view = parts[0];
-
-            if (view === 'account' || view === 'workspaces' || view === 'help') {
-                navigate(view, true);
-                if (view === 'workspaces') renderWorkspaces();
-            } else if (view === 'workspace' && parts[1]) {
-                const wsId = parts[1];
-                const ws = state.workspaces.find(w => w.id === wsId);
-                if (ws) {
-                    await openWorkspace(wsId, true);
-                } else {
-                    navigate('workspaces', true);
-                }
-            } else if (view === 'board' && parts[1]) {
-                const boardId = parts[1];
-                const db = getDb();
-                const board = db.boards.find(b => b.id === boardId);
-                if (board) {
-                    state.activeWorkspaceId = board.workspace_id;
-                    await loadBoards(board.workspace_id);
-                    openBoard(boardId, true);
-                } else {
-                    navigate('workspaces', true);
-                }
-            } else {
-                navigate('account', true);
-            }
-        }
-
-        window.addEventListener('popstate', function() {
-            if (!state.user) return;
-            const hash = location.hash.replace('#/', '').replace('#', '');
-            if (hash && isValidRoute(hash)) {
-                restoreRoute(hash);
-            } else {
-                navigate('account', true);
-            }
-        });
-
-        // ── Navigation ──
-        function navigate(view, skipPush) {
+        // Navigation
+        function navigate(view) {
             state.view = view;
-            if (!skipPush) setHash(view);
-
             document.querySelectorAll('.sidebar-item[data-nav]').forEach(el => el.classList.toggle('active', el.dataset.nav === view));
-
             hideAllViews();
-
-            const views = { account: 'view-account', workspaces: 'view-workspaces', help: 'view-help' };
-            if (views[view]) {
-                const el = document.getElementById(views[view]);
-                el.classList.remove('hidden');
-                el.style.animation = 'none';
-                el.offsetHeight;
-                el.style.animation = '';
-                if (view === 'workspaces') renderWorkspaces();
-            }
-
+            if (view === 'account') document.getElementById('view-account').classList.remove('hidden');
+            if (view === 'workspaces') { document.getElementById('view-workspaces').classList.remove('hidden'); renderWorkspaces(); }
+            if (view === 'help') document.getElementById('view-help').classList.remove('hidden');
             renderSidebarWorkspaces();
         }
 
         function renderAccount() {
             const u = state.user;
-            document.getElementById('acc-name').textContent = u.name || '—';
-            document.getElementById('acc-email').textContent = u.email || '—';
-            document.getElementById('acc-created').textContent = u.created_at ? fmtDate(u.created_at) : '—';
+            document.getElementById('acc-name').textContent = u.name || '\u2014';
+            document.getElementById('acc-email').textContent = u.email || '\u2014';
+            document.getElementById('acc-created').textContent = u.created_at ? fmtDate(u.created_at) : '\u2014';
         }
 
-        // ── Sidebar workspaces ──
+        // Sidebar workspaces
         function renderSidebarWorkspaces() {
-            const el = document.getElementById('sidebar-workspaces-list');
-            const section = document.getElementById('sidebar-workspaces-section');
-            if (!state.user || state.workspaces.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-            section.classList.remove('hidden');
+            const el = document.getElementById('sidebar-ws-list');
             el.innerHTML = state.workspaces.map((ws, i) => {
                 const color = MEMBER_COLORS[i % MEMBER_COLORS.length];
                 const isActive = state.activeWorkspaceId === ws.id && (state.view === 'workspace-detail' || state.view === 'board');
-                return `<div class="sidebar-item${isActive ? ' active' : ''}" onclick="navigateToWorkspace('${ws.id}')">
-                    <span class="ws-dot" style="background:${color}"></span>
+                return `<div class="sidebar-ws-item${isActive ? ' active' : ''}" onclick="openWorkspace('${ws.id}')">
+                    <span class="sidebar-ws-dot" style="background:${color}"></span>
                     ${esc(ws.title)}
                 </div>`;
             }).join('');
         }
 
-        async function navigateToWorkspace(wsId) {
-            hideAllViews();
-            await openWorkspace(wsId);
-        }
-
-        // ── Workspaces ──
+        // Workspaces
         async function loadWorkspaces() {
             try {
                 const list = await api('GET', '/users/' + state.user.id + '/workspaces');
                 state.workspaces = list.map(ws => ({ ...ws, id: ws.id || ws.workspace_id }));
             } catch { state.workspaces = []; }
-            renderSidebarWorkspaces();
         }
 
         function renderWorkspaces() {
@@ -1728,22 +1714,16 @@
             } catch (e) { showToast('Error creating workspace'); }
         }
 
-        async function openWorkspace(wsId, skipPush) {
+        async function openWorkspace(wsId) {
             state.activeWorkspaceId = wsId;
             const ws = state.workspaces.find(w => w.id === wsId);
             document.getElementById('ws-detail-title').textContent = ws?.title || 'Workspace';
             hideAllViews();
-            const detailEl = document.getElementById('view-workspace-detail');
-            detailEl.classList.remove('hidden');
-            detailEl.style.animation = 'none';
-            detailEl.offsetHeight;
-            detailEl.style.animation = '';
+            document.getElementById('view-workspace-detail').classList.remove('hidden');
             state.view = 'workspace-detail';
-            if (!skipPush) setHash('workspace/' + wsId);
             await loadBoards(wsId);
             await loadMembers(wsId);
             renderBoardList();
-            renderMembers();
             renderSidebarWorkspaces();
         }
 
@@ -1751,8 +1731,7 @@
             try {
                 const list = await api('GET', '/workspaces/' + wsId + '/boards');
                 state.boards = list.map(b => ({ ...b, id: b.id || b.board_id }));
-            }
-            catch { state.boards = []; }
+            } catch { state.boards = []; }
             state.tasks = {};
             for (const b of state.boards) await loadTasks(b.id);
         }
@@ -1782,81 +1761,91 @@
         }
 
         function backToBoards() {
-            navigate('workspace/' + state.activeWorkspaceId);
-            document.getElementById('view-board').classList.add('hidden');
+            hideAllViews();
             document.getElementById('view-workspace-detail').classList.remove('hidden');
             renderBoardList();
         }
 
-        // ── Members ──
+        // Members — corrected to match backend API
         async function loadMembers(wsId) {
             try {
-                const list = await api('GET', '/workspaces/' + wsId + '/members');
-                state.members[wsId] = list;
-            } catch { state.members[wsId] = []; }
+                const list = await api('GET', '/workspaces/' + wsId + '/workspace_members');
+                state.members = list;
+            } catch { state.members = []; }
         }
 
-        function renderMembers() {
-            const el = document.getElementById('members-list');
-            const members = state.members[state.activeWorkspaceId] || [];
-            el.innerHTML = members.map((m, i) => {
-                const color = MEMBER_COLORS[i % MEMBER_COLORS.length];
-                const initial = (m.name || '?')[0].toUpperCase();
-                const isOwner = m.role === 'owner';
-                return `<div class="member-row">
-                    <div class="member-avatar" style="background:${color}">${initial}</div>
-                    <div class="member-info">
-                        <div class="member-name">${esc(m.name)}</div>
-                        <div class="member-email">${esc(m.email)}</div>
-                    </div>
-                    <span class="member-role${isOwner ? ' owner' : ''}">${isOwner ? 'Owner' : 'Member'}</span>
-                    ${!isOwner ? `<button class="member-remove" onclick="removeMember('${m.id}')" title="Remove">&#10005;</button>` : ''}
-                </div>`;
-            }).join('');
-            if (members.length === 0) {
-                el.innerHTML = '<div class="empty" style="padding:16px">No members yet</div>';
+        function openMembersModal() {
+            renderMembersTable();
+            openModal('members-modal');
+        }
+
+        function renderMembersTable() {
+            const tbody = document.getElementById('members-tbody');
+            const db = getDb();
+            if (state.members.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,0.5);padding:20px">No members yet</td></tr>';
+                return;
             }
+            tbody.innerHTML = state.members.map(m => {
+                const u = db.users.find(x => x.id === m.user_id);
+                const name = u ? u.name : m.user_id;
+                const email = u ? u.email : '';
+                const roleClass = m.role === 'administrator' ? 'role-administrator' : m.role === 'guest' ? 'role-guest' : 'role-member';
+                const isOwner = m.role === 'administrator' && m.user_id === state.user?.id;
+                return `<tr>
+                    <td>
+                        <div style="font-weight:600">${esc(name)}</div>
+                        <div style="font-size:12px;color:rgba(255,255,255,0.5)">${esc(email)}</div>
+                    </td>
+                    <td><span class="role-badge ${roleClass}">${esc(m.role)}</span></td>
+                    <td>${!isOwner ? `<button class="btn btn-danger-soft btn-sm" onclick="removeMember('${m.user_id}')">Remove</button>` : ''}</td>
+                </tr>`;
+            }).join('');
         }
 
         async function addMember() {
-            const name = document.getElementById('new-member-name').value.trim();
-            const email = document.getElementById('new-member-email').value.trim();
-            if (!name) { showToast('Name is required'); return; }
+            const email = document.getElementById('add-member-email').value.trim();
+            const role = document.getElementById('add-member-role').value;
+            if (!email) { showToast('Email is required'); return; }
             try {
-                await api('POST', '/workspaces/' + state.activeWorkspaceId + '/members', { name, email });
-                document.getElementById('new-member-name').value = '';
-                document.getElementById('new-member-email').value = '';
+                const user = await api('GET', '/users?email=' + encodeURIComponent(email));
+                await api('POST', '/workspaces/' + state.activeWorkspaceId + '/workspace_members', {
+                    user_id: user.id,
+                    role: role,
+                });
+                document.getElementById('add-member-email').value = '';
                 await loadMembers(state.activeWorkspaceId);
-                renderMembers();
+                renderMembersTable();
                 showToast('Member added');
-            } catch { showToast('Failed to add member'); }
+            } catch (e) { showToast(e.data?.message || 'Failed to add member'); }
         }
 
-        async function removeMember(memberId) {
+        async function removeMember(userId) {
             try {
-                await api('DELETE', '/workspaces/' + state.activeWorkspaceId + '/members/' + memberId);
+                await api('DELETE', '/workspaces/' + state.activeWorkspaceId + '/workspace_members/' + userId);
                 await loadMembers(state.activeWorkspaceId);
-                renderMembers();
+                renderMembersTable();
                 showToast('Member removed');
             } catch { showToast('Failed to remove member'); }
         }
 
         function populateAssigneeDropdown() {
             const select = document.getElementById('task-assignee-input');
-            const members = state.members[state.activeWorkspaceId] || [];
-            if (members.length === 0) {
-                select.innerHTML = '<option value="Unassigned">Unassigned</option>';
-            } else {
-                select.innerHTML = members.map(m => `<option value="${esc(m.name)}">${esc(m.name)}</option>`).join('');
-            }
+            const db = getDb();
+            const options = state.members.map(m => {
+                const u = db.users.find(x => x.id === m.user_id);
+                const name = u ? u.name : m.user_id;
+                return `<option value="${esc(name)}">${esc(name)}</option>`;
+            }).join('');
+            select.innerHTML = '<option value="Unassigned">Unassigned</option>' + options;
         }
 
-        // ── Board / tasks ──
+        // Board / tasks
         async function loadTasks(boardId) {
             try {
                 const list = await api('GET', '/boards/' + boardId + '/tasks');
                 state.tasks[boardId] = list.map(t => ({
-                    id: t.id || t.task_id, board_id: boardId, name: t.title, desc: t.description || '',
+                    id: t.id || t.task_id, board_id: normId(boardId), name: t.title, desc: t.description || '',
                     status: t.status, assignee: t.assignee || t.assigned_id || 'Unassigned',
                     created_at: t.created_at, updated_at: t.updated_at,
                     start_date: t.start_date || null, due_date: t.due_date || null,
@@ -1864,7 +1853,7 @@
             } catch { state.tasks[boardId] = []; }
         }
 
-        function openBoard(boardId, skipPush) {
+        function openBoard(boardId) {
             state.activeBoardId = boardId;
             state.boardViewMode = 'kanban';
             const board = state.boards.find(b => b.id === boardId);
@@ -1872,12 +1861,7 @@
             document.getElementById('board-title').textContent = board?.title || 'Board';
             document.getElementById('board-ws-name').textContent = ws ? '\u00B7 ' + ws.title : '';
             hideAllViews();
-            const boardEl = document.getElementById('view-board');
-            boardEl.classList.remove('hidden');
-            boardEl.style.animation = 'none';
-            boardEl.offsetHeight;
-            boardEl.style.animation = '';
-            if (!skipPush) setHash('board/' + boardId);
+            document.getElementById('view-board').classList.remove('hidden');
             document.querySelectorAll('.btn-group .btn-toggle').forEach(b => {
                 b.classList.toggle('active', b.dataset.view === 'kanban');
             });
@@ -1943,57 +1927,42 @@
         function ganttTaskRange(t) {
             const start = parseDateSafe(t.start_date) || parseDateSafe(t.created_at) || new Date();
             let end = parseDateSafe(t.due_date);
-            if (!end) {
-                end = new Date(start.getTime() + 3 * 86400000);
-            }
-            if (end < start) {
-                end = new Date(start.getTime() + 3 * 86400000);
-            }
+            if (!end) end = new Date(start.getTime() + 3 * 86400000);
+            if (end < start) end = new Date(start.getTime() + 3 * 86400000);
             return { start, end };
         }
 
         function renderGantt(boardId) {
             const tasks = state.tasks[boardId] || [];
             const ganttEl = document.getElementById('gantt-area');
-
             if (tasks.length === 0) {
                 ganttEl.innerHTML = '<div class="gantt-empty">No tasks to display in Gantt view</div>';
                 return;
             }
-
             let minDate = Infinity, maxDate = -Infinity;
             const now = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
             const ranges = tasks.map(t => {
                 const r = ganttTaskRange(t);
-                const s = r.start.getTime();
-                const e = r.end.getTime();
-                if (s < minDate) minDate = s;
-                if (e > maxDate) maxDate = e;
+                if (r.start.getTime() < minDate) minDate = r.start.getTime();
+                if (r.end.getTime() > maxDate) maxDate = r.end.getTime();
                 return { task: t, start: r.start, end: r.end };
             });
-
             const rangeStart = new Date(minDate - 2 * 86400000);
             const rangeEnd = new Date(maxDate + 3 * 86400000);
             const totalDays = Math.max(1, Math.ceil((rangeEnd - rangeStart) / 86400000));
-
             let days = [];
             for (let i = 0; i < totalDays; i++) {
                 const d = new Date(rangeStart.getTime() + i * 86400000);
-                const isToday = d.toDateString() === today.toDateString();
-                days.push({ date: d, label: d.getDate() + '/' + (d.getMonth() + 1), isToday });
+                days.push({ date: d, label: d.getDate() + '/' + (d.getMonth() + 1), isToday: d.toDateString() === today.toDateString() });
             }
-
             const totalMs = rangeEnd.getTime() - rangeStart.getTime();
             const nowPos = Math.max(0, Math.min(1, (today.getTime() - rangeStart.getTime()) / totalMs));
-
             const rows = ranges.map(r => {
                 const left = ((r.start.getTime() - rangeStart.getTime()) / totalMs) * 100;
                 const width = Math.max(2, ((r.end.getTime() - r.start.getTime()) / totalMs) * 100);
                 return { task: r.task, left, width };
             });
-
             ganttEl.innerHTML = `
                 <div class="gantt-header">
                     <div class="gantt-header-label">Task</div>
@@ -2043,9 +2012,7 @@
             document.getElementById('task-status-input').value = task.status;
             document.getElementById('task-start-input').value = task.start_date ? toISODate(task.start_date) : '';
             document.getElementById('task-due-input').value = task.due_date ? toISODate(task.due_date) : '';
-            try {
-                populateAssigneeDropdown();
-            } catch (ex) { /* members may not be loaded */ }
+            populateAssigneeDropdown();
             const assigneeSelect = document.getElementById('task-assignee-input');
             for (let i = 0; i < assigneeSelect.options.length; i++) {
                 if (assigneeSelect.options[i].value === task.assignee) {
