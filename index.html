@@ -49,7 +49,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(30deg, rgb(103, 129, 165), rgb(50, 83, 144), rgb(32, 66, 120), rgb(55, 94, 223));
+            background: linear-gradient(30deg, rgb(103, 129, 165), rgb(50, 83, 144), rgb(146, 33, 5), rgb(55, 94, 223));
             background-attachment: fixed;
             color: var(--slate-800);
             font-size: 14px;
@@ -1227,7 +1227,6 @@
                         <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')">+ Add board</button>
                     </div>
                     <div id="board-list" class="grid-cards"></div>
-                    <div id="gantt-area" class="gantt-container hidden"></div>
                 </div>
 
                 <!-- BOARD -->
@@ -1244,6 +1243,7 @@
                         <button class="btn btn-ghost btn-sm" onclick="backToBoards()">&#8592; Boards</button>
                     </div>
                     <div id="board-area" class="board-area"></div>
+                    <div id="gantt-area" class="gantt-container hidden"></div>
                 </div>
 
                 <!-- HELP -->
@@ -1394,6 +1394,7 @@
         const API_BASE = '';
         const MOCK_KEY = 'tt_preview_db';
         const SESSION_KEY = 'tt_preview_session';
+        const NAV_KEY = 'tt_nav_state';
         const MEMBER_COLORS = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
 
         const STATUSES = [
@@ -1581,6 +1582,14 @@
         function closeModal(e, id) { if (e && e.target.id !== id) return; document.getElementById(id).classList.add('hidden'); }
         function toISODate(d) { return d ? new Date(d).toISOString().slice(0, 10) : ''; }
 
+        function saveNavState() {
+            localStorage.setItem(NAV_KEY, JSON.stringify({
+                view: state.view,
+                activeWorkspaceId: state.activeWorkspaceId,
+                activeBoardId: state.activeBoardId,
+            }));
+        }
+
         function hideAllViews() {
             ['view-account', 'view-workspaces', 'view-workspace-detail', 'view-board', 'view-help'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
@@ -1625,11 +1634,29 @@
             document.getElementById('sidebar-name').textContent = user.name || user.email;
             document.getElementById('sidebar-email').textContent = user.email;
             renderAccount();
-            loadWorkspaces().then(() => { renderSidebarWorkspaces(); });
+            loadWorkspaces().then(() => {
+                renderSidebarWorkspaces();
+                const saved = JSON.parse(localStorage.getItem(NAV_KEY) || '{}');
+                if (saved.activeWorkspaceId && state.workspaces.find(w => w.id === saved.activeWorkspaceId)) {
+                    state.activeWorkspaceId = saved.activeWorkspaceId;
+                    openWorkspace(saved.activeWorkspaceId).then(() => {
+                        if (saved.activeBoardId && state.boards.find(b => b.id === saved.activeBoardId)) {
+                            openBoard(saved.activeBoardId);
+                        }
+                    });
+                } else if (saved.view === 'workspaces') {
+                    navigate('workspaces');
+                } else if (saved.view === 'help') {
+                    navigate('help');
+                } else {
+                    navigate('account');
+                }
+            });
         }
 
         function handleLogout() {
             localStorage.removeItem(SESSION_KEY);
+            localStorage.removeItem(NAV_KEY);
             state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, members: [], myRole: null, activeWorkspaceId: null, activeBoardId: null };
             document.getElementById('app-page').classList.add('hidden');
             document.getElementById('auth-page').classList.remove('hidden');
@@ -1659,6 +1686,7 @@
             if (view === 'workspaces') { document.getElementById('view-workspaces').classList.remove('hidden'); renderWorkspaces(); }
             if (view === 'help') document.getElementById('view-help').classList.remove('hidden');
             renderSidebarWorkspaces();
+            saveNavState();
         }
 
         function renderAccount() {
@@ -1721,6 +1749,7 @@
             hideAllViews();
             document.getElementById('view-workspace-detail').classList.remove('hidden');
             state.view = 'workspace-detail';
+            saveNavState();
             await loadBoards(wsId);
             await loadMembers(wsId);
             renderBoardList();
@@ -1761,9 +1790,11 @@
         }
 
         function backToBoards() {
+            state.view = 'workspace-detail';
             hideAllViews();
             document.getElementById('view-workspace-detail').classList.remove('hidden');
             renderBoardList();
+            saveNavState();
         }
 
         // Members — corrected to match backend API
@@ -1862,6 +1893,8 @@
             document.getElementById('board-ws-name').textContent = ws ? '\u00B7 ' + ws.title : '';
             hideAllViews();
             document.getElementById('view-board').classList.remove('hidden');
+            state.view = 'board';
+            saveNavState();
             document.querySelectorAll('.btn-group .btn-toggle').forEach(b => {
                 b.classList.toggle('active', b.dataset.view === 'kanban');
             });
@@ -1905,6 +1938,7 @@
             const s = STATUSES.find(x => x.id === task.status) || STATUSES[0];
             return `<div class="task-card" onclick="openEditTask(event,'${task.board_id}','${task.id}')">
     <div class="task-card-actions">
+      <button class="btn btn-icon" onclick="event.stopPropagation();openEditTask(event,'${task.board_id}','${task.id}')" title="Edit">&#9998;</button>
       <button class="btn btn-icon" onclick="event.stopPropagation();deleteTask(event,'${task.board_id}','${task.id}')" title="Delete">&#128465;</button>
     </div>
     <div class="task-name">${esc(task.name)}</div>
