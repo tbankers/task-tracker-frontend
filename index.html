@@ -884,12 +884,10 @@
                             <div class="topbar-title" id="ws-detail-title">Workspace</div>
                         </div>
                         <button class="btn btn-ghost btn-sm" onclick="navigate('workspaces')">← Back</button>
-                        <label class="gantt-toggle"><input type="checkbox" id="gantt-toggle" onchange="toggleGantt()"> Gantt view</label>
                         <button class="btn btn-ghost btn-sm" onclick="openMembersModal()">Members</button>
                         <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')">Add board</button>
                     </div>
                     <div id="board-list" class="grid-cards"></div>
-                    <div id="gantt-view" class="gantt-wrap hidden"></div>
                 </div>
 
                 <!-- BOARD (kanban) -->
@@ -899,10 +897,12 @@
                             <div class="topbar-title" id="board-title">Board</div>
                             <span class="topbar-sub" id="board-ws-name"></span>
                         </div>
+                        <label class="gantt-toggle"><input type="checkbox" id="gantt-toggle" onchange="toggleGantt()"> Gantt</label>
                         <button class="btn btn-ghost btn-sm" onclick="backToBoards()">← Boards</button>
                         <button class="btn btn-ghost btn-sm btn-danger-soft" onclick="deleteCurrentBoard()">Delete board</button>
                     </div>
                     <div id="board-area" class="board-area"></div>
+                    <div id="gantt-view" class="gantt-wrap hidden"></div>
                 </div>
 
                 <!-- HELP -->
@@ -1393,6 +1393,7 @@
 
             function handleLogout() {
                 history.replaceState(null, '', window.location.pathname);
+                localStorage.removeItem(SESSION_KEY);
                 state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, members: [], myRole: null, activeWorkspaceId: null, activeBoardId: null };
                 document.getElementById('app-page').classList.add('hidden');
                 document.getElementById('verify-page').classList.add('hidden');
@@ -1481,15 +1482,13 @@
                 state.activeWorkspaceId = wsId;
                 const ws = state.workspaces.find(w => w.id === wsId);
                 document.getElementById('ws-detail-title').textContent = ws?.title || 'Workspace';
-                document.getElementById('view-workspaces').classList.add('hidden');
+                ['account', 'workspaces', 'workspace-detail', 'board', 'help'].forEach(v => {
+                    const el = document.getElementById('view-' + v.replace('_', '-'));
+                    if (el) el.classList.add('hidden');
+                });
                 document.getElementById('view-workspace-detail').classList.remove('hidden');
-                document.getElementById('view-board').classList.add('hidden');
                 state.view = 'workspace-detail';
                 state.ganttMode = false;
-                const ganttCb = document.getElementById('gantt-toggle');
-                if (ganttCb) ganttCb.checked = false;
-                document.getElementById('board-list').classList.remove('hidden');
-                document.getElementById('gantt-view').classList.add('hidden');
                 await loadBoards(wsId);
                 renderBoardList();
                 renderSidebarWorkspaces();
@@ -1542,6 +1541,7 @@
             }
 
             function backToBoards() {
+                state.ganttMode = false;
                 document.getElementById('view-board').classList.add('hidden');
                 document.getElementById('view-workspace-detail').classList.remove('hidden');
                 state.view = 'workspace-detail';
@@ -1608,12 +1608,17 @@
             function openBoard(boardId) {
                 state.activeBoardId = boardId;
                 state.view = 'board';
+                state.ganttMode = false;
                 const board = state.boards.find(b => b.id === boardId);
                 const ws = state.workspaces.find(w => w.id === state.activeWorkspaceId);
                 document.getElementById('board-title').textContent = board?.title || 'Board';
                 document.getElementById('board-ws-name').textContent = ws ? '\u00b7 ' + ws.title : '';
                 document.getElementById('view-workspace-detail').classList.add('hidden');
                 document.getElementById('view-board').classList.remove('hidden');
+                const ganttCb = document.getElementById('gantt-toggle');
+                if (ganttCb) ganttCb.checked = false;
+                document.getElementById('board-area').classList.remove('hidden');
+                document.getElementById('gantt-view').classList.add('hidden');
                 renderBoard(boardId);
                 saveNavState();
             }
@@ -1813,15 +1818,15 @@
 
             function toggleGantt() {
                 state.ganttMode = document.getElementById('gantt-toggle').checked;
-                document.getElementById('board-list').classList.toggle('hidden', state.ganttMode);
+                document.getElementById('board-area').classList.toggle('hidden', state.ganttMode);
                 document.getElementById('gantt-view').classList.toggle('hidden', !state.ganttMode);
                 if (state.ganttMode) renderGantt();
             }
 
             function renderGantt() {
                 const el = document.getElementById('gantt-view');
-                const allTasks = Object.values(state.tasks).flat().filter(t => t.board_id);
-                if (!allTasks.length) { el.innerHTML = '<div class="empty">No tasks to display</div>'; return; }
+                const tasks = state.tasks[state.activeBoardId] || [];
+                if (!tasks.length) { el.innerHTML = '<div class="empty">No tasks to display</div>'; return; }
 
                 const today = new Date();
                 const days = [];
@@ -1838,7 +1843,7 @@
                 days.forEach(d => { html += `<th class="day-header">${fmt(d)}</th>`; });
                 html += '</tr></thead><tbody>';
 
-                allTasks.forEach(t => {
+                tasks.forEach(t => {
                     const created = new Date(t.created_at);
                     const updated = new Date(t.updated_at);
                     html += `<tr><td class="gantt-task-name">${esc(t.name)}</td>`;
