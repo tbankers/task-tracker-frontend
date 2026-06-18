@@ -1356,26 +1356,26 @@
         <div class="auth-wrap">
             <div class="auth-card">
                 <h1 class="auth-heading">Task<span style="color:#5e93cb">Tracker</span></h1>
-                <p class="auth-sub">Sign in</p>
+                <p class="auth-sub" data-i18n="signIn">Sign in</p>
                 <div id="login-form">
                     <div id="login-error" class="error-msg"></div>
-                    <div class="field"><label>Email</label><input type="email" id="login-email"
+                    <div class="field"><label data-i18n="email">Email</label><input type="email" id="login-email"
                             placeholder="name@example.com"></div>
-                    <div class="field"><label>Password</label><input type="password" id="login-password"
+                    <div class="field"><label data-i18n="password">Password</label><input type="password" id="login-password"
                             placeholder="password123"></div>
-                    <button class="btn btn-primary" onclick="handleLogin()">Sign in</button>
-                    <p class="auth-switch">No account? <a onclick="showRegister()">Register</a></p>
+                    <button class="btn btn-primary" onclick="handleLogin()" data-i18n="signIn">Sign in</button>
+                    <p class="auth-switch"><span data-i18n="noAccount">No account?</span> <a onclick="showRegister()" data-i18n="register">Register</a></p>
                 </div>
                 <div id="register-form" class="hidden">
                     <div id="register-error" class="error-msg"></div>
-                    <div class="field"><label>Name</label><input type="text" id="reg-name" placeholder="Your name">
+                    <div class="field"><label data-i18n="name">Name</label><input type="text" id="reg-name" placeholder="Your name">
                     </div>
-                    <div class="field"><label>Email</label><input type="email" id="reg-email"
+                    <div class="field"><label data-i18n="email">Email</label><input type="email" id="reg-email"
                             placeholder="you@example.com"></div>
-                    <div class="field"><label>Password</label><input type="password" id="reg-password"
+                    <div class="field"><label data-i18n="password">Password</label><input type="password" id="reg-password"
                             placeholder="Min 6 chars"></div>
-                    <button class="btn btn-primary" onclick="handleRegister()">Create account</button>
-                    <p class="auth-switch">Have an account? <a onclick="showLogin()">Sign in</a></p>
+                    <button class="btn btn-primary" onclick="handleRegister()" data-i18n="createAccount">Create account</button>
+                    <p class="auth-switch"><span data-i18n="haveAccount">Have an account?</span> <a onclick="showLogin()" data-i18n="signIn">Sign in</a></p>
                 </div>
             </div>
         </div>
@@ -1388,14 +1388,14 @@
                 <div class="sidebar-logo">Task<span>Tracker</span></div>
                 <div class="sidebar-section-scroll">
                     <div class="sidebar-section">
-                        <div class="sidebar-label">Menu</div>
+                        <div class="sidebar-label" data-i18n="menu">Menu</div>
                         <div class="sidebar-item active" data-nav="account" onclick="navigate('account')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                 <circle cx="12" cy="7" r="4" />
                             </svg>
-                            Account
+                            <span data-i18n="account">Account</span>
                         </div>
                         <div class="sidebar-item" data-nav="help" onclick="navigate('help')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1404,13 +1404,13 @@
                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                                 <line x1="12" y1="17" x2="12.01" y2="17" />
                             </svg>
-                            Help
+                            <span data-i18n="help">Help</span>
                         </div>
                     </div>
                     <div class="sidebar-section">
                         <div class="sidebar-label"
                             style="display:flex;align-items:center;justify-content:space-between;padding-right:8px">
-                            <span>Workspaces</span>
+                            <span data-i18n="workspaces">Workspaces</span>
                         </div>
                         <div class="sidebar-item" data-nav="workspaces" onclick="navigate('workspaces')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1418,10 +1418,10 @@
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                                 <polyline points="9 22 9 12 15 12 15 22" />
                             </svg>
-                            All workspaces
+                            <span data-i18n="allWorkspaces">All workspaces</span>
                         </div>
                         <div id="sidebar-ws-list" class="sidebar-ws-list"></div>
-                        <div class="sidebar-ws-add" onclick="openModal('workspace-modal')">+ Add workspace</div>
+                        <div class="sidebar-ws-add" onclick="openModal('workspace-modal')" data-i18n="addWorkspace">+ Add workspace</div>
                     </div>
                 </div>
                 <div class="sidebar-bottom">
@@ -1432,8 +1432,9 @@
                             <div class="user-email" id="sidebar-email">demo@example.com</div>
                         </div>
                     </div>
+                    <button class="btn btn-ghost btn-sm sidebar-logout" id="lang-btn" onclick="toggleLang()" style="font-weight:700;font-size:12px">RU</button>
                     <button class="btn btn-ghost btn-sm sidebar-logout" onclick="handleLogout()">
-                        <svg xmlns="http://w3.org" viewBox="0 0 24 24" class="logout-icon">
+                        <svg xmlns="http://www.w3.org" viewBox="0 0 24 24" class="logout-icon">
                             <path d="M16 13v-2H7V9h9V7l5 4-5 4M9 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h4v-2H5V5h4V3z" />
                         </svg>
                     </button>
@@ -1444,17 +1445,17 @@
                 <!-- ACCOUNT -->
                 <div id="view-account" class="content">
                     <div class="topbar">
-                        <div class="topbar-title">Account</div>
+                        <div class="topbar-title" data-i18n="account">Account</div>
                     </div>
                     <div class="panel-card">
-                        <h2>Profile</h2>
-                        <div class="info-row"><span class="info-label">Name</span><span class="info-value"
+                        <h2 data-i18n="profile">Profile</h2>
+                        <div class="info-row"><span class="info-label" data-i18n="name">Name</span><span class="info-value"
                                 id="acc-name">&mdash;</span></div>
-                        <div class="info-row"><span class="info-label">Email</span><span class="info-value"
+                        <div class="info-row"><span class="info-label" data-i18n="email">Email</span><span class="info-value"
                                 id="acc-email">&mdash;</span></div>
-                        <div class="info-row"><span class="info-label">Member since</span><span class="info-value"
+                        <div class="info-row"><span class="info-label" data-i18n="memberSince">Member since</span><span class="info-value"
                                 id="acc-created">&mdash;</span></div>
-                        <button class="btn btn-ghost" style="margin-top:16px" onclick="openPasswordModal()">Change
+                        <button class="btn btn-ghost" style="margin-top:16px" onclick="openPasswordModal()" data-i18n="changePassword">Change
                             password</button>
                     </div>
                 </div>
@@ -1462,8 +1463,8 @@
                 <!-- WORKSPACES -->
                 <div id="view-workspaces" class="content hidden">
                     <div class="topbar">
-                        <div class="topbar-title">Workspaces</div>
-                        <button class="btn btn-ghost btn-sm" onclick="openModal('workspace-modal')">+ Add new</button>
+                        <div class="topbar-title" data-i18n="workspaces">Workspaces</div>
+                        <button class="btn btn-ghost btn-sm" onclick="openModal('workspace-modal')" data-i18n="addNew">+ Add new</button>
                     </div>
                     <div id="workspace-list" class="grid-cards"></div>
                 </div>
@@ -1474,10 +1475,10 @@
                         <div>
                             <div class="topbar-title" id="ws-detail-title">Workspace</div>
                         </div>
-                        <button class="btn btn-ghost btn-sm" onclick="navigate('workspaces')">&#8592; Back</button>
-                        <button class="btn btn-ghost btn-sm" onclick="openMembersModal()">&#128101; Members</button>
-                        <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')">+ Add board</button>
-                        <button class="btn btn-danger-soft btn-sm" onclick="deleteWorkspace()">Delete</button>
+                        <button class="btn btn-ghost btn-sm" onclick="navigate('workspaces')" data-i18n="back">&#8592; Back</button>
+                        <button class="btn btn-ghost btn-sm" onclick="openMembersModal()">&#128101; <span data-i18n="members">Members</span></button>
+                        <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')" data-i18n="addBoard">+ Add board</button>
+                        <button class="btn btn-danger-soft btn-sm" onclick="deleteWorkspace()" data-i18n="delete">Delete</button>
                     </div>
                     <div id="board-list" class="grid-cards"></div>
                 </div>
@@ -1491,17 +1492,17 @@
                         </div>
                         <div class="btn-group">
                             <button class="btn-toggle active" data-view="kanban"
-                                onclick="switchBoardView('kanban')">Kanban</button>
+                                onclick="switchBoardView('kanban')" data-i18n="kanban">Kanban</button>
                             <button class="btn-toggle" data-view="gantt"
-                                onclick="switchBoardView('gantt')">Gantt</button>
+                                onclick="switchBoardView('gantt')" data-i18n="gantt">Gantt</button>
                         </div>
-                        <button class="btn btn-ghost btn-sm btn-comments-toggle" onclick="toggleComments()" title="Comments">
+                        <button class="btn btn-ghost btn-sm btn-comments-toggle" onclick="toggleComments()" data-i18n="comments">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                             </svg>
                             <span class="badge-dot"></span>
                         </button>
-                        <button class="btn btn-ghost btn-sm" onclick="backToBoards()">&#8592; Boards</button>
+                        <button class="btn btn-ghost btn-sm" onclick="backToBoards()" data-i18n="boards">&#8592; Boards</button>
                     </div>
                     <div id="board-area" class="board-area"></div>
                     <div id="gantt-area" class="gantt-container hidden"></div>
@@ -1511,15 +1512,15 @@
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                                 </svg>
-                                Comments
+                                <span data-i18n="comments">Comments</span>
                                 <span class="comments-count" id="comments-count">0</span>
                             </div>
                             <span id="comments-toggle-icon" style="color:rgba(255,255,255,0.5);font-size:12px">&#9650;</span>
                         </div>
                         <div class="comments-body" id="comments-body"></div>
                         <div class="comments-input-wrap comment-input-wrap">
-                            <input type="text" id="comment-input" placeholder="Write a comment..." onkeydown="if(event.key==='Enter')sendComment()">
-                            <button class="comment-send-btn" onclick="sendComment()">Send</button>
+                            <input type="text" id="comment-input" data-i18n-placeholder="writeComment" placeholder="Write a comment..." onkeydown="if(event.key==='Enter')sendComment()">
+                            <button class="comment-send-btn" onclick="sendComment()" data-i18n="send">Send</button>
                         </div>
                     </div>
                 </div>
@@ -1527,29 +1528,29 @@
                 <!-- HELP -->
                 <div id="view-help" class="content hidden">
                     <div class="topbar">
-                        <div class="topbar-title">Help</div>
+                        <div class="topbar-title" data-i18n="help">Help</div>
                     </div>
                     <div class="help-text">
-                        <p>Use the sidebar to switch between sections. Everything runs on one page.</p>
-                        <p>all questions to tg: @korneplod993. email: smnmdvdv@gmail.com</p>
-                        <h3>Workspaces</h3>
+                        <p data-i18n="helpIntro">Use the sidebar to switch between sections. Everything runs on one page.</p>
+                        <p data-i18n="helpContact">all questions to tg: @korneplod993. email: smnmdvdv@gmail.com</p>
+                        <h3 data-i18n="helpWsTitle">Workspaces</h3>
                         <ul>
-                            <li>Create a workspace with a title</li>
-                            <li>Open it to manage boards and members</li>
+                            <li data-i18n="helpWs1">Create a workspace with a title</li>
+                            <li data-i18n="helpWs2">Open it to manage boards and members</li>
                         </ul>
-                        <h3>Boards</h3>
+                        <h3 data-i18n="helpBoardTitle">Boards</h3>
                         <ul>
-                            <li>Each board starts with default columns: To Do, In Progress, Done</li>
-                            <li>Click a board to open the kanban view</li>
-                            <li>Add custom columns with the + Add column button</li>
+                            <li data-i18n="helpBoard1">Each board starts with default columns: To Do, In Progress, Done</li>
+                            <li data-i18n="helpBoard2">Click a board to open the kanban view</li>
+                            <li data-i18n="helpBoard3">Add custom columns with the + Add column button</li>
                         </ul>
-                        <h3 onclick="this.classList.toggle('clicked'), document.body.classList.toggle('dark-bg')">Tasks
+                        <h3 onclick="this.classList.toggle('clicked'), document.body.classList.toggle('dark-bg')" data-i18n="helpTaskTitle">Tasks
                         </h3>
                         <ul>
-                            <li>Add tasks from any column using the + Add task button</li>
-                            <li>Edit title, description, column (status), and assignee</li>
-                            <li>Set start and due dates for Gantt view</li>
-                            <li>Task status = the column it belongs to</li>
+                            <li data-i18n="helpTask1">Add tasks from any column using the + Add task button</li>
+                            <li data-i18n="helpTask2">Edit title, description, column (status), and assignee</li>
+                            <li data-i18n="helpTask3">Set start and due dates for Gantt view</li>
+                            <li data-i18n="helpTask4">Task status = the column it belongs to</li>
                         </ul>
                     </div>
                 </div>
@@ -1560,30 +1561,30 @@
     <!-- MODALS -->
     <div id="workspace-modal" class="modal-overlay hidden" onclick="closeModal(event,'workspace-modal')">
         <div class="modal">
-            <div class="modal-header"><span class="modal-title">New workspace</span><button class="btn btn-icon"
+            <div class="modal-header"><span class="modal-title" data-i18n="newWorkspace">New workspace</span><button class="btn btn-icon"
                     onclick="closeModal(null,'workspace-modal')">&#10005;</button></div>
             <div class="modal-body">
-                <div class="field"><label>Title</label><input type="text" id="workspace-title-input"
+                <div class="field"><label data-i18n="title">Title</label><input type="text" id="workspace-title-input"
                         placeholder="e.g. Marketing team"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-ghost" onclick="closeModal(null,'workspace-modal')">Cancel</button>
-                <button class="btn btn-primary" style="width:auto" onclick="createWorkspace()">Create</button>
+                <button class="btn btn-ghost" onclick="closeModal(null,'workspace-modal')" data-i18n="cancel">Cancel</button>
+                <button class="btn btn-primary" style="width:auto" onclick="createWorkspace()" data-i18n="create">Create</button>
             </div>
         </div>
     </div>
 
     <div id="board-modal" class="modal-overlay hidden" onclick="closeModal(event,'board-modal')">
         <div class="modal">
-            <div class="modal-header"><span class="modal-title">New board</span><button class="btn btn-icon"
+            <div class="modal-header"><span class="modal-title" data-i18n="newBoard">New board</span><button class="btn btn-icon"
                     onclick="closeModal(null,'board-modal')">&#10005;</button></div>
             <div class="modal-body">
-                <div class="field"><label>Title</label><input type="text" id="board-title-input"
+                <div class="field"><label data-i18n="title">Title</label><input type="text" id="board-title-input"
                         placeholder="e.g. Sprint 12"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-ghost" onclick="closeModal(null,'board-modal')">Cancel</button>
-                <button class="btn btn-primary" style="width:auto" onclick="createBoard()">Create</button>
+                <button class="btn btn-ghost" onclick="closeModal(null,'board-modal')" data-i18n="cancel">Cancel</button>
+                <button class="btn btn-primary" style="width:auto" onclick="createBoard()" data-i18n="create">Create</button>
             </div>
         </div>
     </div>
@@ -1591,15 +1592,15 @@
     <!-- COLUMN MODAL -->
     <div id="column-modal" class="modal-overlay hidden" onclick="closeModal(event,'column-modal')">
         <div class="modal">
-            <div class="modal-header"><span class="modal-title">Add column</span><button class="btn btn-icon"
+            <div class="modal-header"><span class="modal-title" data-i18n="addColumn">Add column</span><button class="btn btn-icon"
                     onclick="closeModal(null,'column-modal')">&#10005;</button></div>
             <div class="modal-body">
-                <div class="field"><label>Column name</label><input type="text" id="column-name-input"
+                <div class="field"><label data-i18n="columnName">Column name</label><input type="text" id="column-name-input"
                         placeholder="e.g. In Review"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-ghost" onclick="closeModal(null,'column-modal')">Cancel</button>
-                <button class="btn btn-primary" style="width:auto" onclick="createColumn()">Add column</button>
+                <button class="btn btn-ghost" onclick="closeModal(null,'column-modal')" data-i18n="cancel">Cancel</button>
+                <button class="btn btn-primary" style="width:auto" onclick="createColumn()" data-i18n="addColumn">Add column</button>
             </div>
         </div>
     </div>
@@ -1608,43 +1609,43 @@
     <div id="task-modal" class="modal-overlay hidden" onclick="closeModal(event,'task-modal')">
         <div class="modal">
             <div class="modal-header">
-                <span class="modal-title" id="task-modal-title">New task</span>
+                <span class="modal-title" id="task-modal-title" data-i18n="newTask">New task</span>
                 <button class="btn btn-icon" onclick="closeModal(null,'task-modal')">&#10005;</button>
             </div>
             <div class="modal-body">
-                <div class="field"><label>Title</label><input type="text" id="task-title-input"
+                <div class="field"><label data-i18n="title">Title</label><input type="text" id="task-title-input"
                         placeholder="What needs to be done?"></div>
-                <div class="field"><label>Description</label><textarea id="task-desc-input"
+                <div class="field"><label data-i18n="description">Description</label><textarea id="task-desc-input"
                         placeholder="Details..."></textarea></div>
                 <div class="field-row">
-                    <div class="field"><label>Start date</label><input type="date" id="task-start-input"></div>
-                    <div class="field"><label>Due date</label><input type="date" id="task-due-input"></div>
+                    <div class="field"><label data-i18n="startDate">Start date</label><input type="date" id="task-start-input"></div>
+                    <div class="field"><label data-i18n="dueDate">Due date</label><input type="date" id="task-due-input"></div>
                 </div>
-                <div class="field"><label>Assigned to</label><select id="task-assignee-input"></select></div>
+                <div class="field"><label data-i18n="assignedTo">Assigned to</label><select id="task-assignee-input"></select></div>
                 <div class="field">
-                    <label>Column (Status)</label>
+                    <label data-i18n="columnStatus">Column (Status)</label>
                     <select id="task-column-input"></select>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-ghost" onclick="closeModal(null,'task-modal')">Cancel</button>
-                <button class="btn btn-primary" style="width:auto" onclick="saveTask()">Save</button>
+                <button class="btn btn-ghost" onclick="closeModal(null,'task-modal')" data-i18n="cancel">Cancel</button>
+                <button class="btn btn-primary" style="width:auto" onclick="saveTask()" data-i18n="save">Save</button>
             </div>
         </div>
     </div>
 
     <div id="password-modal" class="modal-overlay hidden" onclick="closeModal(event,'password-modal')">
         <div class="modal">
-            <div class="modal-header"><span class="modal-title">Change password</span><button class="btn btn-icon"
+            <div class="modal-header"><span class="modal-title" data-i18n="changePassword">Change password</span><button class="btn btn-icon"
                     onclick="closeModal(null,'password-modal')">&#10005;</button></div>
             <div class="modal-body">
-                <div class="field"><label>Current password</label><input type="password" id="pwd-current"></div>
-                <div class="field"><label>New password</label><input type="password" id="pwd-new"></div>
-                <div class="field"><label>Confirm new password</label><input type="password" id="pwd-confirm"></div>
+                <div class="field"><label data-i18n="currentPassword">Current password</label><input type="password" id="pwd-current"></div>
+                <div class="field"><label data-i18n="newPassword">New password</label><input type="password" id="pwd-new"></div>
+                <div class="field"><label data-i18n="confirmPassword">Confirm new password</label><input type="password" id="pwd-confirm"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-ghost" onclick="closeModal(null,'password-modal')">Cancel</button>
-                <button class="btn btn-primary" style="width:auto" onclick="changePassword()">Update</button>
+                <button class="btn btn-ghost" onclick="closeModal(null,'password-modal')" data-i18n="cancel">Cancel</button>
+                <button class="btn btn-primary" style="width:auto" onclick="changePassword()" data-i18n="update">Update</button>
             </div>
         </div>
     </div>
@@ -1653,33 +1654,33 @@
     <div id="members-modal" class="modal-overlay hidden" onclick="closeModal(event,'members-modal')">
         <div class="modal" style="max-width:560px">
             <div class="modal-header">
-                <span class="modal-title">Workspace members</span>
+                <span class="modal-title" data-i18n="workspaceMembers">Workspace members</span>
                 <button class="btn btn-icon" onclick="closeModal(null,'members-modal')">&#10005;</button>
             </div>
             <div class="modal-body">
                 <table class="members-table" id="members-table">
                     <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Role</th>
-                            <th>Actions</th>
+                            <th data-i18n="user">User</th>
+                            <th data-i18n="role">Role</th>
+                            <th data-i18n="actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="members-tbody"></tbody>
                 </table>
                 <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1)">
-                    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:rgba(255,255,255,0.8)">Add member
+                    <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:rgba(255,255,255,0.8)" data-i18n="addMemberByEmail">Add member
                         by email</div>
                     <div style="display:flex;gap:8px">
                         <input type="email" id="add-member-email" placeholder="user@example.com"
                             style="flex:1;padding:8px 12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radius-sm);font:inherit;font-size:13px;color:#fff;outline:none">
                         <select id="add-member-role"
                             style="padding:8px 10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radius-sm);font:inherit;font-size:13px;color:#fff;outline:none">
-                            <option value="guest">Guest</option>
-                            <option value="member" selected>Member</option>
-                            <option value="administrator">Administrator</option>
+                            <option value="guest" data-i18n="guest">Guest</option>
+                            <option value="member" selected data-i18n="member">Member</option>
+                            <option value="administrator" data-i18n="administrator">Administrator</option>
                         </select>
-                        <button class="btn btn-primary" style="width:auto" onclick="addMember()">Add</button>
+                        <button class="btn btn-primary" style="width:auto" onclick="addMember()" data-i18n="add">Add</button>
                     </div>
                 </div>
             </div>
@@ -1690,11 +1691,157 @@
         const API_BASE = 'http://localhost:8080';
         const SESSION_KEY = 'tt_preview_session';
         const NAV_KEY = 'tt_nav_state';
+        const LANG_KEY = 'tt_lang';
         const MEMBER_COLORS = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
         const COLUMN_DOTS = ['#94A3B8', '#F59E0B', '#10B981', '#818CF8', '#F472B6', '#34D399', '#FB923C', '#60A5FA'];
 
+        const I18N = {
+            en: {
+                signIn: 'Sign in', register: 'Register', createAccount: 'Create account',
+                email: 'Email', password: 'Password', name: 'Name',
+                noAccount: 'No account?', haveAccount: 'Have an account?',
+                menu: 'Menu', account: 'Account', help: 'Help',
+                workspaces: 'Workspaces', allWorkspaces: 'All workspaces', addWorkspace: '+ Add workspace',
+                profile: 'Profile', memberSince: 'Member since', changePassword: 'Change password',
+                addNew: '+ Add new', back: '\u2190 Back', members: 'Members',
+                addBoard: '+ Add board', addTask: '+ Add task', delete: 'Delete', board: 'Board',
+                kanban: 'Kanban', gantt: 'Gantt', comments: 'Comments',
+                boards: 'Boards', writeComment: 'Write a comment...', send: 'Send',
+                newWorkspace: 'New workspace', title: 'Title', cancel: 'Cancel', create: 'Create',
+                newBoard: 'New board', addColumn: 'Add column', columnName: 'Column name',
+                newTask: 'New task', editTask: 'Edit task', description: 'Description',
+                startDate: 'Start date', dueDate: 'Due date', assignedTo: 'Assigned to',
+                columnStatus: 'Column (Status)', save: 'Save',
+                currentPassword: 'Current password', newPassword: 'New password',
+                confirmPassword: 'Confirm new password', update: 'Update',
+                workspaceMembers: 'Workspace members', user: 'User', role: 'Role', actions: 'Actions',
+                addMemberByEmail: 'Add member by email', add: 'Add', remove: 'Remove',
+                guest: 'Guest', member: 'Member', administrator: 'Administrator',
+                // Help
+                helpIntro: 'Use the sidebar to switch between sections. Everything runs on one page.',
+                helpContact: 'all questions to tg: @korneplod993. email: smnmdvdv@gmail.com',
+                helpWsTitle: 'Workspaces', helpWs1: 'Create a workspace with a title',
+                helpWs2: 'Open it to manage boards and members',
+                helpBoardTitle: 'Boards', helpBoard1: 'Each board starts with default columns: To Do, In Progress, Done',
+                helpBoard2: 'Click a board to open the kanban view',
+                helpBoard3: 'Add custom columns with the + Add column button',
+                helpTaskTitle: 'Tasks', helpTask1: 'Add tasks from any column using the + Add task button',
+                helpTask2: 'Edit title, description, column (status), and assignee',
+                helpTask3: 'Set start and due dates for Gantt view',
+                helpTask4: 'Task status = the column it belongs to',
+                // Toasts
+                fillAllFields: 'Fill in all fields', loginFailed: 'Login failed',
+                registrationFailed: 'Registration failed', checkPasswords: 'Check password fields',
+                passwordUpdated: 'Password updated', workspaceCreated: 'Workspace created',
+                errorCreatingWorkspace: 'Error creating workspace',
+                confirmDeleteWorkspace: 'Delete this workspace and all its boards?',
+                workspaceDeleted: 'Workspace deleted', errorDeletingWorkspace: 'Error deleting workspace',
+                confirmDeleteBoard: 'Delete this board and all its tasks?',
+                boardDeleted: 'Board deleted', errorDeletingBoard: 'Error deleting board',
+                noMembers: 'No members yet', emailRequired: 'Email is required',
+                memberAdded: 'Member added', failedAddMember: 'Failed to add member',
+                memberRemoved: 'Member removed', failedRemoveMember: 'Failed to remove member',
+                commentSent: 'Comment sent', failedSendComment: 'Failed to send comment',
+                commentUpdated: 'Comment updated', failedUpdateComment: 'Failed to update comment',
+                confirmDeleteComment: 'Delete this comment?', commentDeleted: 'Comment deleted',
+                failedDeleteComment: 'Failed to delete comment',
+                noComments: 'No comments yet. Be the first to comment!',
+                titleRequired: 'Title is required', taskCreated: 'Task created',
+                taskUpdated: 'Task updated', failedSaveTask: 'Failed to save task',
+                taskDeleted: 'Task deleted', failedDelete: 'Failed to delete',
+                columnDeleted: 'Column deleted', columnAdded: 'Column added',
+                errorAddingColumn: 'Error adding column',
+                deleteConfirm: (name, n) => `Delete "${name}" and its ${n} task(s)?`,
+                boardCreated: 'Board created', errorCreatingBoard: 'Error creating board',
+                unknown: 'Unknown', noTasks: 'No tasks', noTasksGantt: 'No tasks to display in Gantt view',
+                tasks: 'tasks', task: 'task',
+            },
+            ru: {
+                signIn: '\u0412\u043e\u0439\u0442\u0438', register: '\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f', createAccount: '\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u0430\u043a\u043a\u0430\u0443\u043d\u0442',
+                email: 'Email', password: '\u041f\u0430\u0440\u043e\u043b\u044c', name: '\u0418\u043c\u044f',
+                noAccount: '\u041d\u0435\u0442 \u0430\u043a\u043a\u0430\u0443\u043d\u0442\u0430?', haveAccount: '\u0423\u0436\u0435 \u0435\u0441\u0442\u044c \u0430\u043a\u043a\u0430\u0443\u043d\u0442?',
+                menu: '\u041c\u0435\u043d\u044e', account: '\u0410\u043a\u043a\u0430\u0443\u043d\u0442', help: '\u041f\u043e\u043c\u043e\u0449\u044c',
+                workspaces: '\u0420\u0430\u0431\u043e\u0447\u0438\u0435 \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u0430', allWorkspaces: '\u0412\u0441\u0435 \u0440\u0430\u0431\u043e\u0447\u0438\u0435 \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u0430', addWorkspace: '+ \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e',
+                profile: '\u041f\u0440\u043e\u0444\u0438\u043b\u044c', memberSince: '\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a \u0441', changePassword: '\u0421\u043c\u0435\u043d\u0438\u0442\u044c \u043f\u0430\u0440\u043e\u043b\u044c',
+                addNew: '+ \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c', back: '\u2190 \u041d\u0430\u0437\u0430\u0434', members: '\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u0438',
+                addBoard: '+ \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0434\u043e\u0441\u043a\u0443', addTask: '+ \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447\u0443', delete: '\u0423\u0434\u0430\u043b\u0438\u0442\u044c', board: '\u0414\u043e\u0441\u043a\u0430',
+                kanban: 'Kanban', gantt: 'Gantt', comments: '\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0438',
+                boards: '\u0414\u043e\u0441\u043a\u0438', writeComment: '\u041d\u0430\u043f\u0438\u0448\u0438\u0442\u0435 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439...', send: '\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c',
+                newWorkspace: '\u041d\u043e\u0432\u043e\u0435 \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e', title: '\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435', cancel: '\u041e\u0442\u043c\u0435\u043d\u0430', create: '\u0421\u043e\u0437\u0434\u0430\u0442\u044c',
+                newBoard: '\u041d\u043e\u0432\u0430\u044f \u0434\u043e\u0441\u043a\u0430', addColumn: '\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u043a\u043e\u043b\u043e\u043d\u043a\u0443', columnName: '\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u043a\u043e\u043b\u043e\u043d\u043a\u0438',
+                newTask: '\u041d\u043e\u0432\u0430\u044f \u0437\u0430\u0434\u0430\u0447\u0430', description: '\u041e\u043f\u0438\u0441\u0430\u043d\u0438\u0435',
+                startDate: '\u0414\u0430\u0442\u0430 \u043d\u0430\u0447\u0430\u043b\u0430', dueDate: '\u0421\u0440\u043e\u043a', assignedTo: '\u041d\u0430\u0437\u043d\u0430\u0447\u0438\u0442\u044c',
+                editTask: '\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0437\u0430\u0434\u0430\u0447\u0443',
+                columnStatus: '\u041a\u043e\u043b\u043e\u043d\u043a\u0430 (\u0421\u0442\u0430\u0442\u0443\u0441)', save: '\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c',
+                currentPassword: '\u0422\u0435\u043a\u0443\u0449\u0438\u0439 \u043f\u0430\u0440\u043e\u043b\u044c', newPassword: '\u041d\u043e\u0432\u044b\u0439 \u043f\u0430\u0440\u043e\u043b\u044c',
+                confirmPassword: '\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u044c', update: '\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c',
+                workspaceMembers: '\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u0438 \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u0430', user: '\u041f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044c', role: '\u0420\u043e\u043b\u044c', actions: '\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u044f',
+                addMemberByEmail: '\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u0430 \u043f\u043e email', add: '\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c', remove: '\u0423\u0434\u0430\u043b\u0438\u0442\u044c',
+                guest: '\u0413\u043e\u0441\u0442\u044c', member: '\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a', administrator: '\u0410\u0434\u043c\u0438\u043d\u0438\u0441\u0442\u0440\u0430\u0442\u043e\u0440',
+                helpIntro: '\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439\u0442\u0435 \u0431\u043e\u043a\u043e\u0432\u0443\u044e \u043f\u0430\u043d\u0435\u043b\u044c \u0434\u043b\u044f \u043f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u044f \u043c\u0435\u0436\u0434\u0443 \u0440\u0430\u0437\u0434\u0435\u043b\u0430\u043c\u0438. \u0412\u0441\u0435 \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u043d\u0430 \u043e\u0434\u043d\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435.',
+                helpContact: '\u0412\u0441\u0435 \u0432\u043e\u043f\u0440\u043e\u0441\u044b \u0432 tg: @korneplod993. email: smnmdvdv@gmail.com',
+                helpWsTitle: '\u0420\u0430\u0431\u043e\u0447\u0438\u0435 \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u0430', helpWs1: '\u0421\u043e\u0437\u0434\u0430\u0439\u0442\u0435 \u0440\u0430\u0431\u043e\u0447\u0435\u0435 \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e \u0441 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435\u043c',
+                helpWs2: '\u041e\u0442\u043a\u0440\u043e\u0439\u0442\u0435 \u0435\u0433\u043e \u0434\u043b\u044f \u0443\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u0434\u043e\u0441\u043a\u0430\u043c\u0438 \u0438 \u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u0430\u043c\u0438',
+                helpBoardTitle: '\u0414\u043e\u0441\u043a\u0438', helpBoard1: '\u041a\u0430\u0436\u0434\u0430\u044f \u0434\u043e\u0441\u043a\u0430 \u043d\u0430\u0447\u0438\u043d\u0430\u0435\u0442\u0441\u044f \u0441 \u043a\u043e\u043b\u043e\u043d\u043e\u043a \u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e: To Do, In Progress, Done',
+                helpBoard2: '\u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u043d\u0430 \u0434\u043e\u0441\u043a\u0443 \u0434\u043b\u044f \u043e\u0442\u043a\u0440\u044b\u0442\u0438\u044f kanban-\u0432\u0438\u0434\u0430',
+                helpBoard3: '\u0414\u043e\u0431\u0430\u0432\u043b\u044f\u0439\u0442\u0435 \u043a\u0430\u0441\u0442\u043e\u043c\u043d\u044b\u0435 \u043a\u043e\u043b\u043e\u043d\u043a\u0438 \u043a\u043d\u043e\u043f\u043a\u043e\u0439 + \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u043a\u043e\u043b\u043e\u043d\u043a\u0443',
+                helpTaskTitle: '\u0417\u0430\u0434\u0430\u0447\u0438', helpTask1: '\u0414\u043e\u0431\u0430\u0432\u043b\u044f\u0439\u0442\u0435 \u0437\u0430\u0434\u0430\u0447\u0438 \u0438\u0437 \u043b\u044e\u0431\u043e\u0439 \u043a\u043e\u043b\u043e\u043d\u043a\u0438 \u043a\u043d\u043e\u043f\u043a\u043e\u0439 + \u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447\u0443',
+                helpTask2: '\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u0439\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435, \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435, \u043a\u043e\u043b\u043e\u043d\u043a\u0443 (\u0441\u0442\u0430\u0442\u0443\u0441) \u0438 \u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0433\u043e',
+                helpTask3: '\u0423\u0441\u0442\u0430\u043d\u0430\u0432\u043b\u0438\u0432\u0430\u0439\u0442\u0435 \u0434\u0430\u0442\u044b \u043d\u0430\u0447\u0430\u043b\u0430 \u0438 \u0441\u0440\u043e\u043a\u0430 \u0434\u043b\u044f \u0432\u0438\u0434\u0430 Gantt',
+                helpTask4: '\u0421\u0442\u0430\u0442\u0443\u0441 \u0437\u0430\u0434\u0430\u0447\u0438 = \u043a\u043e\u043b\u043e\u043d\u043a\u0430, \u0432 \u043a\u043e\u0442\u043e\u0440\u043e\u0439 \u043e\u043d\u0430 \u043d\u0430\u0445\u043e\u0434\u0438\u0442\u0441\u044f',
+                fillAllFields: '\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0432\u0441\u0435 \u043f\u043e\u043b\u044f', loginFailed: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0432\u0445\u043e\u0434\u0430',
+                registrationFailed: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0438', checkPasswords: '\u041f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u043f\u043e\u043b\u044f \u043f\u0430\u0440\u043e\u043b\u0435\u0439',
+                passwordUpdated: '\u041f\u0430\u0440\u043e\u043b\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d', workspaceCreated: '\u041f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e \u0441\u043e\u0437\u0434\u0430\u043d\u043e',
+                errorCreatingWorkspace: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u0430',
+                confirmDeleteWorkspace: '\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u044d\u0442\u043e \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e \u0438 \u0432\u0441\u0435 \u0435\u0433\u043e \u0434\u043e\u0441\u043a\u0438?',
+                workspaceDeleted: '\u041f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e \u0443\u0434\u0430\u043b\u0435\u043d\u043e', errorDeletingWorkspace: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u043f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u0430',
+                confirmDeleteBoard: '\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u044d\u0442\u0443 \u0434\u043e\u0441\u043a\u0443 \u0438 \u0432\u0441\u0435 \u0435\u0435 \u0437\u0430\u0434\u0430\u0447\u0438?',
+                boardDeleted: '\u0414\u043e\u0441\u043a\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0430', errorDeletingBoard: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u0434\u043e\u0441\u043a\u0438',
+                noMembers: '\u041f\u043e\u043a\u0430 \u043d\u0438\u043a\u043e\u0433\u043e \u043d\u0435\u0442', emailRequired: '\u0423\u043a\u0430\u0436\u0438\u0442\u0435 email',
+                memberAdded: '\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d', failedAddMember: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u0430',
+                memberRemoved: '\u0423\u0447\u0430\u0441\u0442\u043d\u0438\u043a \u0443\u0434\u0430\u043b\u0435\u043d', failedRemoveMember: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u0443\u0447\u0430\u0441\u0442\u043d\u0438\u043a\u0430',
+                commentSent: '\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043e\u0442\u043f\u0440\u0430\u0432\u043b\u0435\u043d', failedSendComment: '\u041e\u0448\u0438\u0431\u043a\u0430 \u043e\u0442\u043f\u0440\u0430\u0432\u043a\u0438 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f',
+                commentUpdated: '\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d', failedUpdateComment: '\u041e\u0448\u0438\u0431\u043a\u0430 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f',
+                confirmDeleteComment: '\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u044d\u0442\u043e\u0442 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439?', commentDeleted: '\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0439 \u0443\u0434\u0430\u043b\u0435\u043d',
+                failedDeleteComment: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f',
+                noComments: '\u041f\u043e\u043a\u0430 \u043d\u0438\u043a\u0430\u043a\u0438\u0445 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0435\u0432. \u0411\u0443\u0434\u044c\u0442\u0435 \u043f\u0435\u0440\u0432\u044b\u043c!',
+                titleRequired: '\u0423\u043a\u0430\u0436\u0438\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435', taskCreated: '\u0417\u0430\u0434\u0430\u0447\u0430 \u0441\u043e\u0437\u0434\u0430\u043d\u0430',
+                taskUpdated: '\u0417\u0430\u0434\u0430\u0447\u0430 \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0430', failedSaveTask: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u0438\u044f \u0437\u0430\u0434\u0430\u0447\u0438',
+                taskDeleted: '\u0417\u0430\u0434\u0430\u0447\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0430', failedDelete: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0438\u044f',
+                columnDeleted: '\u041a\u043e\u043b\u043e\u043d\u043a\u0430 \u0443\u0434\u0430\u043b\u0435\u043d\u0430', columnAdded: '\u041a\u043e\u043b\u043e\u043d\u043a\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0430',
+                errorAddingColumn: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u043a\u043e\u043b\u043e\u043d\u043a\u0438',
+                deleteConfirm: (name, n) => `\u0423\u0434\u0430\u043b\u0438\u0442\u044c "${name}" \u0438 \u0435\u0433\u043e ${n} \u0437\u0430\u0434\u0430\u0447(\u0438)?`,
+                boardCreated: '\u0414\u043e\u0441\u043a\u0430 \u0441\u043e\u0437\u0434\u0430\u043d\u0430', errorCreatingBoard: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f \u0434\u043e\u0441\u043a\u0438',
+                unknown: '\u041d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u044b\u0439', noTasks: '\u041d\u0435\u0442 \u0437\u0430\u0434\u0430\u0447', noTasksGantt: '\u041d\u0435\u0442 \u0437\u0430\u0434\u0430\u0447 \u0434\u043b\u044f \u043e\u0442\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f \u0432 \u0432\u0438\u0434\u0435 Gantt',
+                tasks: '\u0437\u0430\u0434\u0430\u0447', task: '\u0437\u0430\u0434\u0430\u0447\u0430',
+            },
+        };
+
+        function t(key) { return I18N[state.lang]?.[key] ?? I18N.en[key] ?? key; }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = t(key);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+            });
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'en' ? 'ru' : 'en';
+            localStorage.setItem(LANG_KEY, state.lang);
+            const prefix = '/' + state.lang;
+            const hash = location.hash || '#/account';
+            history.replaceState(null, '', prefix + hash);
+            document.getElementById('lang-btn').textContent = state.lang === 'en' ? 'RU' : 'EN';
+            applyTranslations();
+            if (state.view === 'board' && state.activeBoardId) renderBoard(state.activeBoardId);
+        }
+
         let state = {
-            user: null, token: null, view: 'account',
+            user: null, token: null, view: 'account', lang: 'en',
             workspaces: [], activeWorkspaceId: null,
             boards: [], activeBoardId: null,
             columns: {},
@@ -1719,7 +1866,7 @@
         }
 
         function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-        function fmtDate(iso) { if (!iso) return '&mdash;'; return new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); }
+        function fmtDate(iso) { if (!iso) return '&mdash;'; return new Date(iso).toLocaleDateString(state.lang === 'ru' ? 'ru-RU' : 'en-US', { day: '2-digit', month: 'short', year: 'numeric' }); }
         function todayISO() { return new Date().toISOString().slice(0, 10); }
         function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
         function showToast(msg) {
@@ -1735,10 +1882,11 @@
 
         function saveNavState() {
             localStorage.setItem(NAV_KEY, JSON.stringify({ view: state.view, activeWorkspaceId: state.activeWorkspaceId, activeBoardId: state.activeBoardId }));
+            const prefix = '/' + state.lang;
             let hash = '#/' + (state.view || 'account');
             if (state.view === 'workspace-detail' && state.activeWorkspaceId) hash = '#/workspace/' + state.activeWorkspaceId;
             if (state.view === 'board' && state.activeBoardId) hash = '#/board/' + state.activeBoardId;
-            history.replaceState(null, '', hash);
+            history.replaceState(null, '', prefix + hash);
         }
         function hideAllViews() {
             ['view-account', 'view-workspaces', 'view-workspace-detail', 'view-board', 'view-help'].forEach(id => document.getElementById(id).classList.add('hidden'));
@@ -1749,23 +1897,23 @@
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-password').value;
             const err = document.getElementById('login-error');
-            if (!email || !pass) { showError(err, 'Fill in all fields'); return; }
+            if (!email || !pass) { showError(err, t('fillAllFields')); return; }
             try {
                 const { token, user } = await api('POST', '/auth/login', { email, password: pass });
                 err.style.display = 'none'; loginUser(user, token);
-            } catch (e) { showError(err, e.data?.message || 'Login failed'); }
+            } catch (e) { showError(err, e.data?.message || t('loginFailed')); }
         }
         async function handleRegister() {
             const name = document.getElementById('reg-name').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const pass = document.getElementById('reg-password').value;
             const err = document.getElementById('register-error');
-            if (!name || !email || !pass) { showError(err, 'Fill in all fields'); return; }
+            if (!name || !email || !pass) { showError(err, t('fillAllFields')); return; }
             if (pass.length < 6) { showError(err, 'Password min 6 chars'); return; }
             try {
                 const { token, user } = await api('POST', '/auth/register', { username: name, email, password: pass });
                 err.style.display = 'none'; loginUser(user, token);
-            } catch (e) { showError(err, e.data?.message || 'Registration failed'); }
+            } catch (e) { showError(err, e.data?.message || t('registrationFailed')); }
         }
         function loginUser(user, token) {
             user.id = user.id || user.user_id;
@@ -1777,6 +1925,8 @@
             document.getElementById('sidebar-avatar').textContent = (user.name || user.email)[0].toUpperCase();
             document.getElementById('sidebar-name').textContent = user.name || user.email;
             document.getElementById('sidebar-email').textContent = user.email;
+            document.getElementById('lang-btn').textContent = state.lang === 'en' ? 'RU' : 'EN';
+            applyTranslations();
             renderAccount();
             loadWorkspaces().then(async () => {
                 renderSidebarWorkspaces();
@@ -1821,10 +1971,10 @@
             const current = document.getElementById('pwd-current').value;
             const nw = document.getElementById('pwd-new').value;
             const confirm = document.getElementById('pwd-confirm').value;
-            if (!current || !nw || nw !== confirm) { showToast('Check password fields'); return; }
+            if (!current || !nw || nw !== confirm) { showToast(t('checkPasswords')); return; }
             try {
                 await api('PATCH', '/users/' + state.user.id, { current, password: nw });
-                closeModal(null, 'password-modal'); showToast('Password updated');
+                closeModal(null, 'password-modal'); showToast(t('passwordUpdated'));
             } catch (e) { showToast(e.data?.message || 'Failed'); }
         }
         function openPasswordModal() { openModal('password-modal'); }
@@ -1869,7 +2019,7 @@
             const cards = state.workspaces.map(ws => {
                 return `<div class="card-clickable" onclick="openWorkspace('${ws.id}')"><h3>${esc(ws.title)}</h3></div>`;
             }).join('');
-            el.innerHTML = cards + `<div class="card-clickable card-add" onclick="openModal('workspace-modal')">+ Add workspace</div>`;
+            el.innerHTML = cards + `<div class="card-clickable card-add" onclick="openModal('workspace-modal')">${t('addWorkspace')}</div>`;
         }
         async function createWorkspace() {
             const title = document.getElementById('workspace-title-input').value.trim();
@@ -1879,34 +2029,34 @@
                 ws.id = ws.id || ws.workspace_id;
                 state.workspaces.push(ws);
                 document.getElementById('workspace-title-input').value = '';
-                closeModal(null, 'workspace-modal'); renderWorkspaces(); renderSidebarWorkspaces(); showToast('Workspace created');
-            } catch { showToast('Error creating workspace'); }
+                closeModal(null, 'workspace-modal'); renderWorkspaces(); renderSidebarWorkspaces(); showToast(t('workspaceCreated'));
+            } catch { showToast(t('errorCreatingWorkspace')); }
         }
         async function deleteWorkspace() {
             if (!state.activeWorkspaceId) return;
-            if (!confirm('Delete this workspace and all its boards?')) return;
+            if (!confirm(t('confirmDeleteWorkspace'))) return;
             try {
                 await api('DELETE', '/workspaces/' + state.activeWorkspaceId);
                 state.workspaces = state.workspaces.filter(ws => ws.id !== state.activeWorkspaceId);
                 state.activeWorkspaceId = null;
                 navigate('workspaces');
                 renderSidebarWorkspaces();
-                showToast('Workspace deleted');
+                showToast(t('workspaceDeleted'));
             } catch {
-                showToast('Error deleting workspace');
+                showToast(t('errorDeletingWorkspace'));
             }
         }
         async function deleteBoard(boardId) {
-            if (!confirm('Delete this board and all its tasks?')) return;
+            if (!confirm(t('confirmDeleteBoard'))) return;
             try {
                 await api('DELETE', '/boards/' + boardId);
                 state.boards = state.boards.filter(b => b.id !== boardId);
                 delete state.columns[boardId];
                 renderBoardList();
                 renderSidebarWorkspaces();
-                showToast('Board deleted');
+                showToast(t('boardDeleted'));
             } catch {
-                showToast('Error deleting board');
+                showToast(t('errorDeletingBoard'));
             }
         }
 
@@ -1936,9 +2086,9 @@
                 const cols = state.columns[b.id] || [];
                 const count = cols.reduce((sum, c) => sum + (state.tasks[c.id] || []).length, 0);
                 return `<div class="card-clickable" onclick="openBoard('${b.id}')" style="position:relative">
-                    <button class="btn btn-icon" style="position:absolute;top:10px;right:10px;font-size:13px;padding:4px 6px;opacity:0.5;z-index:1" onclick="event.stopPropagation();deleteBoard('${b.id}')" title="Delete board">&#10005;</button>
-                    <h3>${esc(b.title)}</h3><p>${count} task${count !== 1 ? 's' : ''}</p></div>`;
-            }).join('') + `<div class="card-clickable card-add" onclick="openModal('board-modal')">+ Add board</div>`;
+                    <button class="btn btn-icon" style="position:absolute;top:10px;right:10px;font-size:13px;padding:4px 6px;opacity:0.5;z-index:1" onclick="event.stopPropagation();deleteBoard('${b.id}')" title="${t('delete')}">&#10005;</button>
+                    <h3>${esc(b.title)}</h3><p>${count} ${count !== 1 ? t('tasks') : t('task')}</p></div>`;
+            }).join('') + `<div class="card-clickable card-add" onclick="openModal('board-modal')">${t('addBoard')}</div>`;
         }
         async function createBoard() {
             const title = document.getElementById('board-title-input').value.trim();
@@ -1949,8 +2099,8 @@
                 state.boards.push(b);
                 await loadColumns(b.id);
                 document.getElementById('board-title-input').value = '';
-                closeModal(null, 'board-modal'); renderBoardList(); showToast('Board created');
-            } catch { showToast('Error creating board'); }
+                closeModal(null, 'board-modal'); renderBoardList(); showToast(t('boardCreated'));
+            } catch { showToast(t('errorCreatingBoard')); }
         }
         function backToBoards() {
             state.view = 'workspace-detail'; hideAllViews();
@@ -1967,7 +2117,7 @@
         function renderMembersTable() {
             const tbody = document.getElementById('members-tbody');
             if (!state.members.length) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,0.5);padding:20px">No members yet</td></tr>';
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,0.5);padding:20px">${t('noMembers')}</td></tr>`;
                 return;
             }
             tbody.innerHTML = state.members.map(m => {
@@ -1977,26 +2127,26 @@
                 const isOwner = m.role === 'administrator' && m.user_id === state.user?.id;
                 return `<tr><td><div style="font-weight:600">${esc(name)}</div><div style="font-size:12px;color:rgba(255,255,255,0.5)">${esc(email)}</div></td>
                     <td><span class="role-badge ${roleClass}">${esc(m.role)}</span></td>
-                    <td>${!isOwner ? `<button class="btn btn-danger-soft btn-sm" onclick="removeMember('${m.user_id}')">Remove</button>` : ''}</td></tr>`;
+                    <td>${!isOwner ? `<button class="btn btn-danger-soft btn-sm" onclick="removeMember('${m.user_id}')">${t('remove')}</button>` : ''}</td></tr>`;
             }).join('');
         }
         async function addMember() {
             const email = document.getElementById('add-member-email').value.trim();
             const role = document.getElementById('add-member-role').value;
-            if (!email) { showToast('Email is required'); return; }
+            if (!email) { showToast(t('emailRequired')); return; }
             try {
                 const user = await api('GET', '/users?email=' + encodeURIComponent(email));
                 const userId = user.user_id || user.id;
                 await api('POST', '/workspaces/' + state.activeWorkspaceId + '/workspace_members', { user_id: userId, role });
                 document.getElementById('add-member-email').value = '';
-                await loadMembers(state.activeWorkspaceId); renderMembersTable(); showToast('Member added');
-            } catch (e) { showToast(e.data?.message || 'Failed to add member'); }
+                await loadMembers(state.activeWorkspaceId); renderMembersTable(); showToast(t('memberAdded'));
+            } catch (e) { showToast(e.data?.message || t('failedAddMember')); }
         }
         async function removeMember(userId) {
             try {
                 await api('DELETE', '/workspaces/' + state.activeWorkspaceId + '/workspace_members/' + userId);
-                await loadMembers(state.activeWorkspaceId); renderMembersTable(); showToast('Member removed');
-            } catch { showToast('Failed to remove member'); }
+                await loadMembers(state.activeWorkspaceId); renderMembersTable(); showToast(t('memberRemoved'));
+            } catch { showToast(t('failedRemoveMember')); }
         }
 
         // COLUMNS
@@ -2062,15 +2212,15 @@
                         <button class="btn btn-icon" style="font-size:13px;padding:4px 6px;opacity:0.5" onclick="deleteColumn('${boardId}','${col.id}')" title="Delete column">&#10005;</button>
                     </div>
                     <div class="column-cards">
-                        ${tasks.map(t => renderTaskCard(t, col)).join('') || '<div class="empty" style="padding:16px;font-size:13px">No tasks</div>'}
+                        ${tasks.map(t => renderTaskCard(t, col)).join('') || `<div class="empty" style="padding:16px;font-size:13px">${t('noTasks')}</div>`}
                     </div>
-                    <button class="add-task-btn" onclick="openCreateTask('${boardId}','${col.id}')">+ Add task</button>
+                    <button class="add-task-btn" onclick="openCreateTask('${boardId}','${col.id}')">${t('addTask')}</button>
                 </div>`;
             }).join('');
             area.innerHTML = colHtml + `
                 <div class="column-add">
                     <button class="column-add-btn" onclick="openAddColumnModal('${boardId}')">
-                        <span style="font-size:20px;line-height:1">+</span> Add column
+                        <span style="font-size:20px;line-height:1">+</span> ${t('addColumn')}
                     </button>
                 </div>`;
         }
@@ -2110,18 +2260,18 @@
                 state.tasks[col.id] = [];
                 document.getElementById('column-name-input').value = '';
                 closeModal(null, 'column-modal');
-                renderBoard(boardId); showToast('Column added');
-            } catch { showToast('Error adding column'); }
+                renderBoard(boardId); showToast(t('columnAdded'));
+            } catch { showToast(t('errorAddingColumn')); }
         }
         async function deleteColumn(boardId, colId) {
             const tasks = state.tasks[colId] || [];
-            if (tasks.length > 0 && !confirm(`Delete "${(state.columns[boardId] || []).find(c => c.id === colId)?.name}" and its ${tasks.length} task(s)?`)) return;
+            if (tasks.length > 0 && !confirm(t('deleteConfirm', (state.columns[boardId] || []).find(c => c.id === colId)?.name || '', tasks.length))) return;
             try {
                 await api('DELETE', '/columns/' + colId);
                 state.columns[boardId] = (state.columns[boardId] || []).filter(c => c.id !== colId);
                 delete state.tasks[colId];
-                renderBoard(boardId); showToast('Column deleted');
-            } catch { showToast('Error deleting column'); }
+                renderBoard(boardId); showToast(t('columnDeleted'));
+            } catch { showToast(t('failedDelete')); }
         }
 
         // TASKS
@@ -2171,7 +2321,7 @@
             state.editingTaskId = null;
             state.activeBoardId = boardId;
             state.defaultColumnId = colId;
-            document.getElementById('task-modal-title').textContent = 'New task';
+            document.getElementById('task-modal-title').textContent = t('newTask');
             document.getElementById('task-title-input').value = '';
             document.getElementById('task-desc-input').value = '';
             document.getElementById('task-start-input').value = todayISO();
@@ -2189,7 +2339,7 @@
             state.editingTaskId = taskId;
             state.activeBoardId = boardId;
             state.defaultColumnId = colId;
-            document.getElementById('task-modal-title').textContent = 'Edit task';
+                document.getElementById('task-modal-title').textContent = t('editTask');
             document.getElementById('task-title-input').value = task.title || '';
             document.getElementById('task-desc-input').value = task.description || '';
             document.getElementById('task-start-input').value = task.start_date ? toISODate(task.start_date) : '';
@@ -2206,7 +2356,7 @@
             const newColId = document.getElementById('task-column-input').value;
             const startDate = document.getElementById('task-start-input').value || null;
             const dueDate = document.getElementById('task-due-input').value || null;
-            if (!title) { showToast('Title is required'); return; }
+            if (!title) { showToast(t('titleRequired')); return; }
             const boardId = state.activeBoardId;
             try {
                 if (state.editingTaskId) {
@@ -2228,19 +2378,19 @@
                     if (!state.tasks[newColId]) state.tasks[newColId] = [];
                     // Add/update in new column
                     state.tasks[newColId].push(updated);
-                    showToast('Task updated');
+                    showToast(t('taskUpdated'));
                 } else {
                     const colId = newColId || state.defaultColumnId;
                     const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, column_id: colId, assigned_id: assigneeId, start_date: startDate, due_date: dueDate });
                     created.id = String(created.id || created.task_id);
                     if (!state.tasks[colId]) state.tasks[colId] = [];
                     state.tasks[colId].push({ ...created });
-                    showToast('Task created');
+                    showToast(t('taskCreated'));
                 }
                 closeModal(null, 'task-modal');
                 renderBoard(boardId);
                 if (state.boardViewMode === 'gantt') renderGantt(boardId);
-            } catch (e) { showToast('Failed to save task'); }
+            } catch (e) { showToast(t('failedSaveTask')); }
         }
 
         async function deleteTask(taskId, colId) {
@@ -2250,8 +2400,8 @@
                 state.tasks[colId] = (state.tasks[colId] || []).filter(t => t.id !== taskId);
                 renderBoard(state.activeBoardId);
                 if (state.boardViewMode === 'gantt') renderGantt(state.activeBoardId);
-                showToast('Task deleted');
-            } catch { showToast('Failed to delete'); }
+                showToast(t('taskDeleted'));
+            } catch { showToast(t('failedDelete')); }
         }
 
         // COMMENTS
@@ -2279,12 +2429,12 @@
             }
 
             if (!comments.length) {
-                bodyEl.innerHTML = '<div class="comments-empty">No comments yet. Be the first to comment!</div>';
+                bodyEl.innerHTML = `<div class="comments-empty">${t('noComments')}</div>`;
                 return;
             }
 
             bodyEl.innerHTML = comments.map(c => {
-                const authorName = getMemberNameById(c.author_id) || (state.user && c.author_id === state.user.id ? (state.user.name || state.user.email) : 'Unknown');
+                const authorName = getMemberNameById(c.author_id) || (state.user && c.author_id === state.user.id ? (state.user.name || state.user.email) : t('unknown'));
                 const time = c.sent_at ? new Date(c.sent_at).toLocaleString('en-US', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
                 const isOwn = state.user && c.author_id === state.user.id;
                 return `<div class="comment-item" data-comment-id="${c.comment_id}">
@@ -2312,9 +2462,9 @@
                 await api('POST', '/boards/' + state.activeBoardId + '/comments', { content });
                 input.value = '';
                 await loadComments(state.activeBoardId);
-                showToast('Comment sent');
+                showToast(t('commentSent'));
             } catch {
-                showToast('Failed to send comment');
+                showToast(t('failedSendComment'));
             }
         }
 
@@ -2334,20 +2484,20 @@
             try {
                 await api('PATCH', '/boards/' + state.activeBoardId + '/comments/' + commentId, { content });
                 await loadComments(state.activeBoardId);
-                showToast('Comment updated');
+                showToast(t('commentUpdated'));
             } catch {
-                showToast('Failed to update comment');
+                showToast(t('failedUpdateComment'));
             }
         }
 
         async function deleteComment(commentId) {
-            if (!confirm('Delete this comment?')) return;
+            if (!confirm(t('confirmDeleteComment'))) return;
             try {
                 await api('DELETE', '/boards/' + state.activeBoardId + '/comments/' + commentId);
                 await loadComments(state.activeBoardId);
-                showToast('Comment deleted');
+                showToast(t('commentDeleted'));
             } catch {
-                showToast('Failed to delete comment');
+                showToast(t('failedDeleteComment'));
             }
         }
 
@@ -2401,7 +2551,7 @@
             const columns = state.columns[boardId] || [];
             const allTasks = columns.flatMap((col, idx) => (state.tasks[col.id] || []).map(t => ({ ...t, colName: col.name, colColor: colDot(idx) })));
             const ganttEl = document.getElementById('gantt-area');
-            if (!allTasks.length) { ganttEl.innerHTML = '<div class="gantt-empty">No tasks to display in Gantt view</div>'; return; }
+            if (!allTasks.length) { ganttEl.innerHTML = `<div class="gantt-empty">${t('noTasksGantt')}</div>`; return; }
             let minDate = Infinity, maxDate = -Infinity;
             const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const ranges = allTasks.map(t => {
@@ -2445,6 +2595,19 @@
         }
 
         (function init() {
+            // Detect language from URL or localStorage
+            const pathLang = location.pathname.match(/^\/(ru|en)\//)?.[1];
+            const savedLang = localStorage.getItem(LANG_KEY);
+            state.lang = pathLang || savedLang || 'en';
+            if (!pathLang && savedLang) {
+                history.replaceState(null, '', '/' + state.lang + location.pathname + location.hash);
+            } else if (!pathLang && !savedLang) {
+                history.replaceState(null, '', '/en' + location.pathname + location.hash);
+            }
+            localStorage.setItem(LANG_KEY, state.lang);
+            document.getElementById('lang-btn').textContent = state.lang === 'en' ? 'RU' : 'EN';
+            applyTranslations();
+
             window.addEventListener('hashchange', () => {
                 if (!state.user) return;
                 const hash = location.hash;
