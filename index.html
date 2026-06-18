@@ -1930,8 +1930,10 @@
                 return;
             }
             tbody.innerHTML = state.members.map(m => {
-                const name = m.username || m.user_id;
-                const email = m.email || '';
+                const db = getDb();
+                const u = db.users.find(x => x.id === m.user_id);
+                const name = m.username || m.name || (u ? u.name : null) || m.user_id;
+                const email = m.email || (u ? u.email : '');
                 const roleClass = m.role === 'administrator' ? 'role-administrator' : m.role === 'guest' ? 'role-guest' : 'role-member';
                 const isOwner = m.role === 'administrator' && m.user_id === state.user?.id;
                 return `<tr><td><div style="font-weight:600">${esc(name)}</div><div style="font-size:12px;color:rgba(255,255,255,0.5)">${esc(email)}</div></td>
@@ -2035,7 +2037,7 @@
                 ${task.description ? `<div class="task-desc">${esc(task.description)}</div>` : ''}
                 <div class="task-meta">
                     <span class="badge">${esc(col.name)}</span>
-                    <span class="assignee">${esc(task.assignee || 'Unassigned')}</span>
+                    <span class="assignee">${esc(task.assignee || getMemberNameById(task.assigned_id) || 'Unassigned')}</span>
                     <span>Created ${fmtDate(task.created_at)}</span>
                     ${task.due_date ? `<span>Due ${fmtDate(task.due_date)}</span>` : ''}
                 </div>
@@ -2097,15 +2099,29 @@
                 `<option value="${esc(c.id)}" ${c.id === selectedColId ? 'selected' : ''}>${esc(c.name)}</option>`
             ).join('');
         }
-        function populateAssigneeDropdown(selectedAssignee) {
-            const select = document.getElementById('task-assignee-input');
-            const db = getDb();
-            const options = state.members.map(m => {
+        function getMemberName(m) {
+            if (m.username) return m.username;
+            if (m.name) return m.name;
+            if (USE_MOCK) {
+                const db = getDb();
                 const u = db.users.find(x => x.id === m.user_id);
-                const name = u ? u.name : m.user_id;
-                return `<option value="${esc(name)}" ${name === selectedAssignee ? 'selected' : ''}>${esc(name)}</option>`;
+                if (u) return u.name;
+            }
+            return m.user_id;
+        }
+        function getMemberNameById(userId) {
+            if (!userId) return '';
+            const m = state.members.find(x => x.user_id === userId);
+            return m ? getMemberName(m) : '';
+        }
+        function populateAssigneeDropdown(selectedUserId) {
+            const select = document.getElementById('task-assignee-input');
+            const options = state.members.map(m => {
+                const name = getMemberName(m);
+                const uid = m.user_id;
+                return `<option value="${esc(uid)}" ${uid === selectedUserId ? 'selected' : ''}>${esc(name)}</option>`;
             }).join('');
-            select.innerHTML = `<option value="Unassigned" ${'Unassigned' === selectedAssignee ? 'selected' : ''}>Unassigned</option>` + options;
+            select.innerHTML = `<option value="" ${!selectedUserId ? 'selected' : ''}>Unassigned</option>` + options;
         }
 
         function openCreateTask(boardId, colId) {
@@ -2117,7 +2133,7 @@
             document.getElementById('task-desc-input').value = '';
             document.getElementById('task-start-input').value = todayISO();
             document.getElementById('task-due-input').value = '';
-            populateAssigneeDropdown('Unassigned');
+            populateAssigneeDropdown('');
             populateColumnDropdown(boardId, colId);
             openModal('task-modal');
         }
@@ -2135,7 +2151,7 @@
             document.getElementById('task-desc-input').value = task.description || '';
             document.getElementById('task-start-input').value = task.start_date ? toISODate(task.start_date) : '';
             document.getElementById('task-due-input').value = task.due_date ? toISODate(task.due_date) : '';
-            populateAssigneeDropdown(task.assignee || 'Unassigned');
+            populateAssigneeDropdown(task.assigned_id || task.assignee_id || '');
             populateColumnDropdown(boardId, colId);
             openModal('task-modal');
         }
@@ -2143,7 +2159,7 @@
         async function saveTask() {
             const title = document.getElementById('task-title-input').value.trim();
             const description = document.getElementById('task-desc-input').value.trim();
-            const assignee = document.getElementById('task-assignee-input').value || 'Unassigned';
+            const assigneeId = document.getElementById('task-assignee-input').value || null;
             const newColId = document.getElementById('task-column-input').value;
             const startDate = document.getElementById('task-start-input').value || null;
             const dueDate = document.getElementById('task-due-input').value || null;
@@ -2152,22 +2168,28 @@
             try {
                 if (state.editingTaskId) {
                     const oldColId = state.defaultColumnId;
-                    const patchBody = { title, description, assignee, column_id: newColId, start_date: startDate, due_date: dueDate };
-                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, patchBody);
-                    updated.id = String(updated.id || state.editingTaskId);
+                    const patchBody = { title, description, assigned_id: assigneeId, column_id: newColId, start_date: startDate, due_date: dueDate };
+                    await api('PATCH', '/tasks/' + state.editingTaskId, patchBody);
+                    const oldTask = (state.tasks[oldColId] || []).find(t => String(t.id) === String(state.editingTaskId));
+                    const updated = {
+                        id: String(state.editingTaskId),
+                        title, description, assigned_id: assigneeId,
+                        column_id: newColId,
+                        start_date: startDate, due_date: dueDate,
+                        created_at: oldTask?.created_at || new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                    };
                     // Remove from old column
                     state.tasks[oldColId] = (state.tasks[oldColId] || []).filter(t => String(t.id) !== String(state.editingTaskId));
                     // Ensure new column array exists
                     if (!state.tasks[newColId]) state.tasks[newColId] = [];
                     // Add/update in new column
-                    const existing = state.tasks[newColId].findIndex(t => String(t.id) === updated.id);
-                    if (existing >= 0) state.tasks[newColId][existing] = { ...updated };
-                    else state.tasks[newColId].push({ ...updated });
+                    state.tasks[newColId].push(updated);
                     showToast('Task updated');
                 } else {
                     const colId = newColId || state.defaultColumnId;
-                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, column_id: colId, assigned_id: null });
-                    created.id = created.id || created.task_id;
+                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, column_id: colId, assigned_id: assigneeId, start_date: startDate, due_date: dueDate });
+                    created.id = String(created.id || created.task_id);
                     if (!state.tasks[colId]) state.tasks[colId] = [];
                     state.tasks[colId].push({ ...created });
                     showToast('Task created');
