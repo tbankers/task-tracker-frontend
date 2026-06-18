@@ -1701,6 +1701,10 @@
 
         function saveNavState() {
             localStorage.setItem(NAV_KEY, JSON.stringify({ view: state.view, activeWorkspaceId: state.activeWorkspaceId, activeBoardId: state.activeBoardId }));
+            let hash = '#/' + (state.view || 'account');
+            if (state.view === 'workspace-detail' && state.activeWorkspaceId) hash = '#/workspace/' + state.activeWorkspaceId;
+            if (state.view === 'board' && state.activeBoardId) hash = '#/board/' + state.activeBoardId;
+            history.replaceState(null, '', hash);
         }
         function hideAllViews() {
             ['view-account', 'view-workspaces', 'view-workspace-detail', 'view-board', 'view-help'].forEach(id => document.getElementById(id).classList.add('hidden'));
@@ -1740,8 +1744,27 @@
             document.getElementById('sidebar-name').textContent = user.name || user.email;
             document.getElementById('sidebar-email').textContent = user.email;
             renderAccount();
-            loadWorkspaces().then(() => {
+            loadWorkspaces().then(async () => {
                 renderSidebarWorkspaces();
+                const hash = location.hash;
+                if (hash.startsWith('#/workspace/')) {
+                    const wsId = hash.slice('#/workspace/'.length);
+                    if (state.workspaces.find(w => w.id === wsId)) {
+                        state.activeWorkspaceId = wsId;
+                        openWorkspace(wsId);
+                        return;
+                    }
+                } else if (hash.startsWith('#/board/')) {
+                    const boardId = hash.slice('#/board/'.length);
+                    for (const ws of state.workspaces) {
+                        await loadBoards(ws.id);
+                        if (state.boards.find(b => b.id === boardId)) {
+                            state.activeWorkspaceId = ws.id;
+                            openBoard(boardId);
+                            return;
+                        }
+                    }
+                }
                 const saved = JSON.parse(localStorage.getItem(NAV_KEY) || '{}');
                 if (saved.activeWorkspaceId && state.workspaces.find(w => w.id === saved.activeWorkspaceId)) {
                     state.activeWorkspaceId = saved.activeWorkspaceId;
@@ -2190,6 +2213,26 @@
         }
 
         (function init() {
+            window.addEventListener('hashchange', () => {
+                if (!state.user) return;
+                const hash = location.hash;
+                if (hash.startsWith('#/workspace/')) {
+                    const wsId = hash.slice('#/workspace/'.length);
+                    if (state.activeWorkspaceId !== wsId && state.workspaces.find(w => w.id === wsId)) {
+                        state.activeWorkspaceId = wsId;
+                        openWorkspace(wsId);
+                    }
+                } else if (hash.startsWith('#/board/')) {
+                    const boardId = hash.slice('#/board/'.length);
+                    if (state.activeBoardId !== boardId) openBoard(boardId);
+                } else if (hash === '#/workspaces' && state.view !== 'workspaces') {
+                    navigate('workspaces');
+                } else if (hash === '#/help' && state.view !== 'help') {
+                    navigate('help');
+                } else if ((hash === '#/account' || hash === '' || hash === '#/') && state.view !== 'account') {
+                    navigate('account');
+                }
+            });
             const session = localStorage.getItem(SESSION_KEY);
             if (session) { const { user, token } = JSON.parse(session); loginUser(user, token); }
         })();
