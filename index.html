@@ -1479,8 +1479,8 @@
     </div>
 
     <script>
-        const USE_MOCK = true;
-        const API_BASE = '';
+        const USE_MOCK = false;
+        const API_BASE = 'http://localhost:8080';
         const MOCK_KEY = 'tt_preview_db';
         const SESSION_KEY = 'tt_preview_session';
         const NAV_KEY = 'tt_nav_state';
@@ -1946,7 +1946,8 @@
             if (!email) { showToast('Email is required'); return; }
             try {
                 const user = await api('GET', '/users?email=' + encodeURIComponent(email));
-                await api('POST', '/workspaces/' + state.activeWorkspaceId + '/workspace_members', { user_id: user.id, role });
+                const userId = user.user_id || user.id;
+                await api('POST', '/workspaces/' + state.activeWorkspaceId + '/workspace_members', { user_id: userId, role });
                 document.getElementById('add-member-email').value = '';
                 await loadMembers(state.activeWorkspaceId); renderMembersTable(); showToast('Member added');
             } catch (e) { showToast(e.data?.message || 'Failed to add member'); }
