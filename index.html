@@ -1162,6 +1162,190 @@
             height: 20px;
             fill: currentColor;
         }
+
+        .comments-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            max-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comments-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .comments-header-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comments-count {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .comments-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .comment-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            transition: background 0.2s ease;
+        }
+
+        .comment-item:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .comment-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .comment-author {
+            font-size: 12px;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .comment-item:hover .comment-actions {
+            opacity: 1;
+        }
+
+        .comment-input-wrap {
+            display: flex;
+            gap: 8px;
+            padding: 12px 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comment-input-wrap input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-sm);
+            color: #fff;
+            font: inherit;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .comment-input-wrap input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .comment-input-wrap input:focus {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+        }
+
+        .comment-send-btn {
+            padding: 10px 16px;
+            background: rgba(167, 139, 250, 0.3);
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            border-radius: var(--radius-sm);
+            color: #fff;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .comment-send-btn:hover {
+            background: rgba(167, 139, 250, 0.5);
+        }
+
+        .comments-empty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            padding: 24px 16px;
+            font-size: 13px;
+        }
+
+        .btn-comments-toggle {
+            position: relative;
+        }
+
+        .btn-comments-toggle .badge-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 7px;
+            height: 7px;
+            background: #a78bfa;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .btn-comments-toggle.has-comments .badge-dot {
+            display: block;
+        }
+
+        .comment-edit-input {
+            width: 100%;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            border-radius: 8px;
+            color: #fff;
+            font: inherit;
+            font-size: 13px;
+            outline: none;
+            margin-bottom: 6px;
+        }
     </style>
 </head>
 
@@ -1310,10 +1494,33 @@
                             <button class="btn-toggle" data-view="gantt"
                                 onclick="switchBoardView('gantt')">Gantt</button>
                         </div>
+                        <button class="btn btn-ghost btn-sm btn-comments-toggle" onclick="toggleComments()" title="Comments">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <span class="badge-dot"></span>
+                        </button>
                         <button class="btn btn-ghost btn-sm" onclick="backToBoards()">&#8592; Boards</button>
                     </div>
                     <div id="board-area" class="board-area"></div>
                     <div id="gantt-area" class="gantt-container hidden"></div>
+                    <div id="comments-section" class="comments-panel hidden">
+                        <div class="comments-header" onclick="toggleCommentsBody()">
+                            <div class="comments-header-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                Comments
+                                <span class="comments-count" id="comments-count">0</span>
+                            </div>
+                            <span id="comments-toggle-icon" style="color:rgba(255,255,255,0.5);font-size:12px">&#9650;</span>
+                        </div>
+                        <div class="comments-body" id="comments-body"></div>
+                        <div class="comments-input-wrap comment-input-wrap">
+                            <input type="text" id="comment-input" placeholder="Write a comment..." onkeydown="if(event.key==='Enter')sendComment()">
+                            <button class="comment-send-btn" onclick="sendComment()">Send</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- HELP -->
@@ -1497,6 +1704,9 @@
             defaultColumnId: null,
             boardViewMode: 'kanban',
             members: [], myRole: null,
+            comments: {},   // boardId -> [ comment ]
+            commentsVisible: true,
+            commentsBodyVisible: true,
         };
 
         function uid() { return 'id_' + Math.random().toString(36).slice(2, 10); }
@@ -1983,6 +2193,15 @@
             document.getElementById('board-area').classList.remove('hidden');
             document.getElementById('gantt-area').classList.add('hidden');
             renderBoard(boardId); renderSidebarWorkspaces();
+            // Show comments panel and load comments
+            const commentsSection = document.getElementById('comments-section');
+            state.commentsVisible = true;
+            state.commentsBodyVisible = true;
+            commentsSection.classList.remove('hidden');
+            document.getElementById('comments-body').classList.remove('hidden');
+            document.querySelector('.comment-input-wrap').classList.remove('hidden');
+            document.getElementById('comments-toggle-icon').innerHTML = '&#9650;';
+            loadComments(boardId);
         }
         function switchBoardView(mode) {
             state.boardViewMode = mode;
@@ -2209,6 +2428,130 @@
                 if (state.boardViewMode === 'gantt') renderGantt(state.activeBoardId);
                 showToast('Task deleted');
             } catch { showToast('Failed to delete'); }
+        }
+
+        // COMMENTS
+        async function loadComments(boardId) {
+            try {
+                const list = await api('GET', '/boards/' + boardId + '/comments');
+                state.comments[boardId] = list;
+            } catch {
+                state.comments[boardId] = [];
+            }
+            renderComments(boardId);
+        }
+
+        function renderComments(boardId) {
+            const comments = state.comments[boardId] || [];
+            const countEl = document.getElementById('comments-count');
+            const bodyEl = document.getElementById('comments-body');
+            const toggleBtn = document.querySelector('.btn-comments-toggle');
+
+            countEl.textContent = comments.length;
+            if (comments.length > 0) {
+                toggleBtn.classList.add('has-comments');
+            } else {
+                toggleBtn.classList.remove('has-comments');
+            }
+
+            if (!comments.length) {
+                bodyEl.innerHTML = '<div class="comments-empty">No comments yet. Be the first to comment!</div>';
+                return;
+            }
+
+            bodyEl.innerHTML = comments.map(c => {
+                const authorName = getMemberNameById(c.author_id) || (state.user && c.author_id === state.user.id ? (state.user.name || state.user.email) : 'Unknown');
+                const time = c.sent_at ? new Date(c.sent_at).toLocaleString('en-US', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+                const isOwn = state.user && c.author_id === state.user.id;
+                return `<div class="comment-item" data-comment-id="${c.comment_id}">
+                    <div class="comment-top">
+                        <span class="comment-author">${esc(authorName)}</span>
+                        <div style="display:flex;align-items:center;gap:6px">
+                            <span class="comment-time">${esc(time)}</span>
+                            ${isOwn ? `<div class="comment-actions">
+                                <button class="btn btn-icon btn-sm" style="font-size:12px;padding:2px 5px" onclick="editComment(${c.comment_id})" title="Edit">&#9998;</button>
+                                <button class="btn btn-icon btn-sm" style="font-size:12px;padding:2px 5px" onclick="deleteComment(${c.comment_id})" title="Delete">&#128465;</button>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                    <div class="comment-text" id="comment-text-${c.comment_id}">${esc(c.content)}</div>
+                </div>`;
+            }).join('');
+            bodyEl.scrollTop = bodyEl.scrollHeight;
+        }
+
+        async function sendComment() {
+            const input = document.getElementById('comment-input');
+            const content = input.value.trim();
+            if (!content || !state.activeBoardId) return;
+            try {
+                await api('POST', '/boards/' + state.activeBoardId + '/comments', { content });
+                input.value = '';
+                await loadComments(state.activeBoardId);
+                showToast('Comment sent');
+            } catch {
+                showToast('Failed to send comment');
+            }
+        }
+
+        function editComment(commentId) {
+            const textEl = document.getElementById('comment-text-' + commentId);
+            const comments = state.comments[state.activeBoardId] || [];
+            const comment = comments.find(c => c.comment_id === commentId);
+            if (!comment) return;
+            textEl.innerHTML = `<input class="comment-edit-input" id="comment-edit-${commentId}" value="${esc(comment.content)}" onkeydown="if(event.key==='Enter')saveComment(${commentId});if(event.key==='Escape')renderComments('${state.activeBoardId}')">`;
+            document.getElementById('comment-edit-' + commentId).focus();
+        }
+
+        async function saveComment(commentId) {
+            const input = document.getElementById('comment-edit-' + commentId);
+            const content = input.value.trim();
+            if (!content) return;
+            try {
+                await api('PATCH', '/boards/' + state.activeBoardId + '/comments/' + commentId, { content });
+                await loadComments(state.activeBoardId);
+                showToast('Comment updated');
+            } catch {
+                showToast('Failed to update comment');
+            }
+        }
+
+        async function deleteComment(commentId) {
+            if (!confirm('Delete this comment?')) return;
+            try {
+                await api('DELETE', '/boards/' + state.activeBoardId + '/comments/' + commentId);
+                await loadComments(state.activeBoardId);
+                showToast('Comment deleted');
+            } catch {
+                showToast('Failed to delete comment');
+            }
+        }
+
+        function toggleComments() {
+            const section = document.getElementById('comments-section');
+            state.commentsVisible = !state.commentsVisible;
+            if (state.commentsVisible) {
+                section.classList.remove('hidden');
+                loadComments(state.activeBoardId);
+            } else {
+                section.classList.add('hidden');
+            }
+        }
+
+        function toggleCommentsBody() {
+            const body = document.getElementById('comments-body');
+            const inputWrap = document.querySelector('.comment-input-wrap');
+            const icon = document.getElementById('comments-toggle-icon');
+            state.commentsBodyVisible = !state.commentsBodyVisible;
+            if (state.commentsBodyVisible) {
+                body.classList.remove('hidden');
+                inputWrap.classList.remove('hidden');
+                icon.innerHTML = '&#9650;';
+            } else {
+                body.classList.add('hidden');
+                inputWrap.classList.add('hidden');
+                icon.innerHTML = '&#9660;';
+            }
         }
 
         // GANTT
