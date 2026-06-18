@@ -1604,7 +1604,10 @@
             // MEMBERS
             if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
                 const wsId = path.split('/')[2];
-                return db.workspace_members.filter(m => m.workspace_id === wsId);
+                return db.workspace_members.filter(m => m.workspace_id === wsId).map(m => {
+                    const u = db.users.find(x => x.id === m.user_id);
+                    return { ...m, username: u ? u.name : '', email: u ? u.email : '' };
+                });
             }
             if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
                 const wsId = path.split('/')[2];
@@ -1912,8 +1915,8 @@
                 return;
             }
             tbody.innerHTML = state.members.map(m => {
-                const u = db.users.find(x => x.id === m.user_id);
-                const name = u ? u.name : m.user_id, email = u ? u.email : '';
+                const name = m.username || m.name || (() => { const u = db.users.find(x => x.id === m.user_id); return u ? u.name : m.user_id; })();
+                const email = m.email || (() => { const u = db.users.find(x => x.id === m.user_id); return u ? u.email : ''; })();
                 const roleClass = m.role === 'administrator' ? 'role-administrator' : m.role === 'guest' ? 'role-guest' : 'role-member';
                 const isOwner = m.role === 'administrator' && m.user_id === state.user?.id;
                 return `<tr><td><div style="font-weight:600">${esc(name)}</div><div style="font-size:12px;color:rgba(255,255,255,0.5)">${esc(email)}</div></td>
@@ -2082,8 +2085,7 @@
             const select = document.getElementById('task-assignee-input');
             const db = getDb();
             const options = state.members.map(m => {
-                const u = db.users.find(x => x.id === m.user_id);
-                const name = u ? u.name : m.user_id;
+                const name = m.username || m.name || (() => { const u = db.users.find(x => x.id === m.user_id); return u ? u.name : m.user_id; })();
                 return `<option value="${esc(name)}" ${name === selectedAssignee ? 'selected' : ''}>${esc(name)}</option>`;
             }).join('');
             select.innerHTML = `<option value="Unassigned" ${'Unassigned' === selectedAssignee ? 'selected' : ''}>Unassigned</option>` + options;
