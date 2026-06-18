@@ -1604,10 +1604,7 @@
             // MEMBERS
             if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
                 const wsId = path.split('/')[2];
-                return db.workspace_members.filter(m => m.workspace_id === wsId).map(m => {
-                    const u = db.users.find(x => x.id === m.user_id);
-                    return { ...m, username: u ? u.name : '', email: u ? u.email : '' };
-                });
+                return db.workspace_members.filter(m => m.workspace_id === wsId);
             }
             if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
                 const wsId = path.split('/')[2];
@@ -1855,6 +1852,25 @@
                 closeModal(null, 'workspace-modal'); renderWorkspaces(); renderSidebarWorkspaces(); showToast('Workspace created');
             } catch { showToast('Error creating workspace'); }
         }
+        async function deleteWorkspace(workspaceId) {
+            if (!workspaceId) return;
+
+            try {
+                // Send the DELETE request to your API
+                await api('DELETE', `/workspaces/${workspaceId}`);
+
+                // Remove the workspace from your local state array
+                state.workspaces = state.workspaces.filter(ws => ws.id !== workspaceId);
+
+                // Re-render UI elements
+                renderWorkspaces();
+                renderSidebarWorkspaces();
+                showToast('Workspace deleted');
+            } catch {
+                showToast('Error deleting workspace');
+            }
+        }
+
         async function openWorkspace(wsId) {
             state.activeWorkspaceId = wsId;
             const ws = state.workspaces.find(w => w.id === wsId);
@@ -1915,8 +1931,8 @@
                 return;
             }
             tbody.innerHTML = state.members.map(m => {
-                const name = m.username || m.name || (() => { const u = db.users.find(x => x.id === m.user_id); return u ? u.name : m.user_id; })();
-                const email = m.email || (() => { const u = db.users.find(x => x.id === m.user_id); return u ? u.email : ''; })();
+                const u = db.users.find(x => x.id === m.user_id);
+                const name = u ? u.name : m.user_id, email = u ? u.email : '';
                 const roleClass = m.role === 'administrator' ? 'role-administrator' : m.role === 'guest' ? 'role-guest' : 'role-member';
                 const isOwner = m.role === 'administrator' && m.user_id === state.user?.id;
                 return `<tr><td><div style="font-weight:600">${esc(name)}</div><div style="font-size:12px;color:rgba(255,255,255,0.5)">${esc(email)}</div></td>
@@ -2064,7 +2080,7 @@
                 const list = await api('GET', '/boards/' + boardId + '/tasks');
                 for (const col of (state.columns[boardId] || [])) state.tasks[col.id] = [];
                 for (const t of list) {
-                    const mapped = { ...t, id: t.id || t.task_id };
+                    const mapped = { ...t, id: String(t.id ?? t.task_id), column_id: String(t.column_id) };
                     const colId = mapped.column_id;
                     if (!state.tasks[colId]) state.tasks[colId] = [];
                     state.tasks[colId].push(mapped);
@@ -2085,7 +2101,8 @@
             const select = document.getElementById('task-assignee-input');
             const db = getDb();
             const options = state.members.map(m => {
-                const name = m.username || m.name || (() => { const u = db.users.find(x => x.id === m.user_id); return u ? u.name : m.user_id; })();
+                const u = db.users.find(x => x.id === m.user_id);
+                const name = u ? u.name : m.user_id;
                 return `<option value="${esc(name)}" ${name === selectedAssignee ? 'selected' : ''}>${esc(name)}</option>`;
             }).join('');
             select.innerHTML = `<option value="Unassigned" ${'Unassigned' === selectedAssignee ? 'selected' : ''}>Unassigned</option>` + options;
@@ -2106,7 +2123,7 @@
         }
 
         function openEditTask(taskId, colId) {
-            // Find which board this column belongs to
+            taskId = String(taskId); colId = String(colId);
             let boardId = state.activeBoardId;
             const task = (state.tasks[colId] || []).find(t => t.id === taskId);
             if (!task) return;
@@ -2137,13 +2154,13 @@
                     const oldColId = state.defaultColumnId;
                     const patchBody = { title, description, assignee, column_id: newColId, start_date: startDate, due_date: dueDate };
                     const updated = await api('PATCH', '/tasks/' + state.editingTaskId, patchBody);
-                    updated.id = updated.id || state.editingTaskId;
+                    updated.id = String(updated.id || state.editingTaskId);
                     // Remove from old column
-                    state.tasks[oldColId] = (state.tasks[oldColId] || []).filter(t => t.id !== state.editingTaskId);
+                    state.tasks[oldColId] = (state.tasks[oldColId] || []).filter(t => String(t.id) !== String(state.editingTaskId));
                     // Ensure new column array exists
                     if (!state.tasks[newColId]) state.tasks[newColId] = [];
                     // Add/update in new column
-                    const existing = state.tasks[newColId].findIndex(t => t.id === updated.id);
+                    const existing = state.tasks[newColId].findIndex(t => String(t.id) === updated.id);
                     if (existing >= 0) state.tasks[newColId][existing] = { ...updated };
                     else state.tasks[newColId].push({ ...updated });
                     showToast('Task updated');
@@ -2162,6 +2179,7 @@
         }
 
         async function deleteTask(taskId, colId) {
+            taskId = String(taskId); colId = String(colId);
             try {
                 await api('DELETE', '/tasks/' + taskId);
                 state.tasks[colId] = (state.tasks[colId] || []).filter(t => t.id !== taskId);
