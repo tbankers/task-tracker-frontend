@@ -1224,7 +1224,8 @@
                     <div class="sidebar-section">
                         <div class="sidebar-label"
                             style="display:flex;align-items:center;justify-content:space-between;padding-right:8px">
-                            <span>Workspaces</span></div>
+                            <span>Workspaces</span>
+                        </div>
                         <div class="sidebar-item" data-nav="workspaces" onclick="navigate('workspaces')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1320,6 +1321,7 @@
                     </div>
                     <div class="help-text">
                         <p>Use the sidebar to switch between sections. Everything runs on one page.</p>
+                        <p>all questions to tg: @korneplod993. email: smnmdvdv@gmail.com</p>
                         <h3>Workspaces</h3>
                         <ul>
                             <li>Create a workspace with a title</li>
@@ -1652,19 +1654,18 @@
                 saveDb(db); return { ok: true };
             }
             // TASKS
-            if (method === 'GET' && path.match(/^\/columns\/[^/]+\/tasks$/)) {
-                const colId = path.split('/')[2];
-                return (db.tasks || []).filter(t => t.column_id === colId);
+            if (method === 'GET' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
+                const boardId = path.split('/')[2];
+                const colIds = (db.columns || []).filter(c => c.board_id === boardId).map(c => c.id);
+                return (db.tasks || []).filter(t => colIds.includes(t.column_id));
             }
-            if (method === 'POST' && path.match(/^\/columns\/[^/]+\/tasks$/)) {
-                const colId = path.split('/')[2];
+            if (method === 'POST' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
                 const now = new Date().toISOString();
                 const t = {
-                    id: uid(), column_id: colId,
+                    id: uid(), column_id: body.column_id,
                     title: body.title, description: body.description || '',
-                    assignee: body.assignee || 'Unassigned',
+                    assigned_id: body.assigned_id || null,
                     created_at: now, updated_at: now,
-                    start_date: body.start_date || null, due_date: body.due_date || null,
                 };
                 if (!db.tasks) db.tasks = [];
                 db.tasks.push(t); saveDb(db); return t;
@@ -1942,8 +1943,8 @@
                 const cols = await api('GET', '/boards/' + boardId + '/columns');
                 state.columns[boardId] = cols.map(c => ({ ...c, id: c.id || c.column_id }));
             } catch { state.columns[boardId] = []; }
-            // load tasks for each column
-            for (const col of (state.columns[boardId] || [])) await loadTasks(col.id);
+            // load tasks for the board
+            await loadTasks(boardId);
         }
 
         function openBoard(boardId) {
@@ -2053,11 +2054,19 @@
         }
 
         // TASKS
-        async function loadTasks(colId) {
+        async function loadTasks(boardId) {
             try {
-                const list = await api('GET', '/columns/' + colId + '/tasks');
-                state.tasks[colId] = list.map(t => ({ ...t, id: t.id || t.task_id }));
-            } catch { state.tasks[colId] = []; }
+                const list = await api('GET', '/boards/' + boardId + '/tasks');
+                for (const col of (state.columns[boardId] || [])) state.tasks[col.id] = [];
+                for (const t of list) {
+                    const mapped = { ...t, id: t.id || t.task_id };
+                    const colId = mapped.column_id;
+                    if (!state.tasks[colId]) state.tasks[colId] = [];
+                    state.tasks[colId].push(mapped);
+                }
+            } catch {
+                for (const col of (state.columns[boardId] || [])) state.tasks[col.id] = [];
+            }
         }
 
         function populateColumnDropdown(boardId, selectedColId) {
@@ -2136,7 +2145,7 @@
                     showToast('Task updated');
                 } else {
                     const colId = newColId || state.defaultColumnId;
-                    const created = await api('POST', '/columns/' + colId + '/tasks', { title, description, assignee, start_date: startDate, due_date: dueDate });
+                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, column_id: colId, assigned_id: null });
                     created.id = created.id || created.task_id;
                     if (!state.tasks[colId]) state.tasks[colId] = [];
                     state.tasks[colId].push({ ...created });
