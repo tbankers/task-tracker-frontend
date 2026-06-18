@@ -2191,6 +2191,16 @@
         }
 
         // GANTT
+        function shadeColor(hex, percent) {
+            const num = parseInt(hex.replace('#', ''), 16);
+            let r = (num >> 16) + Math.round(2.55 * percent);
+            let g = ((num >> 8) & 0x00FF) + Math.round(2.55 * percent);
+            let b = (num & 0x0000FF) + Math.round(2.55 * percent);
+            r = Math.max(Math.min(255, r), 0);
+            g = Math.max(Math.min(255, g), 0);
+            b = Math.max(Math.min(255, b), 0);
+            return '#' + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1);
+        }
         function parseDateSafe(v) { if (!v) return null; const d = new Date(v); return isNaN(d.getTime()) ? null : d; }
         function ganttTaskRange(t) {
             const start = parseDateSafe(t.start_date) || parseDateSafe(t.created_at) || new Date();
@@ -2201,7 +2211,7 @@
         }
         function renderGantt(boardId) {
             const columns = state.columns[boardId] || [];
-            const allTasks = columns.flatMap(col => (state.tasks[col.id] || []).map(t => ({ ...t, colName: col.name })));
+            const allTasks = columns.flatMap((col, idx) => (state.tasks[col.id] || []).map(t => ({ ...t, colName: col.name, colColor: colDot(idx) })));
             const ganttEl = document.getElementById('gantt-area');
             if (!allTasks.length) { ganttEl.innerHTML = '<div class="gantt-empty">No tasks to display in Gantt view</div>'; return; }
             let minDate = Infinity, maxDate = -Infinity;
@@ -2235,7 +2245,7 @@
                     ${rows.map(r => `<div class="gantt-row">
                         <div class="gantt-row-label" title="${esc(r.task.title)}">${esc(r.task.title)}</div>
                         <div class="gantt-row-bars">
-                            <div class="gantt-bar" style="left:${r.left}%;width:${r.width}%" title="${esc(r.task.title)} [${esc(r.task.colName)}]">
+                            <div class="gantt-bar" style="left:${r.left}%;width:${r.width}%;background:linear-gradient(135deg, ${r.task.colColor}, ${shadeColor(r.task.colColor, -22)})" title="${esc(r.task.title)} [${esc(r.task.colName)}]">
                                 ${r.width > 10 ? esc(r.task.title) : ''}
                             </div>
                             <div class="gantt-now-line" style="left:${nowPos * 100}%"></div>
