@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -445,19 +445,6 @@
             flex: 1;
         }
 
-        .sidebar-scrollable::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .sidebar-scrollable::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .sidebar-scrollable::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 4px;
-        }
-
         .sidebar-bottom {
             margin-top: auto;
             padding: 16px 12px;
@@ -564,41 +551,9 @@
             overflow: auto;
             padding: 24px;
             display: flex;
-            /* Works with grid too */
             gap: 20px;
             flex-direction: column;
         }
-
-        .logout-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            font-family: sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            color: #dc3545;
-            /* Red accent color */
-            background-color: transparent;
-            border: 2px solid #dc3545;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .logout-icon {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-            /* Matches the text color automatically */
-        }
-
-        /* Hover effects */
-        .logout-btn:hover {
-            color: #fff;
-            background-color: #dc3545;
-        }
-
 
         .panel-card,
         .card-clickable,
@@ -745,6 +700,37 @@
             min-height: 50px;
         }
 
+        /* Add-column column styling */
+        .column-add {
+            width: 300px;
+            flex-shrink: 0;
+        }
+
+        .column-add-btn {
+            width: 100%;
+            padding: 18px;
+            border: 2px dashed rgba(255, 255, 255, 0.35);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 64px;
+        }
+
+        .column-add-btn:hover {
+            border-color: #fff;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
         .task-card {
             border-radius: var(--radius);
             padding: 16px;
@@ -802,23 +788,8 @@
             padding: 4px 9px;
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .badge-todo {
             background: rgba(255, 255, 255, 0.15);
             color: #fff;
-        }
-
-        .badge-progress {
-            background: var(--yellow-100);
-            color: #fff;
-            border-color: var(--yellow-700);
-        }
-
-        .badge-done {
-            background: var(--green-100);
-            color: #fff;
-            border-color: var(--green-700);
         }
 
         .assignee {
@@ -1023,22 +994,11 @@
             white-space: nowrap;
             cursor: default;
             transition: filter 0.2s ease;
+            background: linear-gradient(135deg, #94A3B8, #64748B);
         }
 
         .gantt-bar:hover {
             filter: brightness(1.2);
-        }
-
-        .gantt-bar.status-to_do {
-            background: linear-gradient(135deg, #94A3B8, #64748B);
-        }
-
-        .gantt-bar.status-in_progress {
-            background: linear-gradient(135deg, #F59E0B, #D97706);
-        }
-
-        .gantt-bar.status-done {
-            background: linear-gradient(135deg, #22C55E, #16A34A);
         }
 
         .gantt-empty {
@@ -1137,18 +1097,10 @@
             position: absolute;
             left: 0;
             top: 0;
-
-            background: linear-gradient(to right,
-                    #2774bd 0%,
-                    #27af1d 25%,
-                    #bfff00 50%,
-                    #681743 75%,
-                    #2774bd 100%);
+            background: linear-gradient(to right, #2774bd 0%, #27af1d 25%, #bfff00 50%, #681743 75%, #2774bd 100%);
             background-size: 200% auto;
-
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-
             animation: shineLoop 3s linear infinite;
         }
 
@@ -1165,7 +1117,6 @@
         body.dark-bg {
             background: linear-gradient(30deg, black, rgb(74, 10, 10), rgb(126, 20, 20), black);
         }
-
 
         .help-text ul {
             margin-left: 20px;
@@ -1204,11 +1155,10 @@
             flex: 1;
         }
 
-        .assignee-picker {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 6px;
+        .logout-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
         }
     </style>
 </head>
@@ -1221,7 +1171,6 @@
             <div class="auth-card">
                 <h1 class="auth-heading">Task<span style="color:#5e93cb">Tracker</span></h1>
                 <p class="auth-sub">Sign in</p>
-
                 <div id="login-form">
                     <div id="login-error" class="error-msg"></div>
                     <div class="field"><label>Email</label><input type="email" id="login-email"
@@ -1231,7 +1180,6 @@
                     <button class="btn btn-primary" onclick="handleLogin()">Sign in</button>
                     <p class="auth-switch">No account? <a onclick="showRegister()">Register</a></p>
                 </div>
-
                 <div id="register-form" class="hidden">
                     <div id="register-error" class="error-msg"></div>
                     <div class="field"><label>Name</label><input type="text" id="reg-name" placeholder="Your name">
@@ -1276,8 +1224,7 @@
                     <div class="sidebar-section">
                         <div class="sidebar-label"
                             style="display:flex;align-items:center;justify-content:space-between;padding-right:8px">
-                            <span>Workspaces</span>
-                        </div>
+                            <span>Workspaces</span></div>
                         <div class="sidebar-item" data-nav="workspaces" onclick="navigate('workspaces')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1380,17 +1327,17 @@
                         </ul>
                         <h3>Boards</h3>
                         <ul>
-                            <li>Each board has Todo, In Progress, and Done columns</li>
+                            <li>Each board starts with default columns: To Do, In Progress, Done</li>
                             <li>Click a board to open the kanban view</li>
-                            <li>Switch between Kanban and Gantt views</li>
+                            <li>Add custom columns with the + Add column button</li>
                         </ul>
                         <h3 onclick="this.classList.toggle('clicked'), document.body.classList.toggle('dark-bg')">Tasks
                         </h3>
                         <ul>
-                            <li>Add tasks from any column</li>
-                            <li>Edit title, description, status, and assignee</li>
+                            <li>Add tasks from any column using the + Add task button</li>
+                            <li>Edit title, description, column (status), and assignee</li>
                             <li>Set start and due dates for Gantt view</li>
-                            <li>Created and updated dates are shown on each card</li>
+                            <li>Task status = the column it belongs to</li>
                         </ul>
                     </div>
                 </div>
@@ -1429,10 +1376,29 @@
         </div>
     </div>
 
+    <!-- COLUMN MODAL -->
+    <div id="column-modal" class="modal-overlay hidden" onclick="closeModal(event,'column-modal')">
+        <div class="modal">
+            <div class="modal-header"><span class="modal-title">Add column</span><button class="btn btn-icon"
+                    onclick="closeModal(null,'column-modal')">&#10005;</button></div>
+            <div class="modal-body">
+                <div class="field"><label>Column name</label><input type="text" id="column-name-input"
+                        placeholder="e.g. In Review"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeModal(null,'column-modal')">Cancel</button>
+                <button class="btn btn-primary" style="width:auto" onclick="createColumn()">Add column</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TASK MODAL -->
     <div id="task-modal" class="modal-overlay hidden" onclick="closeModal(event,'task-modal')">
         <div class="modal">
-            <div class="modal-header"><span class="modal-title" id="task-modal-title">New task</span><button
-                    class="btn btn-icon" onclick="closeModal(null,'task-modal')">&#10005;</button></div>
+            <div class="modal-header">
+                <span class="modal-title" id="task-modal-title">New task</span>
+                <button class="btn btn-icon" onclick="closeModal(null,'task-modal')">&#10005;</button>
+            </div>
             <div class="modal-body">
                 <div class="field"><label>Title</label><input type="text" id="task-title-input"
                         placeholder="What needs to be done?"></div>
@@ -1443,12 +1409,9 @@
                     <div class="field"><label>Due date</label><input type="date" id="task-due-input"></div>
                 </div>
                 <div class="field"><label>Assigned to</label><select id="task-assignee-input"></select></div>
-                <div class="field"><label>Status</label>
-                    <select id="task-status-input">
-                        <option value="to_do">Todo</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="done">Done</option>
-                    </select>
+                <div class="field">
+                    <label>Column (Status)</label>
+                    <select id="task-column-input"></select>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1485,7 +1448,7 @@
                 <table class="members-table" id="members-table">
                     <thead>
                         <tr>
-                            <th>User ID</th>
+                            <th>User</th>
                             <th>Role</th>
                             <th>Actions</th>
                         </tr>
@@ -1518,37 +1481,26 @@
         const SESSION_KEY = 'tt_preview_session';
         const NAV_KEY = 'tt_nav_state';
         const MEMBER_COLORS = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
-
-        const STATUSES = [
-            { id: 'to_do', label: 'Todo', badge: 'badge-todo', dot: '#94A3B8' },
-            { id: 'in_progress', label: 'In Progress', badge: 'badge-progress', dot: '#F59E0B' },
-            { id: 'done', label: 'Done', badge: 'badge-done', dot: '#10B981' },
-        ];
+        const COLUMN_DOTS = ['#94A3B8', '#F59E0B', '#10B981', '#818CF8', '#F472B6', '#34D399', '#FB923C', '#60A5FA'];
 
         let state = {
-            user: null,
-            token: null,
-            view: 'account',
-            workspaces: [],
-            activeWorkspaceId: null,
-            boards: [],
-            activeBoardId: null,
-            tasks: {},
+            user: null, token: null, view: 'account',
+            workspaces: [], activeWorkspaceId: null,
+            boards: [], activeBoardId: null,
+            columns: {},   // boardId -> [ {id, boardId, name, position} ]
+            tasks: {},     // columnId -> [ task ]
             editingTaskId: null,
-            defaultStatus: 'to_do',
+            defaultColumnId: null,
             boardViewMode: 'kanban',
-            members: [],
-            myRole: null,
+            members: [], myRole: null,
         };
 
         function uid() { return 'id_' + Math.random().toString(36).slice(2, 10); }
 
         function defaultDb() {
-            const wsId = uid();
-            const wsId2 = uid();
-            const boardId = uid();
-            const now = new Date().toISOString();
+            const wsId = uid(), wsId2 = uid(), boardId = uid(), now = new Date().toISOString();
             const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+            const col1 = uid(), col2 = uid(), col3 = uid();
             return {
                 users: [
                     { id: 'u1', name: 'Demo User', email: 'demo@example.com', password: 'demo123', created_at: '2025-01-10T09:00:00Z' },
@@ -1568,10 +1520,15 @@
                     { id: boardId, workspace_id: wsId, title: 'Product backlog', created_at: now },
                     { id: uid(), workspace_id: wsId, title: 'Sprint 1', created_at: now },
                 ],
+                columns: [
+                    { id: col1, board_id: boardId, name: 'To Do', position: 0, created_at: now },
+                    { id: col2, board_id: boardId, name: 'In Progress', position: 1, created_at: now },
+                    { id: col3, board_id: boardId, name: 'Done', position: 2, created_at: now },
+                ],
                 tasks: [
-                    { id: uid(), board_id: boardId, title: 'Design auth page', description: 'Login and register forms', status: 'done', assignee: 'Alex', created_at: weekAgo, updated_at: now, start_date: weekAgo, due_date: now },
-                    { id: uid(), board_id: boardId, title: 'Build workspace list', description: 'CRUD for workspaces', status: 'in_progress', assignee: 'Sam', created_at: weekAgo, updated_at: now, start_date: weekAgo, due_date: new Date(Date.now() + 3 * 86400000).toISOString() },
-                    { id: uid(), board_id: boardId, title: 'Connect API', description: 'Replace mock layer', status: 'to_do', assignee: 'Jordan', created_at: now, updated_at: now, start_date: new Date(Date.now() + 1 * 86400000).toISOString(), due_date: new Date(Date.now() + 7 * 86400000).toISOString() },
+                    { id: uid(), column_id: col3, title: 'Design auth page', description: 'Login and register forms', assignee: 'Alex', created_at: weekAgo, updated_at: now, start_date: weekAgo, due_date: now },
+                    { id: uid(), column_id: col2, title: 'Build workspace list', description: 'CRUD for workspaces', assignee: 'Sam', created_at: weekAgo, updated_at: now, start_date: weekAgo, due_date: new Date(Date.now() + 3 * 86400000).toISOString() },
+                    { id: uid(), column_id: col1, title: 'Connect API', description: 'Replace mock layer', assignee: 'Unassigned', created_at: now, updated_at: now, start_date: new Date(Date.now() + 1 * 86400000).toISOString(), due_date: new Date(Date.now() + 7 * 86400000).toISOString() },
                 ],
             };
         }
@@ -1582,7 +1539,6 @@
             return JSON.parse(raw);
         }
         function saveDb(db) { localStorage.setItem(MOCK_KEY, JSON.stringify(db)); }
-        function resetMockData() { localStorage.removeItem(MOCK_KEY); localStorage.removeItem(SESSION_KEY); location.reload(); }
 
         async function api(method, path, body) {
             if (USE_MOCK) return mockApi(method, path, body);
@@ -1599,6 +1555,7 @@
             const db = getDb();
             const userId = state.user?.id;
 
+            // AUTH
             if (method === 'POST' && path === '/auth/login') {
                 const u = db.users.find(x => x.email === body.email && x.password === body.password);
                 if (!u) throw { status: 401, data: { message: 'Invalid credentials' } };
@@ -1610,13 +1567,14 @@
                 db.users.push(u); saveDb(db);
                 return { token: 'mock-token', user: { id: u.id, name: u.name, email: u.email, created_at: u.created_at } };
             }
-            if (method === 'POST' && path === '/auth/change-password') {
+            if (method === 'PATCH' && path.startsWith('/users/')) {
                 const u = db.users.find(x => x.id === userId);
-                if (!u || u.password !== body.current) throw { status: 400, data: { message: 'Wrong current password' } };
-                u.password = body.new_password; saveDb(db);
-                return { ok: true };
+                if (!u || (body.current && u.password !== body.current)) throw { status: 400, data: { message: 'Wrong current password' } };
+                if (body.password) u.password = body.password;
+                saveDb(db); return { ok: true };
             }
-            if (method === 'GET' && path.startsWith('/users/') && path.endsWith('/workspaces')) {
+            // WORKSPACES
+            if (method === 'GET' && path.includes('/workspaces') && path.includes(userId)) {
                 return db.workspaces.filter(w => w.user_id === userId);
             }
             if (method === 'POST' && path === '/workspaces') {
@@ -1631,14 +1589,15 @@
             if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/boards$/)) {
                 const wsId = path.split('/')[2];
                 const b = { id: uid(), workspace_id: wsId, title: body.title, created_at: new Date().toISOString() };
-                db.boards.push(b); saveDb(db); return b;
+                db.boards.push(b);
+                // Seed default columns for new board
+                const now = new Date().toISOString();
+                db.columns.push({ id: uid(), board_id: b.id, name: 'To Do', position: 0, created_at: now });
+                db.columns.push({ id: uid(), board_id: b.id, name: 'In Progress', position: 1, created_at: now });
+                db.columns.push({ id: uid(), board_id: b.id, name: 'Done', position: 2, created_at: now });
+                saveDb(db); return b;
             }
-            if (method === 'GET' && path === '/users' && path.includes('email=')) {
-                const email = decodeURIComponent(path.split('email=')[1]);
-                const u = db.users.find(x => x.email === email);
-                if (!u) throw { status: 404, data: { message: 'User not found' } };
-                return { id: u.id, name: u.name, email: u.email };
-            }
+            // MEMBERS
             if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
                 const wsId = path.split('/')[2];
                 return db.workspace_members.filter(m => m.workspace_id === wsId);
@@ -1658,33 +1617,69 @@
             if (method === 'PATCH' && path.match(/^\/workspaces\/[^/]+\/workspace_members\/[^/]+$/)) {
                 const parts = path.split('/');
                 const m = db.workspace_members.find(x => x.workspace_id === parts[2] && x.user_id === parts[4]);
-                if (!m) throw { status: 404, data: { message: 'Member not found' } };
+                if (!m) throw { status: 404 };
                 m.role = body.role; saveDb(db); return m;
             }
-            if (method === 'GET' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
-                return db.tasks.filter(t => t.board_id === path.split('/')[2]);
+            if (method === 'GET' && path === '/users' && path.includes('email=')) {
+                const email = decodeURIComponent(path.split('email=')[1]);
+                const u = db.users.find(x => x.email === email);
+                if (!u) throw { status: 404, data: { message: 'User not found' } };
+                return { id: u.id, name: u.name, email: u.email };
             }
-            if (method === 'POST' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
+            if (method === 'GET' && path.includes('?email=')) {
+                const email = decodeURIComponent(path.split('?email=')[1]);
+                const u = db.users.find(x => x.email === email);
+                if (!u) throw { status: 404, data: { message: 'User not found' } };
+                return { id: u.id, name: u.name, email: u.email };
+            }
+            // COLUMNS
+            if (method === 'GET' && path.match(/^\/boards\/[^/]+\/columns$/)) {
                 const boardId = path.split('/')[2];
+                return (db.columns || []).filter(c => c.board_id === boardId).sort((a, b) => a.position - b.position || a.created_at.localeCompare(b.created_at));
+            }
+            if (method === 'POST' && path.match(/^\/boards\/[^/]+\/columns$/)) {
+                const boardId = path.split('/')[2];
+                const existingCols = (db.columns || []).filter(c => c.board_id === boardId);
+                const position = body.position != null ? body.position : existingCols.length;
+                const col = { id: uid(), board_id: boardId, name: body.name, position, created_at: new Date().toISOString() };
+                if (!db.columns) db.columns = [];
+                db.columns.push(col); saveDb(db); return col;
+            }
+            if (method === 'DELETE' && path.match(/^\/columns\/[^/]+$/)) {
+                const colId = path.split('/')[2];
+                db.columns = (db.columns || []).filter(c => c.id !== colId);
+                db.tasks = (db.tasks || []).filter(t => t.column_id !== colId);
+                saveDb(db); return { ok: true };
+            }
+            // TASKS
+            if (method === 'GET' && path.match(/^\/columns\/[^/]+\/tasks$/)) {
+                const colId = path.split('/')[2];
+                return (db.tasks || []).filter(t => t.column_id === colId);
+            }
+            if (method === 'POST' && path.match(/^\/columns\/[^/]+\/tasks$/)) {
+                const colId = path.split('/')[2];
                 const now = new Date().toISOString();
                 const t = {
-                    id: uid(), board_id: boardId, title: body.title, description: body.description || '',
-                    status: body.status || 'to_do', assignee: body.assignee || 'Unassigned',
+                    id: uid(), column_id: colId,
+                    title: body.title, description: body.description || '',
+                    assignee: body.assignee || 'Unassigned',
                     created_at: now, updated_at: now,
                     start_date: body.start_date || null, due_date: body.due_date || null,
                 };
+                if (!db.tasks) db.tasks = [];
                 db.tasks.push(t); saveDb(db); return t;
             }
-            if (method === 'PATCH' && path.startsWith('/tasks/')) {
+            if (method === 'PATCH' && path.match(/^\/tasks\/[^/]+$/)) {
                 const id = path.split('/')[2];
-                const t = db.tasks.find(x => x.id === id);
+                const t = (db.tasks || []).find(x => x.id === id);
                 if (!t) throw { status: 404 };
                 Object.assign(t, body, { updated_at: new Date().toISOString() });
                 saveDb(db); return t;
             }
-            if (method === 'DELETE' && path.startsWith('/tasks/')) {
+            if (method === 'DELETE' && path.match(/^\/tasks\/[^/]+$/)) {
                 const id = path.split('/')[2];
-                db.tasks = db.tasks.filter(x => x.id !== id); saveDb(db); return { ok: true };
+                db.tasks = (db.tasks || []).filter(x => x.id !== id);
+                saveDb(db); return { ok: true };
             }
             throw { status: 404, data: { message: 'Not found: ' + method + ' ' + path } };
         }
@@ -1705,20 +1700,13 @@
         function toISODate(d) { return d ? new Date(d).toISOString().slice(0, 10) : ''; }
 
         function saveNavState() {
-            localStorage.setItem(NAV_KEY, JSON.stringify({
-                view: state.view,
-                activeWorkspaceId: state.activeWorkspaceId,
-                activeBoardId: state.activeBoardId,
-            }));
+            localStorage.setItem(NAV_KEY, JSON.stringify({ view: state.view, activeWorkspaceId: state.activeWorkspaceId, activeBoardId: state.activeBoardId }));
         }
-
         function hideAllViews() {
-            ['view-account', 'view-workspaces', 'view-workspace-detail', 'view-board', 'view-help'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
+            ['view-account', 'view-workspaces', 'view-workspace-detail', 'view-board', 'view-help'].forEach(id => document.getElementById(id).classList.add('hidden'));
         }
 
-        // Auth
+        // AUTH
         async function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-password').value;
@@ -1726,11 +1714,9 @@
             if (!email || !pass) { showError(err, 'Fill in all fields'); return; }
             try {
                 const { token, user } = await api('POST', '/auth/login', { email, password: pass });
-                err.style.display = 'none';
-                loginUser(user, token);
+                err.style.display = 'none'; loginUser(user, token);
             } catch (e) { showError(err, e.data?.message || 'Login failed'); }
         }
-
         async function handleRegister() {
             const name = document.getElementById('reg-name').value.trim();
             const email = document.getElementById('reg-email').value.trim();
@@ -1740,11 +1726,9 @@
             if (pass.length < 6) { showError(err, 'Password min 6 chars'); return; }
             try {
                 const { token, user } = await api('POST', '/auth/register', { username: name, email, password: pass });
-                err.style.display = 'none';
-                loginUser(user, token);
+                err.style.display = 'none'; loginUser(user, token);
             } catch (e) { showError(err, e.data?.message || 'Registration failed'); }
         }
-
         function loginUser(user, token) {
             user.id = user.id || user.user_id;
             user.name = user.name || user.username;
@@ -1762,44 +1746,33 @@
                 if (saved.activeWorkspaceId && state.workspaces.find(w => w.id === saved.activeWorkspaceId)) {
                     state.activeWorkspaceId = saved.activeWorkspaceId;
                     openWorkspace(saved.activeWorkspaceId).then(() => {
-                        if (saved.activeBoardId && state.boards.find(b => b.id === saved.activeBoardId)) {
-                            openBoard(saved.activeBoardId);
-                        }
+                        if (saved.activeBoardId && state.boards.find(b => b.id === saved.activeBoardId)) openBoard(saved.activeBoardId);
                     });
-                } else if (saved.view === 'workspaces') {
-                    navigate('workspaces');
-                } else if (saved.view === 'help') {
-                    navigate('help');
-                } else {
-                    navigate('account');
-                }
+                } else if (saved.view === 'workspaces') navigate('workspaces');
+                else if (saved.view === 'help') navigate('help');
+                else navigate('account');
             });
         }
-
         function handleLogout() {
-            localStorage.removeItem(SESSION_KEY);
-            localStorage.removeItem(NAV_KEY);
-            state = { ...state, user: null, token: null, workspaces: [], boards: [], tasks: {}, members: [], myRole: null, activeWorkspaceId: null, activeBoardId: null };
+            localStorage.removeItem(SESSION_KEY); localStorage.removeItem(NAV_KEY);
+            state = { ...state, user: null, token: null, workspaces: [], boards: [], columns: {}, tasks: {}, members: [], myRole: null, activeWorkspaceId: null, activeBoardId: null };
             document.getElementById('app-page').classList.add('hidden');
             document.getElementById('auth-page').classList.remove('hidden');
             showLogin();
         }
-
         async function changePassword() {
             const current = document.getElementById('pwd-current').value;
             const nw = document.getElementById('pwd-new').value;
             const confirm = document.getElementById('pwd-confirm').value;
             if (!current || !nw || nw !== confirm) { showToast('Check password fields'); return; }
             try {
-                await api('PATCH', '/users/' + state.user.id, { password: nw });
-                closeModal(null, 'password-modal');
-                showToast('Password updated');
+                await api('PATCH', '/users/' + state.user.id, { current, password: nw });
+                closeModal(null, 'password-modal'); showToast('Password updated');
             } catch (e) { showToast(e.data?.message || 'Failed'); }
         }
-
         function openPasswordModal() { openModal('password-modal'); }
 
-        // Navigation
+        // NAV
         function navigate(view) {
             state.view = view;
             document.querySelectorAll('.sidebar-item[data-nav]').forEach(el => el.classList.toggle('active', el.dataset.nav === view));
@@ -1807,10 +1780,8 @@
             if (view === 'account') document.getElementById('view-account').classList.remove('hidden');
             if (view === 'workspaces') { document.getElementById('view-workspaces').classList.remove('hidden'); renderWorkspaces(); }
             if (view === 'help') document.getElementById('view-help').classList.remove('hidden');
-            renderSidebarWorkspaces();
-            saveNavState();
+            renderSidebarWorkspaces(); saveNavState();
         }
-
         function renderAccount() {
             const u = state.user;
             document.getElementById('acc-name').textContent = u.name || '\u2014';
@@ -1818,37 +1789,32 @@
             document.getElementById('acc-created').textContent = u.created_at ? fmtDate(u.created_at) : '\u2014';
         }
 
-        // Sidebar workspaces
+        // SIDEBAR
         function renderSidebarWorkspaces() {
             const el = document.getElementById('sidebar-ws-list');
             el.innerHTML = state.workspaces.map((ws, i) => {
                 const color = MEMBER_COLORS[i % MEMBER_COLORS.length];
                 const isActive = state.activeWorkspaceId === ws.id && (state.view === 'workspace-detail' || state.view === 'board');
                 return `<div class="sidebar-ws-item${isActive ? ' active' : ''}" onclick="openWorkspace('${ws.id}')">
-                    <span class="sidebar-ws-dot" style="background:${color}"></span>
-                    ${esc(ws.title)}
-                </div>`;
+                    <span class="sidebar-ws-dot" style="background:${color}"></span>${esc(ws.title)}</div>`;
             }).join('');
         }
 
-        // Workspaces
+        // WORKSPACES
         async function loadWorkspaces() {
             try {
                 const list = await api('GET', '/users/' + state.user.id + '/workspaces');
                 state.workspaces = list.map(ws => ({ ...ws, id: ws.id || ws.workspace_id }));
             } catch { state.workspaces = []; }
         }
-
         function renderWorkspaces() {
             const el = document.getElementById('workspace-list');
             const cards = state.workspaces.map(ws => {
                 const count = getDb().boards.filter(b => b.workspace_id === ws.id).length;
-                return `<div class="card-clickable" onclick="openWorkspace('${ws.id}')">
-      <h3>${esc(ws.title)}</h3><p>${count} board${count !== 1 ? 's' : ''}</p></div>`;
+                return `<div class="card-clickable" onclick="openWorkspace('${ws.id}')"><h3>${esc(ws.title)}</h3><p>${count} board${count !== 1 ? 's' : ''}</p></div>`;
             }).join('');
             el.innerHTML = cards + `<div class="card-clickable card-add" onclick="openModal('workspace-modal')">+ Add workspace</div>`;
         }
-
         async function createWorkspace() {
             const title = document.getElementById('workspace-title-input').value.trim();
             if (!title) return;
@@ -1857,45 +1823,37 @@
                 ws.id = ws.id || ws.workspace_id;
                 state.workspaces.push(ws);
                 document.getElementById('workspace-title-input').value = '';
-                closeModal(null, 'workspace-modal');
-                renderWorkspaces();
-                renderSidebarWorkspaces();
-                showToast('Workspace created');
-            } catch (e) { showToast('Error creating workspace'); }
+                closeModal(null, 'workspace-modal'); renderWorkspaces(); renderSidebarWorkspaces(); showToast('Workspace created');
+            } catch { showToast('Error creating workspace'); }
         }
-
         async function openWorkspace(wsId) {
             state.activeWorkspaceId = wsId;
             const ws = state.workspaces.find(w => w.id === wsId);
             document.getElementById('ws-detail-title').textContent = ws?.title || 'Workspace';
-            hideAllViews();
-            document.getElementById('view-workspace-detail').classList.remove('hidden');
-            state.view = 'workspace-detail';
-            saveNavState();
-            await loadBoards(wsId);
-            await loadMembers(wsId);
-            renderBoardList();
-            renderSidebarWorkspaces();
+            hideAllViews(); document.getElementById('view-workspace-detail').classList.remove('hidden');
+            state.view = 'workspace-detail'; saveNavState();
+            await loadBoards(wsId); await loadMembers(wsId);
+            renderBoardList(); renderSidebarWorkspaces();
         }
 
+        // BOARDS
         async function loadBoards(wsId) {
             try {
                 const list = await api('GET', '/workspaces/' + wsId + '/boards');
                 state.boards = list.map(b => ({ ...b, id: b.id || b.board_id }));
             } catch { state.boards = []; }
-            state.tasks = {};
-            for (const b of state.boards) await loadTasks(b.id);
+            // load columns & tasks for each board
+            state.columns = {}; state.tasks = {};
+            for (const b of state.boards) await loadColumns(b.id);
         }
-
         function renderBoardList() {
             const el = document.getElementById('board-list');
             el.innerHTML = state.boards.map(b => {
-                const count = (state.tasks[b.id] || []).length;
-                return `<div class="card-clickable" onclick="openBoard('${b.id}')">
-      <h3>${esc(b.title)}</h3><p>${count} task${count !== 1 ? 's' : ''}</p></div>`;
+                const cols = state.columns[b.id] || [];
+                const count = cols.reduce((sum, c) => sum + (state.tasks[c.id] || []).length, 0);
+                return `<div class="card-clickable" onclick="openBoard('${b.id}')"><h3>${esc(b.title)}</h3><p>${count} task${count !== 1 ? 's' : ''}</p></div>`;
             }).join('') + `<div class="card-clickable card-add" onclick="openModal('board-modal')">+ Add board</div>`;
         }
-
         async function createBoard() {
             const title = document.getElementById('board-title-input').value.trim();
             if (!title || !state.activeWorkspaceId) return;
@@ -1903,107 +1861,66 @@
                 const b = await api('POST', '/workspaces/' + state.activeWorkspaceId + '/boards', { title });
                 b.id = b.id || b.board_id;
                 state.boards.push(b);
-                state.tasks[b.id] = [];
+                await loadColumns(b.id);
                 document.getElementById('board-title-input').value = '';
-                closeModal(null, 'board-modal');
-                renderBoardList();
-                showToast('Board created');
+                closeModal(null, 'board-modal'); renderBoardList(); showToast('Board created');
             } catch { showToast('Error creating board'); }
         }
-
         function backToBoards() {
-            state.view = 'workspace-detail';
-            hideAllViews();
+            state.view = 'workspace-detail'; hideAllViews();
             document.getElementById('view-workspace-detail').classList.remove('hidden');
-            renderBoardList();
-            saveNavState();
+            renderBoardList(); saveNavState();
         }
 
-        // Members — corrected to match backend API
+        // MEMBERS
         async function loadMembers(wsId) {
-            try {
-                const list = await api('GET', '/workspaces/' + wsId + '/workspace_members');
-                state.members = list;
-            } catch { state.members = []; }
+            try { state.members = await api('GET', '/workspaces/' + wsId + '/workspace_members'); }
+            catch { state.members = []; }
         }
-
-        function openMembersModal() {
-            renderMembersTable();
-            openModal('members-modal');
-        }
-
+        function openMembersModal() { renderMembersTable(); openModal('members-modal'); }
         function renderMembersTable() {
             const tbody = document.getElementById('members-tbody');
             const db = getDb();
-            if (state.members.length === 0) {
+            if (!state.members.length) {
                 tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:rgba(255,255,255,0.5);padding:20px">No members yet</td></tr>';
                 return;
             }
             tbody.innerHTML = state.members.map(m => {
                 const u = db.users.find(x => x.id === m.user_id);
-                const name = u ? u.name : m.user_id;
-                const email = u ? u.email : '';
+                const name = u ? u.name : m.user_id, email = u ? u.email : '';
                 const roleClass = m.role === 'administrator' ? 'role-administrator' : m.role === 'guest' ? 'role-guest' : 'role-member';
                 const isOwner = m.role === 'administrator' && m.user_id === state.user?.id;
-                return `<tr>
-                    <td>
-                        <div style="font-weight:600">${esc(name)}</div>
-                        <div style="font-size:12px;color:rgba(255,255,255,0.5)">${esc(email)}</div>
-                    </td>
+                return `<tr><td><div style="font-weight:600">${esc(name)}</div><div style="font-size:12px;color:rgba(255,255,255,0.5)">${esc(email)}</div></td>
                     <td><span class="role-badge ${roleClass}">${esc(m.role)}</span></td>
-                    <td>${!isOwner ? `<button class="btn btn-danger-soft btn-sm" onclick="removeMember('${m.user_id}')">Remove</button>` : ''}</td>
-                </tr>`;
+                    <td>${!isOwner ? `<button class="btn btn-danger-soft btn-sm" onclick="removeMember('${m.user_id}')">Remove</button>` : ''}</td></tr>`;
             }).join('');
         }
-
         async function addMember() {
             const email = document.getElementById('add-member-email').value.trim();
             const role = document.getElementById('add-member-role').value;
             if (!email) { showToast('Email is required'); return; }
             try {
                 const user = await api('GET', '/users?email=' + encodeURIComponent(email));
-                await api('POST', '/workspaces/' + state.activeWorkspaceId + '/workspace_members', {
-                    user_id: user.id,
-                    role: role,
-                });
+                await api('POST', '/workspaces/' + state.activeWorkspaceId + '/workspace_members', { user_id: user.id, role });
                 document.getElementById('add-member-email').value = '';
-                await loadMembers(state.activeWorkspaceId);
-                renderMembersTable();
-                showToast('Member added');
+                await loadMembers(state.activeWorkspaceId); renderMembersTable(); showToast('Member added');
             } catch (e) { showToast(e.data?.message || 'Failed to add member'); }
         }
-
         async function removeMember(userId) {
             try {
                 await api('DELETE', '/workspaces/' + state.activeWorkspaceId + '/workspace_members/' + userId);
-                await loadMembers(state.activeWorkspaceId);
-                renderMembersTable();
-                showToast('Member removed');
+                await loadMembers(state.activeWorkspaceId); renderMembersTable(); showToast('Member removed');
             } catch { showToast('Failed to remove member'); }
         }
 
-        function populateAssigneeDropdown() {
-            const select = document.getElementById('task-assignee-input');
-            const db = getDb();
-            const options = state.members.map(m => {
-                const u = db.users.find(x => x.id === m.user_id);
-                const name = u ? u.name : m.user_id;
-                return `<option value="${esc(name)}">${esc(name)}</option>`;
-            }).join('');
-            select.innerHTML = '<option value="Unassigned">Unassigned</option>' + options;
-        }
-
-        // Board / tasks
-        async function loadTasks(boardId) {
+        // COLUMNS
+        async function loadColumns(boardId) {
             try {
-                const list = await api('GET', '/boards/' + boardId + '/tasks');
-                state.tasks[boardId] = list.map(t => ({
-                    id: t.id || t.task_id, board_id: normId(boardId), name: t.title, desc: t.description || '',
-                    status: t.status, assignee: t.assignee || t.assigned_id || 'Unassigned',
-                    created_at: t.created_at, updated_at: t.updated_at,
-                    start_date: t.start_date || null, due_date: t.due_date || null,
-                }));
-            } catch { state.tasks[boardId] = []; }
+                const cols = await api('GET', '/boards/' + boardId + '/columns');
+                state.columns[boardId] = cols.map(c => ({ ...c, id: c.id || c.column_id }));
+            } catch { state.columns[boardId] = []; }
+            // load tasks for each column
+            for (const col of (state.columns[boardId] || [])) await loadTasks(col.id);
         }
 
         function openBoard(boardId) {
@@ -2013,24 +1930,16 @@
             const ws = state.workspaces.find(w => w.id === state.activeWorkspaceId);
             document.getElementById('board-title').textContent = board?.title || 'Board';
             document.getElementById('board-ws-name').textContent = ws ? '\u00B7 ' + ws.title : '';
-            hideAllViews();
-            document.getElementById('view-board').classList.remove('hidden');
-            state.view = 'board';
-            saveNavState();
-            document.querySelectorAll('.btn-group .btn-toggle').forEach(b => {
-                b.classList.toggle('active', b.dataset.view === 'kanban');
-            });
+            hideAllViews(); document.getElementById('view-board').classList.remove('hidden');
+            state.view = 'board'; saveNavState();
+            document.querySelectorAll('.btn-group .btn-toggle').forEach(b => b.classList.toggle('active', b.dataset.view === 'kanban'));
             document.getElementById('board-area').classList.remove('hidden');
             document.getElementById('gantt-area').classList.add('hidden');
-            renderBoard(boardId);
-            renderSidebarWorkspaces();
+            renderBoard(boardId); renderSidebarWorkspaces();
         }
-
         function switchBoardView(mode) {
             state.boardViewMode = mode;
-            document.querySelectorAll('.btn-group .btn-toggle').forEach(b => {
-                b.classList.toggle('active', b.dataset.view === mode);
-            });
+            document.querySelectorAll('.btn-group .btn-toggle').forEach(b => b.classList.toggle('active', b.dataset.view === mode));
             if (mode === 'kanban') {
                 document.getElementById('board-area').classList.remove('hidden');
                 document.getElementById('gantt-area').classList.add('hidden');
@@ -2042,44 +1951,192 @@
             }
         }
 
+        function colDot(index) { return COLUMN_DOTS[index % COLUMN_DOTS.length]; }
+
         function renderBoard(boardId) {
-            const tasks = state.tasks[boardId] || [];
+            const columns = state.columns[boardId] || [];
             const area = document.getElementById('board-area');
-            area.innerHTML = STATUSES.map(s => {
-                const col = tasks.filter(t => t.status === s.id);
+            const colHtml = columns.map((col, idx) => {
+                const tasks = state.tasks[col.id] || [];
+                const dot = colDot(idx);
                 return `<div class="column">
-      <div class="column-header"><span class="dot" style="background:${s.dot}"></span>
-        <span class="column-title">${s.label}</span><span class="column-count">${col.length}</span></div>
-      <div class="column-cards">${col.map(t => renderTaskCard(t)).join('') || '<div class="empty" style="padding:16px">No tasks</div>'}</div>
-      <button class="add-task-btn" onclick="openCreateTask('${boardId}','${s.id}')">+ Add task</button>
-    </div>`;
+                    <div class="column-header">
+                        <span class="dot" style="background:${dot};color:${dot}"></span>
+                        <span class="column-title">${esc(col.name)}</span>
+                        <span class="column-count">${tasks.length}</span>
+                        <button class="btn btn-icon" style="font-size:13px;padding:4px 6px;opacity:0.5" onclick="deleteColumn('${boardId}','${col.id}')" title="Delete column">&#10005;</button>
+                    </div>
+                    <div class="column-cards">
+                        ${tasks.map(t => renderTaskCard(t, col)).join('') || '<div class="empty" style="padding:16px;font-size:13px">No tasks</div>'}
+                    </div>
+                    <button class="add-task-btn" onclick="openCreateTask('${boardId}','${col.id}')">+ Add task</button>
+                </div>`;
             }).join('');
+            area.innerHTML = colHtml + `
+                <div class="column-add">
+                    <button class="column-add-btn" onclick="openAddColumnModal('${boardId}')">
+                        <span style="font-size:20px;line-height:1">+</span> Add column
+                    </button>
+                </div>`;
         }
 
-        function renderTaskCard(task) {
-            const s = STATUSES.find(x => x.id === task.status) || STATUSES[0];
-            return `<div class="task-card" onclick="openEditTaskDirect('${task.board_id}','${task.id}')">
-    <div class="task-card-actions">
-      <button class="btn btn-icon" onclick="event.stopPropagation();openEditTaskDirect('${task.board_id}','${task.id}')" title="Edit">&#9998;</button>
-      <button class="btn btn-icon" onclick="event.stopPropagation();deleteTask('${task.board_id}','${task.id}')" title="Delete">&#128465;</button>
-    </div>
-    <div class="task-name">${esc(task.name)}</div>
-    ${task.desc ? `<div class="task-desc">${esc(task.desc)}</div>` : ''}
-    <div class="task-meta">
-      <span class="badge ${s.badge}">${s.label}</span>
-      <span class="assignee">${esc(task.assignee)}</span>
-      <span>Created ${fmtDate(task.created_at)}</span>
-      ${task.due_date ? `<span>Due ${fmtDate(task.due_date)}</span>` : ''}
-    </div>
-  </div>`;
+        function renderTaskCard(task, col) {
+            return `<div class="task-card">
+                <div class="task-card-actions">
+                    <button class="btn btn-icon" onclick="openEditTask('${task.id}','${col.id}')" title="Edit">&#9998;</button>
+                    <button class="btn btn-icon" onclick="deleteTask('${task.id}','${col.id}')" title="Delete">&#128465;</button>
+                </div>
+                <div class="task-name">${esc(task.title)}</div>
+                ${task.description ? `<div class="task-desc">${esc(task.description)}</div>` : ''}
+                <div class="task-meta">
+                    <span class="badge">${esc(col.name)}</span>
+                    <span class="assignee">${esc(task.assignee || 'Unassigned')}</span>
+                    <span>Created ${fmtDate(task.created_at)}</span>
+                    ${task.due_date ? `<span>Due ${fmtDate(task.due_date)}</span>` : ''}
+                </div>
+            </div>`;
         }
 
-        function parseDateSafe(v) {
-            if (!v) return null;
-            const d = new Date(v);
-            return isNaN(d.getTime()) ? null : d;
+        // COLUMN CRUD
+        function openAddColumnModal(boardId) {
+            state.activeBoardId = boardId;
+            document.getElementById('column-name-input').value = '';
+            openModal('column-modal');
+        }
+        async function createColumn() {
+            const name = document.getElementById('column-name-input').value.trim();
+            if (!name) return;
+            const boardId = state.activeBoardId;
+            try {
+                const col = await api('POST', '/boards/' + boardId + '/columns', { name });
+                col.id = col.id || col.column_id;
+                state.columns[boardId] = state.columns[boardId] || [];
+                state.columns[boardId].push(col);
+                state.tasks[col.id] = [];
+                document.getElementById('column-name-input').value = '';
+                closeModal(null, 'column-modal');
+                renderBoard(boardId); showToast('Column added');
+            } catch { showToast('Error adding column'); }
+        }
+        async function deleteColumn(boardId, colId) {
+            const tasks = state.tasks[colId] || [];
+            if (tasks.length > 0 && !confirm(`Delete "${(state.columns[boardId] || []).find(c => c.id === colId)?.name}" and its ${tasks.length} task(s)?`)) return;
+            try {
+                await api('DELETE', '/columns/' + colId);
+                state.columns[boardId] = (state.columns[boardId] || []).filter(c => c.id !== colId);
+                delete state.tasks[colId];
+                renderBoard(boardId); showToast('Column deleted');
+            } catch { showToast('Error deleting column'); }
         }
 
+        // TASKS
+        async function loadTasks(colId) {
+            try {
+                const list = await api('GET', '/columns/' + colId + '/tasks');
+                state.tasks[colId] = list.map(t => ({ ...t, id: t.id || t.task_id }));
+            } catch { state.tasks[colId] = []; }
+        }
+
+        function populateColumnDropdown(boardId, selectedColId) {
+            const select = document.getElementById('task-column-input');
+            const cols = state.columns[boardId] || [];
+            select.innerHTML = cols.map(c =>
+                `<option value="${esc(c.id)}" ${c.id === selectedColId ? 'selected' : ''}>${esc(c.name)}</option>`
+            ).join('');
+        }
+        function populateAssigneeDropdown(selectedAssignee) {
+            const select = document.getElementById('task-assignee-input');
+            const db = getDb();
+            const options = state.members.map(m => {
+                const u = db.users.find(x => x.id === m.user_id);
+                const name = u ? u.name : m.user_id;
+                return `<option value="${esc(name)}" ${name === selectedAssignee ? 'selected' : ''}>${esc(name)}</option>`;
+            }).join('');
+            select.innerHTML = `<option value="Unassigned" ${'Unassigned' === selectedAssignee ? 'selected' : ''}>Unassigned</option>` + options;
+        }
+
+        function openCreateTask(boardId, colId) {
+            state.editingTaskId = null;
+            state.activeBoardId = boardId;
+            state.defaultColumnId = colId;
+            document.getElementById('task-modal-title').textContent = 'New task';
+            document.getElementById('task-title-input').value = '';
+            document.getElementById('task-desc-input').value = '';
+            document.getElementById('task-start-input').value = todayISO();
+            document.getElementById('task-due-input').value = '';
+            populateAssigneeDropdown('Unassigned');
+            populateColumnDropdown(boardId, colId);
+            openModal('task-modal');
+        }
+
+        function openEditTask(taskId, colId) {
+            // Find which board this column belongs to
+            let boardId = state.activeBoardId;
+            const task = (state.tasks[colId] || []).find(t => t.id === taskId);
+            if (!task) return;
+            state.editingTaskId = taskId;
+            state.activeBoardId = boardId;
+            state.defaultColumnId = colId;
+            document.getElementById('task-modal-title').textContent = 'Edit task';
+            document.getElementById('task-title-input').value = task.title || '';
+            document.getElementById('task-desc-input').value = task.description || '';
+            document.getElementById('task-start-input').value = task.start_date ? toISODate(task.start_date) : '';
+            document.getElementById('task-due-input').value = task.due_date ? toISODate(task.due_date) : '';
+            populateAssigneeDropdown(task.assignee || 'Unassigned');
+            populateColumnDropdown(boardId, colId);
+            openModal('task-modal');
+        }
+
+        async function saveTask() {
+            const title = document.getElementById('task-title-input').value.trim();
+            const description = document.getElementById('task-desc-input').value.trim();
+            const assignee = document.getElementById('task-assignee-input').value || 'Unassigned';
+            const newColId = document.getElementById('task-column-input').value;
+            const startDate = document.getElementById('task-start-input').value || null;
+            const dueDate = document.getElementById('task-due-input').value || null;
+            if (!title) { showToast('Title is required'); return; }
+            const boardId = state.activeBoardId;
+            try {
+                if (state.editingTaskId) {
+                    const oldColId = state.defaultColumnId;
+                    const patchBody = { title, description, assignee, column_id: newColId, start_date: startDate, due_date: dueDate };
+                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, patchBody);
+                    updated.id = updated.id || state.editingTaskId;
+                    // Remove from old column
+                    state.tasks[oldColId] = (state.tasks[oldColId] || []).filter(t => t.id !== state.editingTaskId);
+                    // Ensure new column array exists
+                    if (!state.tasks[newColId]) state.tasks[newColId] = [];
+                    // Add/update in new column
+                    const existing = state.tasks[newColId].findIndex(t => t.id === updated.id);
+                    if (existing >= 0) state.tasks[newColId][existing] = { ...updated };
+                    else state.tasks[newColId].push({ ...updated });
+                    showToast('Task updated');
+                } else {
+                    const colId = newColId || state.defaultColumnId;
+                    const created = await api('POST', '/columns/' + colId + '/tasks', { title, description, assignee, start_date: startDate, due_date: dueDate });
+                    created.id = created.id || created.task_id;
+                    if (!state.tasks[colId]) state.tasks[colId] = [];
+                    state.tasks[colId].push({ ...created });
+                    showToast('Task created');
+                }
+                closeModal(null, 'task-modal');
+                renderBoard(boardId);
+                if (state.boardViewMode === 'gantt') renderGantt(boardId);
+            } catch (e) { showToast('Failed to save task'); }
+        }
+
+        async function deleteTask(taskId, colId) {
+            try {
+                await api('DELETE', '/tasks/' + taskId);
+                state.tasks[colId] = (state.tasks[colId] || []).filter(t => t.id !== taskId);
+                renderBoard(state.activeBoardId);
+                if (state.boardViewMode === 'gantt') renderGantt(state.activeBoardId);
+                showToast('Task deleted');
+            } catch { showToast('Failed to delete'); }
+        }
+
+        // GANTT
+        function parseDateSafe(v) { if (!v) return null; const d = new Date(v); return isNaN(d.getTime()) ? null : d; }
         function ganttTaskRange(t) {
             const start = parseDateSafe(t.start_date) || parseDateSafe(t.created_at) || new Date();
             let end = parseDateSafe(t.due_date);
@@ -2087,25 +2144,20 @@
             if (end < start) end = new Date(start.getTime() + 3 * 86400000);
             return { start, end };
         }
-
         function renderGantt(boardId) {
-            const tasks = state.tasks[boardId] || [];
+            const columns = state.columns[boardId] || [];
+            const allTasks = columns.flatMap(col => (state.tasks[col.id] || []).map(t => ({ ...t, colName: col.name })));
             const ganttEl = document.getElementById('gantt-area');
-            if (tasks.length === 0) {
-                ganttEl.innerHTML = '<div class="gantt-empty">No tasks to display in Gantt view</div>';
-                return;
-            }
+            if (!allTasks.length) { ganttEl.innerHTML = '<div class="gantt-empty">No tasks to display in Gantt view</div>'; return; }
             let minDate = Infinity, maxDate = -Infinity;
-            const now = new Date();
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const ranges = tasks.map(t => {
+            const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const ranges = allTasks.map(t => {
                 const r = ganttTaskRange(t);
                 if (r.start.getTime() < minDate) minDate = r.start.getTime();
                 if (r.end.getTime() > maxDate) maxDate = r.end.getTime();
                 return { task: t, start: r.start, end: r.end };
             });
-            const rangeStart = new Date(minDate - 2 * 86400000);
-            const rangeEnd = new Date(maxDate + 3 * 86400000);
+            const rangeStart = new Date(minDate - 2 * 86400000), rangeEnd = new Date(maxDate + 3 * 86400000);
             const totalDays = Math.max(1, Math.ceil((rangeEnd - rangeStart) / 86400000));
             let days = [];
             for (let i = 0; i < totalDays; i++) {
@@ -2122,115 +2174,24 @@
             ganttEl.innerHTML = `
                 <div class="gantt-header">
                     <div class="gantt-header-label">Task</div>
-                    <div class="gantt-timeline-header">
-                        ${days.map(d => `<div class="gantt-day-cell${d.isToday ? ' today' : ''}">${d.label}</div>`).join('')}
-                    </div>
+                    <div class="gantt-timeline-header">${days.map(d => `<div class="gantt-day-cell${d.isToday ? ' today' : ''}">${d.label}</div>`).join('')}</div>
                 </div>
                 <div class="gantt-body">
-                    ${rows.map(r => `
-                        <div class="gantt-row">
-                            <div class="gantt-row-label" title="${esc(r.task.name)}">${esc(r.task.name)}</div>
-                            <div class="gantt-row-bars">
-                                <div class="gantt-bar status-${r.task.status}" style="left:${r.left}%;width:${r.width}%" title="${esc(r.task.name)}">
-                                    ${r.width > 10 ? esc(r.task.name) : ''}
-                                </div>
-                                <div class="gantt-now-line" style="left:${nowPos * 100}%"></div>
+                    ${rows.map(r => `<div class="gantt-row">
+                        <div class="gantt-row-label" title="${esc(r.task.title)}">${esc(r.task.title)}</div>
+                        <div class="gantt-row-bars">
+                            <div class="gantt-bar" style="left:${r.left}%;width:${r.width}%" title="${esc(r.task.title)} [${esc(r.task.colName)}]">
+                                ${r.width > 10 ? esc(r.task.title) : ''}
                             </div>
+                            <div class="gantt-now-line" style="left:${nowPos * 100}%"></div>
                         </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function openCreateTask(boardId, status) {
-            state.editingTaskId = null;
-            state.activeBoardId = boardId;
-            state.defaultStatus = status;
-            document.getElementById('task-modal-title').textContent = 'New task';
-            document.getElementById('task-title-input').value = '';
-            document.getElementById('task-desc-input').value = '';
-            document.getElementById('task-status-input').value = status;
-            document.getElementById('task-start-input').value = todayISO();
-            document.getElementById('task-due-input').value = '';
-            populateAssigneeDropdown();
-            openModal('task-modal');
-        }
-
-        function openEditTaskDirect(boardId, taskId) {
-            const task = (state.tasks[boardId] || []).find(t => t.id === taskId);
-            if (!task) return;
-            state.editingTaskId = taskId;
-            state.activeBoardId = boardId;
-            document.getElementById('task-modal-title').textContent = 'Edit task';
-            document.getElementById('task-title-input').value = task.name;
-            document.getElementById('task-desc-input').value = task.desc || '';
-            document.getElementById('task-status-input').value = task.status;
-            document.getElementById('task-start-input').value = task.start_date ? toISODate(task.start_date) : '';
-            document.getElementById('task-due-input').value = task.due_date ? toISODate(task.due_date) : '';
-            populateAssigneeDropdown();
-            const assigneeSelect = document.getElementById('task-assignee-input');
-            for (let i = 0; i < assigneeSelect.options.length; i++) {
-                if (assigneeSelect.options[i].value === task.assignee) {
-                    assigneeSelect.selectedIndex = i;
-                    break;
-                }
-            }
-            openModal('task-modal');
-        }
-
-        async function saveTask() {
-            const title = document.getElementById('task-title-input').value.trim();
-            const description = document.getElementById('task-desc-input').value.trim();
-            const assignee = document.getElementById('task-assignee-input').value || 'Unassigned';
-            const status = document.getElementById('task-status-input').value;
-            const startDate = document.getElementById('task-start-input').value || null;
-            const dueDate = document.getElementById('task-due-input').value || null;
-            if (!title) return;
-            const boardId = state.activeBoardId;
-            try {
-                if (state.editingTaskId) {
-                    const patchBody = { title, description, status, assignee, start_date: startDate, due_date: dueDate };
-                    const updated = await api('PATCH', '/tasks/' + state.editingTaskId, patchBody);
-                    const idx = state.tasks[boardId].findIndex(t => t.id === state.editingTaskId);
-                    if (idx >= 0) state.tasks[boardId][idx] = {
-                        id: updated.id || updated.task_id, board_id: boardId, name: updated.title || title, desc: updated.description || description,
-                        status: updated.status, assignee: updated.assignee || 'Unassigned',
-                        created_at: updated.created_at, updated_at: updated.updated_at,
-                        start_date: updated.start_date, due_date: updated.due_date,
-                    };
-                    showToast('Task updated');
-                } else {
-                    const created = await api('POST', '/boards/' + boardId + '/tasks', { title, description, status, assignee, start_date: startDate, due_date: dueDate });
-                    state.tasks[boardId].push({
-                        id: created.id || created.task_id, board_id: boardId, name: created.title, desc: created.description,
-                        status: created.status, assignee: created.assignee || 'Unassigned',
-                        created_at: created.created_at, updated_at: created.updated_at,
-                        start_date: created.start_date, due_date: created.due_date,
-                    });
-                    showToast('Task created');
-                }
-                closeModal(null, 'task-modal');
-                renderBoard(boardId);
-                if (state.boardViewMode === 'gantt') renderGantt(boardId);
-            } catch { showToast('Failed to save task'); }
-        }
-
-        async function deleteTask(boardId, taskId) {
-            try {
-                await api('DELETE', '/tasks/' + taskId);
-                state.tasks[boardId] = state.tasks[boardId].filter(t => t.id !== taskId);
-                renderBoard(boardId);
-                if (state.boardViewMode === 'gantt') renderGantt(boardId);
-                showToast('Task deleted');
-            } catch { showToast('Failed to delete'); }
+                    </div>`).join('')}
+                </div>`;
         }
 
         (function init() {
             const session = localStorage.getItem(SESSION_KEY);
-            if (session) {
-                const { user, token } = JSON.parse(session);
-                loginUser(user, token);
-            }
+            if (session) { const { user, token } = JSON.parse(session); loginUser(user, token); }
         })();
     </script>
 </body>
