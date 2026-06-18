@@ -920,13 +920,13 @@
 
         .gantt-timeline-header {
             flex: 1;
-            display: flex;
-            overflow: hidden;
+            position: relative;
         }
 
         .gantt-day-cell {
-            flex: 1;
-            min-width: 40px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
             text-align: center;
             padding: 12px 0;
             font-size: 11px;
@@ -1477,6 +1477,7 @@
                         <button class="btn btn-ghost btn-sm" onclick="navigate('workspaces')">&#8592; Back</button>
                         <button class="btn btn-ghost btn-sm" onclick="openMembersModal()">&#128101; Members</button>
                         <button class="btn btn-ghost btn-sm" onclick="openModal('board-modal')">+ Add board</button>
+                        <button class="btn btn-danger-soft btn-sm" onclick="deleteWorkspace()">Delete</button>
                     </div>
                     <div id="board-list" class="grid-cards"></div>
                 </div>
@@ -1686,9 +1687,7 @@
     </div>
 
     <script>
-        const USE_MOCK = false;
         const API_BASE = 'http://localhost:8080';
-        const MOCK_KEY = 'tt_preview_db';
         const SESSION_KEY = 'tt_preview_session';
         const NAV_KEY = 'tt_nav_state';
         const MEMBER_COLORS = ['#8B5CF6', '#3B82F6', '#22C55E', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
@@ -1698,64 +1697,18 @@
             user: null, token: null, view: 'account',
             workspaces: [], activeWorkspaceId: null,
             boards: [], activeBoardId: null,
-            columns: {},   // boardId -> [ {id, boardId, name, position} ]
-            tasks: {},     // columnId -> [ task ]
+            columns: {},
+            tasks: {},
             editingTaskId: null,
             defaultColumnId: null,
             boardViewMode: 'kanban',
             members: [], myRole: null,
-            comments: {},   // boardId -> [ comment ]
+            comments: {},
             commentsVisible: true,
             commentsBodyVisible: true,
         };
 
-        function uid() { return 'id_' + Math.random().toString(36).slice(2, 10); }
-
-        function defaultDb() {
-            const wsId = uid(), wsId2 = uid(), boardId = uid(), now = new Date().toISOString();
-            const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-            const col1 = uid(), col2 = uid(), col3 = uid();
-            return {
-                users: [
-                    { id: 'u1', name: 'Demo User', email: 'demo@example.com', password: 'demo123', created_at: '2025-01-10T09:00:00Z' },
-                    { id: 'u2', name: 'Alex', email: 'alex@example.com', password: 'pass123', created_at: '2025-02-10T09:00:00Z' },
-                    { id: 'u3', name: 'Sam', email: 'sam@example.com', password: 'pass123', created_at: '2025-03-10T09:00:00Z' },
-                ],
-                workspaces: [
-                    { id: wsId, user_id: 'u1', title: 'My Workspace', created_at: now },
-                    { id: wsId2, user_id: 'u1', title: 'Side Projects', created_at: now },
-                ],
-                workspace_members: [
-                    { workspace_id: wsId, user_id: 'u1', role: 'administrator' },
-                    { workspace_id: wsId, user_id: 'u2', role: 'member' },
-                    { workspace_id: wsId, user_id: 'u3', role: 'member' },
-                ],
-                boards: [
-                    { id: boardId, workspace_id: wsId, title: 'Product backlog', created_at: now },
-                    { id: uid(), workspace_id: wsId, title: 'Sprint 1', created_at: now },
-                ],
-                columns: [
-                    { id: col1, board_id: boardId, name: 'To Do', position: 0, created_at: now },
-                    { id: col2, board_id: boardId, name: 'In Progress', position: 1, created_at: now },
-                    { id: col3, board_id: boardId, name: 'Done', position: 2, created_at: now },
-                ],
-                tasks: [
-                    { id: uid(), column_id: col3, title: 'Design auth page', description: 'Login and register forms', assignee: 'Alex', created_at: weekAgo, updated_at: now, start_date: weekAgo, due_date: now },
-                    { id: uid(), column_id: col2, title: 'Build workspace list', description: 'CRUD for workspaces', assignee: 'Sam', created_at: weekAgo, updated_at: now, start_date: weekAgo, due_date: new Date(Date.now() + 3 * 86400000).toISOString() },
-                    { id: uid(), column_id: col1, title: 'Connect API', description: 'Replace mock layer', assignee: 'Unassigned', created_at: now, updated_at: now, start_date: new Date(Date.now() + 1 * 86400000).toISOString(), due_date: new Date(Date.now() + 7 * 86400000).toISOString() },
-                ],
-            };
-        }
-
-        function getDb() {
-            const raw = localStorage.getItem(MOCK_KEY);
-            if (!raw) { const db = defaultDb(); localStorage.setItem(MOCK_KEY, JSON.stringify(db)); return db; }
-            return JSON.parse(raw);
-        }
-        function saveDb(db) { localStorage.setItem(MOCK_KEY, JSON.stringify(db)); }
-
         async function api(method, path, body) {
-            if (USE_MOCK) return mockApi(method, path, body);
             const opts = { method, headers: { 'Content-Type': 'application/json' } };
             if (state.token) opts.headers.Authorization = 'Bearer ' + state.token;
             if (body) opts.body = JSON.stringify(body);
@@ -1763,138 +1716,6 @@
             const json = await res.json().catch(() => ({}));
             if (!res.ok) throw { status: res.status, data: json };
             return json;
-        }
-
-        function mockApi(method, path, body) {
-            const db = getDb();
-            const userId = state.user?.id;
-
-            // AUTH
-            if (method === 'POST' && path === '/auth/login') {
-                const u = db.users.find(x => x.email === body.email && x.password === body.password);
-                if (!u) throw { status: 401, data: { message: 'Invalid credentials' } };
-                return { token: 'mock-token', user: { id: u.id, name: u.name, email: u.email, created_at: u.created_at } };
-            }
-            if (method === 'POST' && path === '/auth/register') {
-                if (db.users.some(x => x.email === body.email)) throw { status: 409, data: { message: 'Email taken' } };
-                const u = { id: uid(), name: body.username, email: body.email, password: body.password, created_at: new Date().toISOString() };
-                db.users.push(u); saveDb(db);
-                return { token: 'mock-token', user: { id: u.id, name: u.name, email: u.email, created_at: u.created_at } };
-            }
-            if (method === 'PATCH' && path.startsWith('/users/')) {
-                const u = db.users.find(x => x.id === userId);
-                if (!u || (body.current && u.password !== body.current)) throw { status: 400, data: { message: 'Wrong current password' } };
-                if (body.password) u.password = body.password;
-                saveDb(db); return { ok: true };
-            }
-            // WORKSPACES
-            if (method === 'GET' && path.includes('/workspaces') && path.includes(userId)) {
-                return db.workspaces.filter(w => w.user_id === userId);
-            }
-            if (method === 'POST' && path === '/workspaces') {
-                const ws = { id: uid(), user_id: userId, title: body.title, created_at: new Date().toISOString() };
-                db.workspaces.push(ws);
-                db.workspace_members.push({ workspace_id: ws.id, user_id: userId, role: 'administrator' });
-                saveDb(db); return ws;
-            }
-            if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/boards$/)) {
-                return db.boards.filter(b => b.workspace_id === path.split('/')[2]);
-            }
-            if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/boards$/)) {
-                const wsId = path.split('/')[2];
-                const b = { id: uid(), workspace_id: wsId, title: body.title, created_at: new Date().toISOString() };
-                db.boards.push(b);
-                // Seed default columns for new board
-                const now = new Date().toISOString();
-                db.columns.push({ id: uid(), board_id: b.id, name: 'To Do', position: 0, created_at: now });
-                db.columns.push({ id: uid(), board_id: b.id, name: 'In Progress', position: 1, created_at: now });
-                db.columns.push({ id: uid(), board_id: b.id, name: 'Done', position: 2, created_at: now });
-                saveDb(db); return b;
-            }
-            // MEMBERS
-            if (method === 'GET' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
-                const wsId = path.split('/')[2];
-                return db.workspace_members.filter(m => m.workspace_id === wsId);
-            }
-            if (method === 'POST' && path.match(/^\/workspaces\/[^/]+\/workspace_members$/)) {
-                const wsId = path.split('/')[2];
-                const exists = db.workspace_members.find(m => m.workspace_id === wsId && m.user_id === body.user_id);
-                if (exists) throw { status: 409, data: { message: 'User already a member' } };
-                const m = { workspace_id: wsId, user_id: body.user_id, role: body.role || 'member' };
-                db.workspace_members.push(m); saveDb(db); return m;
-            }
-            if (method === 'DELETE' && path.match(/^\/workspaces\/[^/]+\/workspace_members\/[^/]+$/)) {
-                const parts = path.split('/');
-                db.workspace_members = db.workspace_members.filter(m => !(m.workspace_id === parts[2] && m.user_id === parts[4]));
-                saveDb(db); return { ok: true };
-            }
-            if (method === 'PATCH' && path.match(/^\/workspaces\/[^/]+\/workspace_members\/[^/]+$/)) {
-                const parts = path.split('/');
-                const m = db.workspace_members.find(x => x.workspace_id === parts[2] && x.user_id === parts[4]);
-                if (!m) throw { status: 404 };
-                m.role = body.role; saveDb(db); return m;
-            }
-            if (method === 'GET' && path === '/users' && path.includes('email=')) {
-                const email = decodeURIComponent(path.split('email=')[1]);
-                const u = db.users.find(x => x.email === email);
-                if (!u) throw { status: 404, data: { message: 'User not found' } };
-                return { id: u.id, name: u.name, email: u.email };
-            }
-            if (method === 'GET' && path.includes('?email=')) {
-                const email = decodeURIComponent(path.split('?email=')[1]);
-                const u = db.users.find(x => x.email === email);
-                if (!u) throw { status: 404, data: { message: 'User not found' } };
-                return { id: u.id, name: u.name, email: u.email };
-            }
-            // COLUMNS
-            if (method === 'GET' && path.match(/^\/boards\/[^/]+\/columns$/)) {
-                const boardId = path.split('/')[2];
-                return (db.columns || []).filter(c => c.board_id === boardId).sort((a, b) => a.position - b.position || a.created_at.localeCompare(b.created_at));
-            }
-            if (method === 'POST' && path.match(/^\/boards\/[^/]+\/columns$/)) {
-                const boardId = path.split('/')[2];
-                const existingCols = (db.columns || []).filter(c => c.board_id === boardId);
-                const position = body.position != null ? body.position : existingCols.length;
-                const col = { id: uid(), board_id: boardId, name: body.name, position, created_at: new Date().toISOString() };
-                if (!db.columns) db.columns = [];
-                db.columns.push(col); saveDb(db); return col;
-            }
-            if (method === 'DELETE' && path.match(/^\/columns\/[^/]+$/)) {
-                const colId = path.split('/')[2];
-                db.columns = (db.columns || []).filter(c => c.id !== colId);
-                db.tasks = (db.tasks || []).filter(t => t.column_id !== colId);
-                saveDb(db); return { ok: true };
-            }
-            // TASKS
-            if (method === 'GET' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
-                const boardId = path.split('/')[2];
-                const colIds = (db.columns || []).filter(c => c.board_id === boardId).map(c => c.id);
-                return (db.tasks || []).filter(t => colIds.includes(t.column_id));
-            }
-            if (method === 'POST' && path.match(/^\/boards\/[^/]+\/tasks$/)) {
-                const now = new Date().toISOString();
-                const t = {
-                    id: uid(), column_id: body.column_id,
-                    title: body.title, description: body.description || '',
-                    assigned_id: body.assigned_id || null,
-                    created_at: now, updated_at: now,
-                };
-                if (!db.tasks) db.tasks = [];
-                db.tasks.push(t); saveDb(db); return t;
-            }
-            if (method === 'PATCH' && path.match(/^\/tasks\/[^/]+$/)) {
-                const id = path.split('/')[2];
-                const t = (db.tasks || []).find(x => x.id === id);
-                if (!t) throw { status: 404 };
-                Object.assign(t, body, { updated_at: new Date().toISOString() });
-                saveDb(db); return t;
-            }
-            if (method === 'DELETE' && path.match(/^\/tasks\/[^/]+$/)) {
-                const id = path.split('/')[2];
-                db.tasks = (db.tasks || []).filter(x => x.id !== id);
-                saveDb(db); return { ok: true };
-            }
-            throw { status: 404, data: { message: 'Not found: ' + method + ' ' + path } };
         }
 
         function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -2046,8 +1867,7 @@
         function renderWorkspaces() {
             const el = document.getElementById('workspace-list');
             const cards = state.workspaces.map(ws => {
-                const count = getDb().boards.filter(b => b.workspace_id === ws.id).length;
-                return `<div class="card-clickable" onclick="openWorkspace('${ws.id}')"><h3>${esc(ws.title)}</h3><p>${count} board${count !== 1 ? 's' : ''}</p></div>`;
+                return `<div class="card-clickable" onclick="openWorkspace('${ws.id}')"><h3>${esc(ws.title)}</h3></div>`;
             }).join('');
             el.innerHTML = cards + `<div class="card-clickable card-add" onclick="openModal('workspace-modal')">+ Add workspace</div>`;
         }
@@ -2062,22 +1882,31 @@
                 closeModal(null, 'workspace-modal'); renderWorkspaces(); renderSidebarWorkspaces(); showToast('Workspace created');
             } catch { showToast('Error creating workspace'); }
         }
-        async function deleteWorkspace(workspaceId) {
-            if (!workspaceId) return;
-
+        async function deleteWorkspace() {
+            if (!state.activeWorkspaceId) return;
+            if (!confirm('Delete this workspace and all its boards?')) return;
             try {
-                // Send the DELETE request to your API
-                await api('DELETE', `/workspaces/${workspaceId}`);
-
-                // Remove the workspace from your local state array
-                state.workspaces = state.workspaces.filter(ws => ws.id !== workspaceId);
-
-                // Re-render UI elements
-                renderWorkspaces();
+                await api('DELETE', '/workspaces/' + state.activeWorkspaceId);
+                state.workspaces = state.workspaces.filter(ws => ws.id !== state.activeWorkspaceId);
+                state.activeWorkspaceId = null;
+                navigate('workspaces');
                 renderSidebarWorkspaces();
                 showToast('Workspace deleted');
             } catch {
                 showToast('Error deleting workspace');
+            }
+        }
+        async function deleteBoard(boardId) {
+            if (!confirm('Delete this board and all its tasks?')) return;
+            try {
+                await api('DELETE', '/boards/' + boardId);
+                state.boards = state.boards.filter(b => b.id !== boardId);
+                delete state.columns[boardId];
+                renderBoardList();
+                renderSidebarWorkspaces();
+                showToast('Board deleted');
+            } catch {
+                showToast('Error deleting board');
             }
         }
 
@@ -2106,7 +1935,9 @@
             el.innerHTML = state.boards.map(b => {
                 const cols = state.columns[b.id] || [];
                 const count = cols.reduce((sum, c) => sum + (state.tasks[c.id] || []).length, 0);
-                return `<div class="card-clickable" onclick="openBoard('${b.id}')"><h3>${esc(b.title)}</h3><p>${count} task${count !== 1 ? 's' : ''}</p></div>`;
+                return `<div class="card-clickable" onclick="openBoard('${b.id}')" style="position:relative">
+                    <button class="btn btn-icon" style="position:absolute;top:10px;right:10px;font-size:13px;padding:4px 6px;opacity:0.5;z-index:1" onclick="event.stopPropagation();deleteBoard('${b.id}')" title="Delete board">&#10005;</button>
+                    <h3>${esc(b.title)}</h3><p>${count} task${count !== 1 ? 's' : ''}</p></div>`;
             }).join('') + `<div class="card-clickable card-add" onclick="openModal('board-modal')">+ Add board</div>`;
         }
         async function createBoard() {
@@ -2140,10 +1971,8 @@
                 return;
             }
             tbody.innerHTML = state.members.map(m => {
-                const db = getDb();
-                const u = db.users.find(x => x.id === m.user_id);
-                const name = m.username || m.name || (u ? u.name : null) || m.user_id;
-                const email = m.email || (u ? u.email : '');
+                const name = m.username || m.name || m.user_id;
+                const email = m.email || '';
                 const roleClass = m.role === 'administrator' ? 'role-administrator' : m.role === 'guest' ? 'role-guest' : 'role-member';
                 const isOwner = m.role === 'administrator' && m.user_id === state.user?.id;
                 return `<tr><td><div style="font-weight:600">${esc(name)}</div><div style="font-size:12px;color:rgba(255,255,255,0.5)">${esc(email)}</div></td>
@@ -2321,11 +2150,6 @@
         function getMemberName(m) {
             if (m.username) return m.username;
             if (m.name) return m.name;
-            if (USE_MOCK) {
-                const db = getDb();
-                const u = db.users.find(x => x.id === m.user_id);
-                if (u) return u.name;
-            }
             return m.user_id;
         }
         function getMemberNameById(userId) {
@@ -2588,12 +2412,14 @@
             });
             const rangeStart = new Date(minDate - 2 * 86400000), rangeEnd = new Date(maxDate + 3 * 86400000);
             const totalDays = Math.max(1, Math.ceil((rangeEnd - rangeStart) / 86400000));
+            const totalMs = rangeEnd.getTime() - rangeStart.getTime();
             let days = [];
             for (let i = 0; i < totalDays; i++) {
                 const d = new Date(rangeStart.getTime() + i * 86400000);
-                days.push({ date: d, label: d.getDate() + '/' + (d.getMonth() + 1), isToday: d.toDateString() === today.toDateString() });
+                const leftPct = (i * 86400000 / totalMs) * 100;
+                const widthPct = (86400000 / totalMs) * 100;
+                days.push({ date: d, label: d.getDate() + '/' + (d.getMonth() + 1), isToday: d.toDateString() === today.toDateString(), leftPct, widthPct });
             }
-            const totalMs = rangeEnd.getTime() - rangeStart.getTime();
             const nowPos = Math.max(0, Math.min(1, (today.getTime() - rangeStart.getTime()) / totalMs));
             const rows = ranges.map(r => {
                 const left = ((r.start.getTime() - rangeStart.getTime()) / totalMs) * 100;
@@ -2603,7 +2429,7 @@
             ganttEl.innerHTML = `
                 <div class="gantt-header">
                     <div class="gantt-header-label">Task</div>
-                    <div class="gantt-timeline-header">${days.map(d => `<div class="gantt-day-cell${d.isToday ? ' today' : ''}">${d.label}</div>`).join('')}</div>
+                    <div class="gantt-timeline-header">${days.map(d => `<div class="gantt-day-cell${d.isToday ? ' today' : ''}" style="left:${d.leftPct}%;width:${d.widthPct}%">${d.label}</div>`).join('')}</div>
                 </div>
                 <div class="gantt-body">
                     ${rows.map(r => `<div class="gantt-row">
