@@ -847,12 +847,14 @@
 
         .members-table td:first-child {
             border-left: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+            border-top-left-radius: var(--radius-sm);
+            border-bottom-left-radius: var(--radius-sm);
         }
 
         .members-table td:last-child {
             border-right: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            border-top-right-radius: var(--radius-sm);
+            border-bottom-right-radius: var(--radius-sm);
         }
 
         .members-table tr:hover td {
