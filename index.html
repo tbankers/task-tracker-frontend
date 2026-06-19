@@ -901,7 +901,8 @@
             border: var(--glass-border);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            overflow: hidden;
+            max-height: 70vh;
+            overflow-y: auto;
         }
 
         .gantt-header {
@@ -945,8 +946,6 @@
         }
 
         .gantt-body {
-            max-height: 500px;
-            overflow-y: auto;
             position: relative;
         }
 
@@ -2146,6 +2145,7 @@
                         await loadBoards(ws.id);
                         if (state.boards.find(b => b.id === boardId)) {
                             state.activeWorkspaceId = ws.id;
+                            await loadMembers(ws.id);
                             openBoard(boardId);
                             return;
                         }
@@ -2378,6 +2378,7 @@
             document.getElementById('board-ws-name').textContent = ws ? '\u00B7 ' + ws.title : '';
             hideAllViews(); document.getElementById('view-board').classList.remove('hidden');
             state.view = 'board'; saveNavState();
+            if (!state.members.length && state.activeWorkspaceId) loadMembers(state.activeWorkspaceId);
             document.querySelectorAll('.btn-group .btn-toggle').forEach(b => b.classList.toggle('active', b.dataset.view === 'kanban'));
             document.getElementById('board-area').classList.remove('hidden');
             document.getElementById('gantt-area').classList.add('hidden');
@@ -3004,7 +3005,10 @@
                     }
                 } else if (hash.startsWith('#/board/')) {
                     const boardId = hash.slice('#/board/'.length);
-                    if (state.activeBoardId !== boardId) openBoard(boardId);
+                    if (state.activeBoardId !== boardId) {
+                        if (!state.members.length && state.activeWorkspaceId) loadMembers(state.activeWorkspaceId);
+                        openBoard(boardId);
+                    }
                 } else if (hash === '#/workspaces' && state.view !== 'workspaces') {
                     navigate('workspaces');
                 } else if (hash === '#/help' && state.view !== 'help') {
