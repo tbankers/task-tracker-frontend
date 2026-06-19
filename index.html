@@ -996,7 +996,7 @@
             color: #fff;
             overflow: hidden;
             white-space: nowrap;
-            cursor: default;
+            cursor: pointer;
             transition: filter 0.2s ease;
             background: linear-gradient(135deg, #94A3B8, #64748B);
         }
@@ -2740,17 +2740,17 @@
                 const x2 = toRect.left - bodyRect.left + ganttBody.scrollLeft;
                 const y2 = toRect.top + toRect.height / 2 - bodyRect.top + ganttBody.scrollTop;
 
-                const dx = Math.abs(x2 - x1);
+                const dx = x2 - x1;
                 const dy = y2 - y1;
-                const midX = (x1 + x2) / 2;
+                const cpOffset = Math.max(60, Math.abs(dx) * 0.4);
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 30} ${y1}, ${x2 - 30} ${y2}, ${x2} ${y2}`);
+                path.setAttribute('d', `M ${x1} ${y1} C ${x1 + cpOffset} ${y1}, ${x2 - cpOffset} ${y2}, ${x2} ${y2}`);
                 path.setAttribute('stroke', '#000');
                 path.setAttribute('stroke-width', '2');
                 path.setAttribute('fill', 'none');
                 path.setAttribute('marker-end', 'url(#blockpoint-arrowhead)');
-                path.setAttribute('opacity', '0.8');
+                path.setAttribute('opacity', '0.5');
                 svg.appendChild(path);
             }
 
@@ -2819,7 +2819,7 @@
                     ${rows.map(r => `<div class="gantt-row">
                         <div class="gantt-row-label" title="${esc(r.task.title)}">${esc(r.task.title)}</div>
                         <div class="gantt-row-bars">
-                            <div class="gantt-bar" data-task-id="${r.task.id}" style="left:${r.left}%;width:${r.width}%;background:linear-gradient(135deg, ${r.task.colColor}, ${shadeColor(r.task.colColor, -22)})" title="${esc(r.task.title)} [${esc(r.task.colName)}]">
+                            <div class="gantt-bar" data-task-id="${r.task.id}" onclick="openEditTask('${r.task.id}','${r.task.column_id}')" style="left:${r.left}%;width:${r.width}%;background:linear-gradient(135deg, ${r.task.colColor}, ${shadeColor(r.task.colColor, -22)})" title="${esc(r.task.title)} [${esc(r.task.colName)}]">
                                 ${r.width > 10 ? esc(r.task.title) : ''}
                             </div>
                             <div class="gantt-now-line" style="left:${nowPos * 100}%"></div>
