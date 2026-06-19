@@ -1080,54 +1080,126 @@
         }
 
         .help-text {
-            max-width: 640px;
+            max-width: 720px;
             line-height: 1.7;
             color: rgba(255, 255, 255, 0.8);
         }
 
-        .help-text h3 {
-            margin: 20px 0 8px;
+        .help-hero {
+            text-align: center;
+            padding: 32px 0 24px;
+        }
+
+        .help-hero h2 {
+            font-size: 24px;
+            font-weight: 700;
             color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .help-hero p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        .help-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .help-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius);
+            padding: 24px;
             transition: all 0.3s ease;
         }
 
-        .help-text h3.clicked {
-            color: transparent;
-            position: relative;
+        .help-card:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
-        .help-text h3.clicked::after {
-            content: "Easter egg by the author of this page - Artyom Kivel";
+        .help-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 14px;
+        }
+
+        .help-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .help-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .help-card li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 8px;
+            font-size: 13.5px;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.5;
+        }
+
+        .help-card li::before {
+            content: '';
             position: absolute;
             left: 0;
-            top: 0;
-            background: linear-gradient(to right, #2774bd 0%, #27af1d 25%, #bfff00 50%, #681743 75%, #2774bd 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shineLoop 3s linear infinite;
+            top: 8px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(167, 139, 250, 0.7);
         }
 
-        @keyframes shineLoop {
-            0% {
-                background-position: 200% center;
-            }
-
-            100% {
-                background-position: -200% center;
-            }
+        .help-contact {
+            margin-top: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: var(--glass-border);
         }
 
-        body.dark-bg {
-            background: linear-gradient(30deg, black, rgb(74, 10, 10), rgb(126, 20, 20), black);
+        .help-contact-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(167, 139, 250, 0.3);
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        .help-text ul {
-            margin-left: 20px;
+        .help-contact-text {
+            font-size: 13.5px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
         }
 
-        .help-text li {
-            margin-bottom: 6px;
+        .help-contact-text strong {
+            color: #fff;
         }
 
         .toast {
@@ -1578,27 +1650,73 @@
                         <div class="topbar-title" data-i18n="help">Help</div>
                     </div>
                     <div class="help-text">
-                        <p data-i18n="helpIntro">Use the sidebar to switch between sections. Everything runs on one page.</p>
-                        <p data-i18n="helpContact">all questions to tg: @korneplod993. email: smnmdvdv@gmail.com</p>
-                        <h3 data-i18n="helpWsTitle">Workspaces</h3>
-                        <ul>
-                            <li data-i18n="helpWs1">Create a workspace with a title</li>
-                            <li data-i18n="helpWs2">Open it to manage boards and members</li>
-                        </ul>
-                        <h3 data-i18n="helpBoardTitle">Boards</h3>
-                        <ul>
-                            <li data-i18n="helpBoard1">Each board starts with default columns: To Do, In Progress, Done</li>
-                            <li data-i18n="helpBoard2">Click a board to open the kanban view</li>
-                            <li data-i18n="helpBoard3">Add custom columns with the + Add column button</li>
-                        </ul>
-                        <h3 onclick="this.classList.toggle('clicked'), document.body.classList.toggle('dark-bg')" data-i18n="helpTaskTitle">Tasks
-                        </h3>
-                        <ul>
-                            <li data-i18n="helpTask1">Add tasks from any column using the + Add task button</li>
-                            <li data-i18n="helpTask2">Edit title, description, column (status), and assignee</li>
-                            <li data-i18n="helpTask3">Set start and due dates for Gantt view</li>
-                            <li data-i18n="helpTask4">Task status = the column it belongs to</li>
-                        </ul>
+                        <div class="help-hero">
+                            <h2>TaskTracker</h2>
+                            <p data-i18n="helpIntro">Use the sidebar to switch between sections. Everything runs on one page.</p>
+                        </div>
+                        <div class="help-cards">
+                            <div class="help-card">
+                                <div class="help-card-icon" style="background:rgba(139,92,246,0.25);border:1px solid rgba(139,92,246,0.4)">&#127968;</div>
+                                <h3 data-i18n="helpWsTitle">Workspaces</h3>
+                                <ul>
+                                    <li data-i18n="helpWs1">Create a workspace with a title</li>
+                                    <li data-i18n="helpWs2">Open it to manage boards and members</li>
+                                </ul>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-card-icon" style="background:rgba(59,130,246,0.25);border:1px solid rgba(59,130,246,0.4)">&#128203;</div>
+                                <h3 data-i18n="helpBoardTitle">Boards</h3>
+                                <ul>
+                                    <li data-i18n="helpBoard1">Each board starts with default columns: To Do, In Progress, Done</li>
+                                    <li data-i18n="helpBoard2">Click a board to open the kanban view</li>
+                                    <li data-i18n="helpBoard3">Add custom columns with the + Add column button</li>
+                                </ul>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-card-icon" style="background:rgba(16,185,129,0.25);border:1px solid rgba(16,185,129,0.4)">&#9997;</div>
+                                <h3 data-i18n="helpTaskTitle">Tasks</h3>
+                                <ul>
+                                    <li data-i18n="helpTask1">Add tasks from any column using the + Add task button</li>
+                                    <li data-i18n="helpTask2">Edit title, description, column (status), and assignee</li>
+                                    <li data-i18n="helpTask3">Set start and due dates for Gantt view</li>
+                                    <li data-i18n="helpTask4">Task status = the column it belongs to</li>
+                                </ul>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-card-icon" style="background:rgba(245,158,11,0.25);border:1px solid rgba(245,158,11,0.4)">&#128279;</div>
+                                <h3 data-i18n="helpBlockpoints">Blockpoints</h3>
+                                <ul>
+                                    <li data-i18n="helpBp1">Mark tasks that block other tasks from starting</li>
+                                    <li data-i18n="helpBp2">Manage blockers in the task edit modal</li>
+                                    <li data-i18n="helpBp3">View dependency arrows in Gantt view</li>
+                                </ul>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-card-icon" style="background:rgba(236,72,153,0.25);border:1px solid rgba(236,72,153,0.4)">&#128196;</div>
+                                <h3 data-i18n="helpGanttTitle">Gantt</h3>
+                                <ul>
+                                    <li data-i18n="helpGantt1">Switch to Gantt view from the board top bar</li>
+                                    <li data-i18n="helpGantt2">Tasks are positioned by start and due dates</li>
+                                    <li data-i18n="helpGantt3">Purple line marks today</li>
+                                    <li data-i18n="helpGantt4">Click a task bar to edit it</li>
+                                </ul>
+                            </div>
+                            <div class="help-card">
+                                <div class="help-card-icon" style="background:rgba(6,182,212,0.25);border:1px solid rgba(6,182,212,0.4)">&#128172;</div>
+                                <h3 data-i18n="helpCommentsTitle">Comments</h3>
+                                <ul>
+                                    <li data-i18n="helpComments1">Discuss tasks right inside the board</li>
+                                    <li data-i18n="helpComments2">Edit and delete your own comments</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="help-contact">
+                            <div class="help-contact-icon">&#128231;</div>
+                            <div class="help-contact-text">
+                                <strong data-i18n="helpContactTitle">Contact us</strong><br>
+                                <span data-i18n="helpContactBody">Telegram: @korneplod993 &middot; Email: smnmdvdv@gmail.com</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -1784,6 +1902,16 @@
                 helpTask2: 'Edit title, description, column (status), and assignee',
                 helpTask3: 'Set start and due dates for Gantt view',
                 helpTask4: 'Task status = the column it belongs to',
+                helpBlockpoints: 'Blockpoints', helpBp1: 'Mark tasks that block other tasks from starting',
+                helpBp2: 'Manage blockers in the task edit modal',
+                helpBp3: 'View dependency arrows in Gantt view',
+                helpGanttTitle: 'Gantt', helpGantt1: 'Switch to Gantt view from the board top bar',
+                helpGantt2: 'Tasks are positioned by start and due dates',
+                helpGantt3: 'Purple line marks today',
+                helpGantt4: 'Click a task bar to edit it',
+                helpCommentsTitle: 'Comments', helpComments1: 'Discuss tasks right inside the board',
+                helpComments2: 'Edit and delete your own comments',
+                helpContactTitle: 'Contact us', helpContactBody: 'Telegram: @korneplod993 \u00B7 Email: smnmdvdv@gmail.com',
                 // Toasts
                 fillAllFields: 'Fill in all fields', loginFailed: 'Login failed',
                 registrationFailed: 'Registration failed', checkPasswords: 'Check password fields',
@@ -1847,6 +1975,16 @@
                 helpTask2: '\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u0439\u0442\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u0438\u0435, \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435, \u043a\u043e\u043b\u043e\u043d\u043a\u0443 (\u0441\u0442\u0430\u0442\u0443\u0441) \u0438 \u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0433\u043e',
                 helpTask3: '\u0423\u0441\u0442\u0430\u043d\u0430\u0432\u043b\u0438\u0432\u0430\u0439\u0442\u0435 \u0434\u0430\u0442\u044b \u043d\u0430\u0447\u0430\u043b\u0430 \u0438 \u0441\u0440\u043e\u043a\u0430 \u0434\u043b\u044f \u0432\u0438\u0434\u0430 Gantt',
                 helpTask4: '\u0421\u0442\u0430\u0442\u0443\u0441 \u0437\u0430\u0434\u0430\u0447\u0438 = \u043a\u043e\u043b\u043e\u043d\u043a\u0430, \u0432 \u043a\u043e\u0442\u043e\u0440\u043e\u0439 \u043e\u043d\u0430 \u043d\u0430\u0445\u043e\u0434\u0438\u0442\u0441\u044f',
+                helpBlockpoints: '\u0411\u043b\u043e\u043a\u043f\u043e\u0438\u043d\u0442\u044b', helpBp1: '\u041e\u0442\u043c\u0435\u0447\u0430\u0439\u0442\u0435 \u0437\u0430\u0434\u0430\u0447\u0438, \u043a\u043e\u0442\u043e\u0440\u044b\u0435 \u0431\u043b\u043e\u043a\u0438\u0440\u0443\u044e\u0442 \u0434\u0440\u0443\u0433\u0438\u0435',
+                helpBp2: '\u0423\u043f\u0440\u0430\u0432\u043b\u044f\u0439\u0442\u0435 \u0431\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u043a\u0430\u043c\u0438 \u0432 \u043c\u043e\u0434\u0430\u043b\u043a\u0435 \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f',
+                helpBp3: '\u0421\u0442\u0440\u0435\u043b\u043a\u0438 \u0437\u0430\u0432\u0438\u0441\u0438\u043c\u043e\u0441\u0442\u0435\u0439 \u0432 \u0432\u0438\u0434\u0435 Gantt',
+                helpGanttTitle: 'Gantt', helpGantt1: '\u041f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0438\u0442\u0435\u0441\u044c \u043d\u0430 Gantt \u0432 \u043f\u0430\u043d\u0435\u043b\u0438 \u0434\u043e\u0441\u043a\u0438',
+                helpGantt2: '\u0417\u0430\u0434\u0430\u0447\u0438 \u0440\u0430\u0441\u043f\u043e\u043b\u0430\u0433\u0430\u044e\u0442\u0441\u044f \u043f\u043e \u0434\u0430\u0442\u0430\u043c \u043d\u0430\u0447\u0430\u043b\u0430 \u0438 \u0441\u0440\u043e\u043a\u0430',
+                helpGantt3: '\u0424\u0438\u043e\u043b\u0435\u0442\u043e\u0432\u0430\u044f \u043b\u0438\u043d\u0438\u044f \u043e\u0442\u043c\u0435\u0447\u0430\u0435\u0442 \u0441\u0435\u0433\u043e\u0434\u043d\u044f',
+                helpGantt4: '\u041d\u0430\u0436\u043c\u0438\u0442\u0435 \u043d\u0430 \u043f\u043e\u043b\u043e\u0441\u043a\u0443 \u0437\u0430\u0434\u0430\u0447\u0438 \u0434\u043b\u044f \u0440\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f',
+                helpCommentsTitle: '\u041a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0438', helpComments1: '\u041e\u0431\u0441\u0443\u0436\u0434\u0430\u0439\u0442\u0435 \u0437\u0430\u0434\u0430\u0447\u0438 \u043f\u0440\u044f\u043c\u043e \u043d\u0430 \u0434\u043e\u0441\u043a\u0435',
+                helpComments2: '\u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u0443\u0439\u0442\u0435 \u0438 \u0443\u0434\u0430\u043b\u044f\u0439\u0442\u0435 \u0441\u0432\u043e\u0438 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u0438',
+                helpContactTitle: '\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b', helpContactBody: 'Telegram: @korneplod993 \u00B7 Email: smnmdvdv@gmail.com',
                 fillAllFields: '\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0432\u0441\u0435 \u043f\u043e\u043b\u044f', loginFailed: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0432\u0445\u043e\u0434\u0430',
                 registrationFailed: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0438', checkPasswords: '\u041f\u0440\u043e\u0432\u0435\u0440\u044c\u0442\u0435 \u043f\u043e\u043b\u044f \u043f\u0430\u0440\u043e\u043b\u0435\u0439',
                 passwordUpdated: '\u041f\u0430\u0440\u043e\u043b\u044c \u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d', workspaceCreated: '\u041f\u0440\u043e\u0441\u0442\u0440\u0430\u043d\u0441\u0442\u0432\u043e \u0441\u043e\u0437\u0434\u0430\u043d\u043e',
