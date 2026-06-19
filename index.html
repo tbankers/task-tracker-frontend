@@ -647,6 +647,7 @@
         }
 
         .board-area {
+            position: relative;
             display: flex;
             gap: 20px;
             align-items: flex-start;
@@ -944,6 +945,7 @@
         .gantt-body {
             max-height: 500px;
             overflow-y: auto;
+            position: relative;
         }
 
         .gantt-row {
@@ -1346,6 +1348,51 @@
             outline: none;
             margin-bottom: 6px;
         }
+
+        .blockpoint-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(139, 92, 246, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            color: #c084fc;
+        }
+
+        .blockpoint-arrow-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .blockpoint-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .blockpoint-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .blockpoint-empty {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            padding: 8px 0;
+        }
     </style>
 </head>
 
@@ -1626,6 +1673,14 @@
                     <label data-i18n="columnStatus">Column (Status)</label>
                     <select id="task-column-input"></select>
                 </div>
+                <div id="blockpoint-section" class="blockpoint-section" style="display:none">
+                    <label data-i18n="blockedBy">Blocked by</label>
+                    <div id="blockpoint-list"></div>
+                    <div style="display:flex;gap:8px;margin-top:8px">
+                        <select id="blockpoint-task-select" style="flex:1;padding:8px 12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:var(--radius-sm);font:inherit;font-size:13px;color:#fff;outline:none"></select>
+                        <button class="btn btn-ghost btn-sm" onclick="addBlockpointFromModal()">+</button>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-ghost" onclick="closeModal(null,'task-modal')" data-i18n="cancel">Cancel</button>
@@ -1753,8 +1808,10 @@
                 errorAddingColumn: 'Error adding column',
                 deleteConfirm: (name, n) => `Delete "${name}" and its ${n} task(s)?`,
                 boardCreated: 'Board created', errorCreatingBoard: 'Error creating board',
-                unknown: 'Unknown', noTasks: 'No tasks', noTasksGantt: 'No tasks to display in Gantt view',
+                unknown: 'Unknown',                 noTasks: 'No tasks', noTasksGantt: 'No tasks to display in Gantt view',
                 tasks: 'tasks', task: 'task',
+                blockedBy: 'Blocked by', blockpointAdded: 'Blockpoint added',
+                blockpointRemoved: 'Blockpoint removed', noBlockpoints: 'No blockers',
             },
             ru: {
                 signIn: '\u0412\u043e\u0439\u0442\u0438', register: '\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044f', createAccount: '\u0421\u043e\u0437\u0434\u0430\u0442\u044c \u0430\u043a\u043a\u0430\u0443\u043d\u0442',
@@ -1814,6 +1871,8 @@
                 boardCreated: '\u0414\u043e\u0441\u043a\u0430 \u0441\u043e\u0437\u0434\u0430\u043d\u0430', errorCreatingBoard: '\u041e\u0448\u0438\u0431\u043a\u0430 \u0441\u043e\u0437\u0434\u0430\u043d\u0438\u044f \u0434\u043e\u0441\u043a\u0438',
                 unknown: '\u041d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u044b\u0439', noTasks: '\u041d\u0435\u0442 \u0437\u0430\u0434\u0430\u0447', noTasksGantt: '\u041d\u0435\u0442 \u0437\u0430\u0434\u0430\u0447 \u0434\u043b\u044f \u043e\u0442\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u044f \u0432 \u0432\u0438\u0434\u0435 Gantt',
                 tasks: '\u0437\u0430\u0434\u0430\u0447', task: '\u0437\u0430\u0434\u0430\u0447\u0430',
+                blockedBy: '\u0417\u0430\u0431\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u0430\u043d\u043e', blockpointAdded: '\u0411\u043b\u043e\u043a\u043f\u043e\u0438\u043d\u0442 \u0434\u043e\u0431\u0430\u0432\u043b\u0435\u043d',
+                blockpointRemoved: '\u0411\u043b\u043e\u043a\u043f\u043e\u0438\u043d\u0442 \u0443\u0434\u0430\u043b\u0451\u043d', noBlockpoints: '\u041d\u0435\u0442 \u0431\u043b\u043e\u043a\u0438\u0440\u043e\u0432\u043e\u043a',
             },
         };
 
@@ -1853,6 +1912,7 @@
             comments: {},
             commentsVisible: true,
             commentsBodyVisible: true,
+            blockpoints: {},
         };
 
         async function api(method, path, body) {
@@ -2226,7 +2286,9 @@
         }
 
         function renderTaskCard(task, col) {
-            return `<div class="task-card">
+            const blockedBy = state.blockpoints[task.id] || [];
+            const blockerBadge = blockedBy.length > 0 ? `<span class="blockpoint-badge">\u{1F517} ${blockedBy.length}</span>` : '';
+            return `<div class="task-card" data-task-id="${task.id}">
                 <div class="task-card-actions">
                     <button class="btn btn-icon" onclick="openEditTask('${task.id}','${col.id}')" title="Edit">&#9998;</button>
                     <button class="btn btn-icon" onclick="deleteTask('${task.id}','${col.id}')" title="Delete">&#128465;</button>
@@ -2238,6 +2300,7 @@
                     <span class="assignee">${esc(task.assignee || getMemberNameById(task.assigned_id) || 'Unassigned')}</span>
                     <span>Created ${fmtDate(task.created_at)}</span>
                     ${task.due_date ? `<span>Due ${fmtDate(task.due_date)}</span>` : ''}
+                    ${blockerBadge}
                 </div>
             </div>`;
         }
@@ -2288,6 +2351,7 @@
             } catch {
                 for (const col of (state.columns[boardId] || [])) state.tasks[col.id] = [];
             }
+            await loadAllBlockpoints(boardId);
         }
 
         function populateColumnDropdown(boardId, selectedColId) {
@@ -2328,6 +2392,7 @@
             document.getElementById('task-due-input').value = '';
             populateAssigneeDropdown('');
             populateColumnDropdown(boardId, colId);
+            document.getElementById('blockpoint-section').style.display = 'none';
             openModal('task-modal');
         }
 
@@ -2346,6 +2411,9 @@
             document.getElementById('task-due-input').value = task.due_date ? toISODate(task.due_date) : '';
             populateAssigneeDropdown(task.assigned_id || task.assignee_id || '');
             populateColumnDropdown(boardId, colId);
+            document.getElementById('blockpoint-section').style.display = '';
+            renderBlockpointList(taskId);
+            populateBlockpointDropdown(taskId);
             openModal('task-modal');
         }
 
@@ -2398,6 +2466,10 @@
             try {
                 await api('DELETE', '/tasks/' + taskId);
                 state.tasks[colId] = (state.tasks[colId] || []).filter(t => t.id !== taskId);
+                delete state.blockpoints[taskId];
+                for (const key of Object.keys(state.blockpoints)) {
+                    state.blockpoints[key] = state.blockpoints[key].filter(id => String(id) !== taskId);
+                }
                 renderBoard(state.activeBoardId);
                 if (state.boardViewMode === 'gantt') renderGantt(state.activeBoardId);
                 showToast(t('taskDeleted'));
@@ -2528,6 +2600,163 @@
             }
         }
 
+        // BLOCKPOINTS
+        async function loadAllBlockpoints(boardId) {
+            const columns = state.columns[boardId] || [];
+            const allTasks = columns.flatMap(col => state.tasks[col.id] || []);
+            for (const task of allTasks) {
+                try {
+                    const bp = await api('GET', '/tasks/' + task.id + '/blockpoints');
+                    state.blockpoints[task.id] = (bp.blocked_by || []).map(Number);
+                } catch {
+                    state.blockpoints[task.id] = [];
+                }
+            }
+        }
+
+        function renderBlockpointList(taskId) {
+            const listEl = document.getElementById('blockpoint-list');
+            const blockedBy = state.blockpoints[taskId] || [];
+            if (!blockedBy.length) {
+                listEl.innerHTML = `<div class="blockpoint-empty">${t('noBlockpoints')}</div>`;
+                return;
+            }
+            const columns = state.columns[state.activeBoardId] || [];
+            const allTasks = columns.flatMap(col => state.tasks[col.id] || []);
+            listEl.innerHTML = blockedBy.map(blockedById => {
+                const bt = allTasks.find(task => Number(task.id) === blockedById);
+                const title = bt ? bt.title : 'Task #' + blockedById;
+                return `<div class="blockpoint-item">
+                    <span>\u{1F517} ${esc(title)}</span>
+                    <button class="btn btn-icon btn-sm" style="font-size:12px;padding:2px 5px" onclick="removeBlockpointFromModal(${blockedById})">&#10005;</button>
+                </div>`;
+            }).join('');
+        }
+
+        function populateBlockpointDropdown(taskId) {
+            const select = document.getElementById('blockpoint-task-select');
+            const columns = state.columns[state.activeBoardId] || [];
+            const allTasks = columns.flatMap(col => state.tasks[col.id] || []);
+            const currentBlockpoints = state.blockpoints[taskId] || [];
+            const options = allTasks
+                .filter(task => String(task.id) !== String(taskId) && !currentBlockpoints.includes(Number(task.id)))
+                .map(task => `<option value="${task.id}">${esc(task.title)}</option>`)
+                .join('');
+            select.innerHTML = options || `<option value="">${t('noTasks')}</option>`;
+        }
+
+        async function addBlockpointFromModal() {
+            const taskId = state.editingTaskId;
+            if (!taskId) return;
+            const select = document.getElementById('blockpoint-task-select');
+            const blockedByTaskId = Number(select.value);
+            if (!blockedByTaskId) return;
+            try {
+                await api('POST', '/tasks/' + taskId + '/blockpoints', { blocked_by_task_id: blockedByTaskId });
+                if (!state.blockpoints[taskId]) state.blockpoints[taskId] = [];
+                state.blockpoints[taskId].push(blockedByTaskId);
+                renderBlockpointList(taskId);
+                populateBlockpointDropdown(taskId);
+                if (state.boardViewMode === 'gantt') {
+                    renderGantt(state.activeBoardId);
+                } else {
+                    renderBoard(state.activeBoardId);
+                }
+                showToast(t('blockpointAdded'));
+            } catch {
+                showToast('Failed to add blockpoint');
+            }
+        }
+
+        async function removeBlockpointFromModal(blockedById) {
+            const taskId = state.editingTaskId;
+            if (!taskId) return;
+            try {
+                await api('DELETE', '/tasks/' + taskId + '/blockpoints/' + blockedById);
+                state.blockpoints[taskId] = (state.blockpoints[taskId] || []).filter(id => id !== blockedById);
+                renderBlockpointList(taskId);
+                populateBlockpointDropdown(taskId);
+                if (state.boardViewMode === 'gantt') {
+                    renderGantt(state.activeBoardId);
+                } else {
+                    renderBoard(state.activeBoardId);
+                }
+                showToast(t('blockpointRemoved'));
+            } catch {
+                showToast('Failed to remove blockpoint');
+            }
+        }
+
+        function drawGanttBlockpointArrows(boardId) {
+            const ganttBody = document.querySelector('.gantt-body');
+            if (!ganttBody) return;
+            const existingSvg = ganttBody.querySelector('.blockpoint-arrow-svg');
+            if (existingSvg) existingSvg.remove();
+
+            const bars = {};
+            ganttBody.querySelectorAll('.gantt-bar[data-task-id]').forEach(el => {
+                bars[el.dataset.taskId] = el;
+            });
+
+            const arrows = [];
+            for (const [taskId, blockedByIds] of Object.entries(state.blockpoints)) {
+                if (!bars[taskId]) continue;
+                for (const blockedById of blockedByIds) {
+                    const blockedByIdStr = String(blockedById);
+                    if (!bars[blockedByIdStr]) continue;
+                    arrows.push({ from: bars[blockedByIdStr], to: bars[taskId] });
+                }
+            }
+
+            if (!arrows.length) return;
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.classList.add('blockpoint-arrow-svg');
+            svg.setAttribute('width', ganttBody.scrollWidth);
+            svg.setAttribute('height', ganttBody.scrollHeight);
+
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+            marker.setAttribute('id', 'blockpoint-arrowhead');
+            marker.setAttribute('markerWidth', '10');
+            marker.setAttribute('markerHeight', '7');
+            marker.setAttribute('refX', '10');
+            marker.setAttribute('refY', '3.5');
+            marker.setAttribute('orient', 'auto');
+            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygon.setAttribute('points', '0 0, 10 3.5, 0 7');
+            polygon.setAttribute('fill', '#000');
+            marker.appendChild(polygon);
+            defs.appendChild(marker);
+            svg.appendChild(defs);
+
+            const bodyRect = ganttBody.getBoundingClientRect();
+            for (const arrow of arrows) {
+                const fromRect = arrow.from.getBoundingClientRect();
+                const toRect = arrow.to.getBoundingClientRect();
+
+                const x1 = fromRect.right - bodyRect.left + ganttBody.scrollLeft;
+                const y1 = fromRect.top + fromRect.height / 2 - bodyRect.top + ganttBody.scrollTop;
+                const x2 = toRect.left - bodyRect.left + ganttBody.scrollLeft;
+                const y2 = toRect.top + toRect.height / 2 - bodyRect.top + ganttBody.scrollTop;
+
+                const dx = Math.abs(x2 - x1);
+                const dy = y2 - y1;
+                const midX = (x1 + x2) / 2;
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 30} ${y1}, ${x2 - 30} ${y2}, ${x2} ${y2}`);
+                path.setAttribute('stroke', '#000');
+                path.setAttribute('stroke-width', '2');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('marker-end', 'url(#blockpoint-arrowhead)');
+                path.setAttribute('opacity', '0.8');
+                svg.appendChild(path);
+            }
+
+            ganttBody.appendChild(svg);
+        }
+
         // GANTT
         function shadeColor(hex, percent) {
             const num = parseInt(hex.replace('#', ''), 16);
@@ -2541,10 +2770,12 @@
         }
         function parseDateSafe(v) { if (!v) return null; const d = new Date(v); return isNaN(d.getTime()) ? null : d; }
         function ganttTaskRange(t) {
-            const start = parseDateSafe(t.start_date) || parseDateSafe(t.created_at) || new Date();
-            let end = parseDateSafe(t.due_date);
-            if (!end) end = new Date(start.getTime() + 3 * 86400000);
-            if (end < start) end = new Date(start.getTime() + 3 * 86400000);
+            const rawStart = parseDateSafe(t.start_date) || parseDateSafe(t.created_at) || new Date();
+            const start = new Date(rawStart.getFullYear(), rawStart.getMonth(), rawStart.getDate());
+            let rawEnd = parseDateSafe(t.due_date);
+            if (!rawEnd) rawEnd = new Date(start.getTime() + 3 * 86400000);
+            if (rawEnd < start) rawEnd = new Date(start.getTime() + 3 * 86400000);
+            const end = new Date(rawEnd.getFullYear(), rawEnd.getMonth(), rawEnd.getDate(), 23, 59, 59);
             return { start, end };
         }
         function renderGantt(boardId) {
@@ -2560,12 +2791,15 @@
                 if (r.end.getTime() > maxDate) maxDate = r.end.getTime();
                 return { task: t, start: r.start, end: r.end };
             });
-            const rangeStart = new Date(minDate - 2 * 86400000), rangeEnd = new Date(maxDate + 3 * 86400000);
+            const rangeStartDate = new Date(minDate - 2 * 86400000);
+            const rangeEndDate = new Date(maxDate + 3 * 86400000);
+            const rangeStart = new Date(rangeStartDate.getFullYear(), rangeStartDate.getMonth(), rangeStartDate.getDate());
+            const rangeEnd = new Date(rangeEndDate.getFullYear(), rangeEndDate.getMonth(), rangeEndDate.getDate(), 23, 59, 59);
             const totalDays = Math.max(1, Math.ceil((rangeEnd - rangeStart) / 86400000));
             const totalMs = rangeEnd.getTime() - rangeStart.getTime();
             let days = [];
             for (let i = 0; i < totalDays; i++) {
-                const d = new Date(rangeStart.getTime() + i * 86400000);
+                const d = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate() + i);
                 const leftPct = (i * 86400000 / totalMs) * 100;
                 const widthPct = (86400000 / totalMs) * 100;
                 days.push({ date: d, label: d.getDate() + '/' + (d.getMonth() + 1), isToday: d.toDateString() === today.toDateString(), leftPct, widthPct });
@@ -2585,13 +2819,14 @@
                     ${rows.map(r => `<div class="gantt-row">
                         <div class="gantt-row-label" title="${esc(r.task.title)}">${esc(r.task.title)}</div>
                         <div class="gantt-row-bars">
-                            <div class="gantt-bar" style="left:${r.left}%;width:${r.width}%;background:linear-gradient(135deg, ${r.task.colColor}, ${shadeColor(r.task.colColor, -22)})" title="${esc(r.task.title)} [${esc(r.task.colName)}]">
+                            <div class="gantt-bar" data-task-id="${r.task.id}" style="left:${r.left}%;width:${r.width}%;background:linear-gradient(135deg, ${r.task.colColor}, ${shadeColor(r.task.colColor, -22)})" title="${esc(r.task.title)} [${esc(r.task.colName)}]">
                                 ${r.width > 10 ? esc(r.task.title) : ''}
                             </div>
                             <div class="gantt-now-line" style="left:${nowPos * 100}%"></div>
                         </div>
                     </div>`).join('')}
                 </div>`;
+            requestAnimationFrame(() => drawGanttBlockpointArrows(boardId));
         }
 
         (function init() {
